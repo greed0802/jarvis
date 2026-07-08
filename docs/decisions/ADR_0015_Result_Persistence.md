@@ -10,7 +10,7 @@ tags:
   - Persistence
 related:
   - 03_Core_Ontology_Relationships.md
-  - 09_Memory_Framework.md
+  - 10_Memory_Framework.md
 supersedes: null
 superseded_by: null
 ---

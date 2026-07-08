@@ -11,7 +11,7 @@ tags:
   - ADR
 related:
   - 01_Principles.md
-  - 15_Development_Guide.md
+  - 24_Development_Guide.md
 supersedes: null
 superseded_by: null
 ---

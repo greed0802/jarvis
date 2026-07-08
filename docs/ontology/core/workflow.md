@@ -1,121 +1,264 @@
-# Workflow
+# Object: Workflow
 
-## Definition
-
-A Workflow is the execution strategy of Jarvis. It transforms an approved Intent into one or more executable Tasks and orchestrates their execution to achieve the user's goal.
-
-Unlike the Planner, which decides **what** should be done, the Workflow determines **how** it should be executed. It supervises task execution, evaluates intermediate results, adapts its strategy when necessary, and ensures the execution remains aligned with the user's intent.
-
-A Workflow is deterministic by design but adaptive in execution. Given the same validated context and constraints, it should produce a predictable strategy while remaining capable of responding to new information, clarification, or execution outcomes.
+Category:
+Core / Execution
 
 ---
 
-## Purpose
+# Definition
 
-The Workflow exists to coordinate execution.
+A Workflow is the execution structure that coordinates the implementation of an approved Plan.
 
-It owns the Tasks required to achieve an Intent, manages their lifecycle, determines execution order, controls branching and parallel execution, monitors progress, and continuously evaluates confidence before producing results.
+A Workflow transforms an approved Plan into one or more executable Tasks and manages their execution from creation through completion.
 
-The Workflow acts as the strategic supervisor between planning and execution.
+A Workflow never determines strategy.
 
----
-
-## Ownership
-
-A Workflow can exist at multiple levels.
-
-- **Platform** defines the Workflow architecture and built-in workflows.
-- **Workspace** owns active workflow instances during a working session.
-- **Project** may store reusable or historical workflows.
-- **User** can influence, pause, modify, stop, or save workflows.
+It coordinates execution.
 
 ---
 
-## Relationship with Planner
+# Purpose
 
-Planner decides **what** should be accomplished.
+The Workflow exists to bridge planning and execution.
 
-Workflow decides **how** it will be accomplished.
+After the Planner Engine produces an approved Plan, the Workflow Engine instantiates a Workflow that owns, schedules, and coordinates the Tasks required to accomplish that Plan.
 
-Planner delegates execution.
-
-Workflow manages execution.
+The Workflow ensures execution remains deterministic, observable, recoverable, and aligned with the approved strategy.
 
 ---
 
-## Tasks
+# Workflow Answers
 
-A Workflow owns its Tasks.
+> **"How should the approved Plan be executed?"**
 
-Tasks are execution units delegated to Skills through the Planner and Capability system.
+Not
 
-The Workflow monitors task completion, retries, branching, dependencies, and confidence.
-
----
-
-## Execution
-
-A Workflow supports:
-
-- Sequential execution
-- Parallel execution
-- Conditional branching
-- Retry
-- Pause
-- Resume
-- Rollback (where applicable)
-- Progressive execution
-
-Multiple Workflows may exist simultaneously for the same Intent, such as:
-
-- Fastest
-- Highest Accuracy
-- Lowest Cost
-- Offline
-- User-defined
-
-The Planner selects the most appropriate Workflow based on Context.
+> **"What should be done?"**
 
 ---
 
-## Results
+# Workflow Does
 
-A Workflow may produce:
+A Workflow:
 
-- Intermediate Results
-- Progress Updates
-- Draft Results
-- Final Results
-
-Intermediate Results may continue to improve in the background until confidence reaches an acceptable threshold or the user approves the current result.
-
----
-
-## Learning
-
-Workflow execution history should be retained to reduce unnecessary recomputation, improve future execution strategies, and support learning.
-
-Execution history should be reusable where appropriate while respecting permissions and validation.
+- Owns Tasks
+- Coordinates execution
+- Schedules Tasks
+- Manages dependencies
+- Monitors execution progress
+- Applies retry policies
+- Supports pause and resume
+- Coordinates cancellation
+- Requests Context refresh
+- Requests replanning when required
+- Collects execution Results
 
 ---
 
-## Failure
+# Workflow Does NOT
 
-A Workflow should avoid failure whenever possible.
+A Workflow never:
 
-If execution confidence becomes insufficient, the Workflow should:
+- Interpret Intent
+- Build Context
+- Produce Plans
+- Select Skill implementations
+- Execute Skills
+- Validate Results
+- Promote Knowledge
 
-1. Explain what it currently understands.
-2. Explain what it intends to do.
-3. Identify missing information.
-4. Request clarification from the user.
+Execution is performed by Skills.
 
-Only unrecoverable platform or system errors should terminate execution.
+Validation belongs to the Validation Framework.
+
+Planning belongs to the Planner Engine.
 
 ---
 
-## Guiding Principle
+# Workflow Composition
 
-A Workflow answers:
+A Workflow may contain:
 
-**"How should this Intent be executed?"**
+- Identifier
+- Approved Plan reference
+- Task collection
+- Execution State
+- Scheduling policy
+- Dependency graph
+- Retry policy
+- Progress information
+- Execution history
+- Result references
+
+---
+
+# Workflow Lifecycle
+
+```text
+Created
+      │
+      ▼
+Prepared
+      │
+      ▼
+Executing
+      │
+      ▼
+Paused
+      │
+      ▼
+Resumed
+      │
+      ▼
+Completed
+
+or
+
+Cancelled
+
+or
+
+Failed
+```
+
+---
+
+# Task Management
+
+A Workflow owns one or more Tasks.
+
+Tasks may execute:
+
+- Sequentially
+- In Parallel
+- Conditionally
+
+The Workflow Engine determines execution order.
+
+Tasks never coordinate one another.
+
+---
+
+# Context Refresh
+
+The Workflow determines when Context should be refreshed.
+
+Typical refresh points include:
+
+- Task completion
+- Workflow checkpoints
+- User clarification
+- Explicit replanning
+- Validation feedback
+
+Context is never refreshed autonomously during active Task execution.
+
+---
+
+# Replanning
+
+When execution can no longer safely continue, the Workflow may request replanning from the Planner Engine.
+
+Typical reasons include:
+
+- Repeated Task failure
+- Invalid assumptions
+- Changed requirements
+- Missing Resources
+- Updated user objectives
+
+The Workflow never creates new Plans.
+
+---
+
+# Relationships
+
+```text
+Plan
+      │
+      ▼
+Workflow
+      │
+      ▼
+Task
+      │
+      ▼
+Capability
+      │
+      ▼
+Capability Registry
+      │
+      ▼
+Capability Resolver
+      │
+      ▼
+Skill
+      │
+      ▼
+Result
+```
+
+---
+
+# Information Boundaries
+
+Workflow owns:
+
+- Tasks
+- Execution state
+- Scheduling
+- Dependencies
+- Progress
+- Retry policies
+- Result references
+
+Workflow never owns:
+
+- Intent
+- Context
+- Plans
+- Capabilities
+- Skills
+- Knowledge
+- Memory
+
+---
+
+# Golden Rule
+
+The Workflow coordinates execution.
+
+It never decides strategy.
+
+It never performs work.
+
+---
+
+# Guiding Principle
+
+Plans define **what** should be accomplished.
+
+Workflows coordinate **how execution proceeds**.
+
+Tasks define **individual work**.
+
+Skills perform the work.
+
+---
+
+# Related Documents
+
+- 05_Data_Flow.md
+- 07_Planner_Engine.md
+- 08_Workflow_Engine.md
+- docs/ontology/core/task.md
+- docs/ontology/core/capability.md
+
+---
+
+# Related ADRs
+
+- ADR_0013 — Workflow Ownership
+- ADR_0014 — Workflow Determinism
+- ADR_0022 — Context Lifecycle and Ownership
+- ADR_0023 — Capability Discovery and Resolution

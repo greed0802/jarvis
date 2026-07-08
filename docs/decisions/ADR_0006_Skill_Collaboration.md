@@ -9,7 +9,7 @@ tags:
 - Skill
 - Capability
 related:
-- 10_Skill_Framework.md
+- 15_Skill_Framework.md
 supersedes: null
 superseded_by: null
 ---

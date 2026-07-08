@@ -19,7 +19,9 @@ It only describes the desired outcome.
 
 Purpose
 
-Intent serves as the bridge between human communication and Jarvis's internal architecture.
+Intent represents Jarvis's structured understanding of the user's objective.
+
+It provides the Planner Engine with a clear description of what should be achieved while remaining independent of how that objective will be accomplished.
 
 Every workflow begins with one or more Intents.
 
@@ -27,7 +29,11 @@ Without an Intent, no planning or execution should occur.
 
 ---
 
-Intent Contains
+Intent References
+
+Intent references the Context against which it was interpreted.
+
+Context remains owned by the Context Engine throughout its lifecycle.
 
 • Goal
 
@@ -75,7 +81,11 @@ Examples:
 
 Context
 
-Intent should never be interpreted using only the current sentence.
+The Context Engine interprets user requests using the current Context.
+
+The resulting Intent maintains a reference to the Context against which it was interpreted.
+
+This allows downstream Runtime Engines to understand both the objective and the supporting evidence.
 
 Jarvis should evaluate:
 
@@ -117,7 +127,9 @@ Template
 
 Output Format
 
-If required parameters are missing or ambiguous, the Planner is responsible for requesting clarification.
+If required parameters are missing or ambiguous, the Context Engine should attempt to resolve them using available Context.
+
+If ambiguity remains, the Planner Engine requests clarification before planning proceeds.
 
 ---
 
@@ -145,7 +157,9 @@ Confidence
 
 Intent should include a confidence score representing how well Jarvis understands the user's objective.
 
-Execution should never begin if confidence is below the acceptable threshold.
+Planning should not proceed until the Intent has sufficient confidence.
+
+When confidence is insufficient, the Context Engine should expand understanding through additional Context, Memory, Knowledge, or user clarification.
 
 Instead:
 
@@ -220,34 +234,24 @@ Each Intent may generate one or more Tasks during planning.
 Relationships
 
 User
-
-creates
-
+      │
+      ▼
+User Request
+      │
+      ▼
+Context Engine
+      │
+      ▼
 Intent
-
-Intent
-
-uses
-
-Context
-
-Planner
-
-consumes
-
-Intent
-
-Planner
-
-creates
-
+      │
+      ▼
+Planner Engine
+      │
+      ▼
 Plan
-
-Workflow
-
-executes
-
-Plan
+      │
+      ▼
+Workflow Engine
 
 ---
 
@@ -267,37 +271,33 @@ Intent never:
 
 • Reads Resources directly
 
+• Intent never owns Context
+
 Those responsibilities belong to the Planner.
 
 ---
 
 Lifecycle
 
-Created
-
-↓
-
-Parsed
-
-↓
-
-Context Enriched
-
-↓
-
-Validated
-
-↓
-
-Planned
-
-↓
-
-Completed
-
-or
-
-Rejected
+User Request
+      │
+      ▼
+Initial Intent
+      │
+      ▼
+Context Assembly
+      │
+      ▼
+Intent Interpretation
+      │
+      ▼
+Intent Validation
+      │
+      ▼
+Planner
+      │
+      ▼
+Plan
 
 ---
 
@@ -314,3 +314,24 @@ Planning answers:
 Execution answers:
 
 "Let's do it."
+
+
+# Related Documents
+
+05_Data_Flow.md
+
+06_Context_Engine.md
+
+07_Planner_Engine.md
+
+# Related ADR
+
+ADR_0008 — Context
+
+ADR_0005 — Deterministic Planner
+
+ADR_0010 — Human Control
+
+ADR_0021 — Control Plane and Data Plane Separation
+
+ADR_0022 — Context Lifecycle and Ownership

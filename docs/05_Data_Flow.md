@@ -1,198 +1,232 @@
-# 05_Data_Flow.md
+# Data Flow
 
-Version: 1.0
+Version: 1.1
 
 ---
 
 # Purpose
 
-This document defines the canonical flow of information within the Jarvis Platform.
+This document defines the architectural flow of information and execution within the Jarvis Platform.
 
-It describes how information enters the platform, how it is understood, planned, executed, validated, and transformed into Results while maintaining the architectural separation between the Control Plane and the Data Plane established by ADR_0021.
+It describes how requests become understanding, how understanding becomes strategy, how strategy becomes execution, and how execution becomes validated knowledge.
 
-This document defines architectural behavior only.
-
-Implementation details belong to the individual Engine, Framework, Service, and Infrastructure documents.
+This document defines **information flow**, not implementation.
 
 ---
 
-# Scope
+# Core Flow
 
-This document defines:
-
-- Information flow
-- Request lifecycle
-- Knowledge formation lifecycle
-- Information ownership
-- Flow invariants
-
-This document does not define:
-
-- Engine implementation
-- Framework implementation
-- Storage mechanisms
-- APIs
-- Databases
-- Programming models
-
----
-
-# Architectural Context
-
-The Jarvis Platform separates platform governance from business execution.
-
-The Platform Kernel governs the runtime environment through the Control Plane.
-
-The information flow described in this document occurs entirely within the Data Plane.
-
-The Control Plane provides lifecycle management, policy enforcement, dependency management, and shared platform services but does not participate in business information flow.
-
----
-
-# Information Flow Principles
-
-Information moves through the platform as a sequence of increasingly refined representations.
-
-Each stage transforms information without assuming responsibility for the stages before or after it.
-
-Information ownership remains explicit throughout the lifecycle.
-
-No stage may bypass architectural governance.
-
----
-
-# Request Lifecycle
-
-Every user request follows the same high-level lifecycle.
+Jarvis follows a deterministic lifecycle of understanding, planning, execution, validation, and learning.
 
 ```text
-                 Request
-                    │
-                    ▼
-              Understanding
-                    │
-                    ▼
-                Planning
-                    │
-                    ▼
-                Execution
-                    │
-            ┌───────┴────────┐
-            ▼                │
-       Validation            │
-            │                │
-            └──────► Next Task
-                    │
-                    ▼
-                 Closure
-                    │
-                    ▼
-                  Result
+User Request
+      │
+      ▼
+Intent
+      │
+      ▼
+Context
+      │
+      ▼
+Planner
+      │
+      ▼
+Approved Plan
+      │
+      ▼
+Workflow
+      │
+      ▼
+Task
+      │
+      ▼
+Capability
+      │
+      ▼
+Capability Registry
+      │
+      ▼
+Capability Resolver
+      │
+      ▼
+Skill
+      │
+      ▼
+Result
+      │
+      ▼
+Validation
+      │
+      ▼
+Memory
+      │
+      ▼
+Learning
+      │
+      ▼
+Knowledge
 ```
-
-Each stage has a distinct responsibility.
 
 ---
 
-# Stage 1 — Understanding
+# 1. Understanding Flow
 
-Understanding establishes what the user is attempting to achieve.
+Understanding establishes the current working reality before any planning occurs.
 
-Relevant information may be assembled from:
+```text
+User Request
+      │
+      ▼
+Intent
+      │
+      ▼
+Context
+```
+
+The Context Engine assembles the relevant Context by referencing:
 
 - Resources
 - Memory
 - Knowledge
 - Workspace
 - Project
-- User input
-- Platform state
+- User
+- Runtime metadata
 
-The outcome of this stage is sufficient understanding for planning.
-
-This document intentionally does not define how Context is assembled or how Intent is resolved. Those responsibilities belong to the Context Engine.
+Context references information rather than duplicating it.
 
 ---
 
-# Stage 2 — Planning
+# 2. Planning Flow
 
-Planning transforms understanding into an executable approach.
+Planning transforms understanding into an executable strategy.
 
-Planning determines:
+```text
+Intent
+      │
+      ▼
+Context
+      │
+      ▼
+Planner Engine
+      │
+      ▼
+Approved Plan
+```
 
-- objectives
-- required capabilities
-- execution strategy
-- constraints
+The Planner Engine evaluates:
 
-Planning produces an execution plan.
+- Intent
+- Context
+- Constraints
+- Risks
+- Available Capabilities
 
-Planning never performs work.
+Planning is deterministic by default.
 
----
-
-# Stage 3 — Execution
-
-Execution transforms the approved plan into completed work.
-
-Execution is coordinated through Workflows.
-
-Workflows decompose work into Tasks.
-
-Tasks request Capabilities.
-
-Capabilities are fulfilled by Skills.
-
-Skills perform the actual work.
-
-Validation may occur repeatedly throughout execution rather than only after completion.
+AI may assist planning but never replaces deterministic decision making.
 
 ---
 
-# Stage 4 — Closure
+# 3. Execution Flow
 
-Execution concludes by producing one or more Results.
+The Workflow Engine transforms an approved Plan into coordinated execution.
 
-Results represent the outcome of completed work.
+```text
+Approved Plan
+      │
+      ▼
+Workflow
+      │
+      ▼
+Task
+      │
+      ▼
+Capability
+      │
+      ▼
+Capability Registry
+      │
+      ▼
+Capability Resolver
+      │
+      ▼
+Skill
+      │
+      ▼
+Result
+```
 
-Results remain subject to validation, review, and traceability requirements defined elsewhere within the architecture.
+Workflow coordinates execution.
+
+Tasks define executable work.
+
+Capabilities define required operations.
+
+Skills perform the work.
 
 ---
 
-# Knowledge Formation Lifecycle
+# 4. Validation and Replanning
 
-Knowledge formation is independent from individual request execution.
-
-Completed Results may contribute to future understanding through Memory and Knowledge.
+Validation is a cross-cutting concern throughout execution.
 
 ```text
 Result
-   │
-   ▼
-Observation
-   │
-   ▼
+      │
+      ▼
+Validation Framework
+      │
+      ▼
+Workflow Engine
+      ├──────── Continue
+      ├──────── Retry
+      ├──────── Refresh Context
+      └──────── Request Replanning
+                     │
+                     ▼
+               Planner Engine
+```
+
+The Validation Framework never communicates directly with the Planner Engine.
+
+The Workflow Engine determines whether execution should:
+
+- Continue
+- Retry
+- Refresh Context
+- Request replanning
+
+---
+
+# 5. Learning Flow
+
+Validated execution contributes to long-term platform knowledge.
+
+```text
+Validated Result
+      │
+      ▼
 Memory
-   │
-Validation
-   │
-   ▼
+      │
+      ▼
+Learning
+      │
+      ▼
 Knowledge
 ```
 
 Memory preserves experience.
 
-Knowledge preserves validated understanding.
+Learning evaluates experience.
 
-Not every Result becomes Knowledge.
+Knowledge stores validated understanding.
 
-Knowledge promotion shall follow the governance defined by the Knowledge Framework.
+Knowledge promotion requires validation and, where appropriate, explicit human approval.
 
 ---
 
-# Information Ownership
-
-Each information type has a primary architectural owner.
+# Ownership
 
 | Information | Primary Owner |
 |-------------|---------------|
@@ -204,66 +238,91 @@ Each information type has a primary architectural owner.
 | Plan | Planner Engine |
 | Workflow | Workflow Engine |
 | Task | Workflow Engine |
-| Capability | Skill Framework |
-| Result | Result Framework |
-
-Ownership defines responsibility rather than implementation.
-
----
-
-# Flow Invariants
-
-Every execution within the Jarvis Platform shall satisfy the following invariants.
-
-- Information flows through defined architectural stages.
-- Understanding precedes Planning.
-- Planning precedes Execution.
-- Workflows coordinate execution.
-- Skills perform work.
-- Results remain traceable.
-- Memory records observations.
-- Knowledge contains only validated information.
-- Human approval shall be required wherever defined by platform policy.
-- The Control Plane governs execution without participating in business information flow.
+| Capability | Capability Registry & Resolver |
+| Skill | Skill Framework |
+| Result | Workflow Execution |
 
 ---
 
-# Relationship to the Control Plane
+# Architectural Invariants
 
-This document defines information movement within the Data Plane.
+The following rules apply throughout the platform:
 
-The Control Plane remains responsible for:
-
-- platform lifecycle
-- platform policies
-- dependency management
-- configuration
-- security
-- shared platform services
-
-The responsibilities of the Control Plane are defined in:
-
-- 04_Platform_Kernel.md
-- ADR_0017
-- ADR_0021
+- Context is owned exclusively by the Context Engine.
+- Plans are owned exclusively by the Planner Engine.
+- Workflows and Tasks are owned exclusively by the Workflow Engine.
+- Capability discovery is performed by the Capability Registry.
+- Runtime Skill selection is performed by the Capability Resolver.
+- Skills perform work but never coordinate execution.
+- Validation evaluates execution but never requests replanning directly.
+- The Workflow Engine mediates retries, Context refresh, and replanning.
+- Knowledge promotion requires validation.
+- Human approval is required whenever platform policy demands it.
 
 ---
 
-# Relationship to Future Documents
+# Governance Principles
 
-This document establishes the canonical information lifecycle for the Jarvis Platform.
+The Data Flow follows the architectural principles of the Jarvis Platform.
 
-Subsequent architecture documents expand individual stages without redefining this lifecycle.
-
-- 06_Context_Engine.md defines Understanding.
-- 07_Planner_Engine.md defines Planning.
-- 08_Workflow_Engine.md defines Execution coordination.
-- Cross-Cutting Framework documents define validation, memory, knowledge, and resource management.
-- 20_Event_System.md defines event propagation.
-- 21_Service_Container.md defines dependency resolution.
+- Humans remain in control.
+- AI provides assistance rather than authority.
+- Deterministic systems take precedence over probabilistic recommendations.
+- Context references information rather than duplicating it.
+- Execution remains explainable and traceable.
+- Failures are contained and recoverable.
 
 ---
 
-# Guiding Principle
+# Architectural Summary
 
-> **Jarvis understands before it plans, plans before it executes, executes through coordinated workflows, validates before it learns, and preserves every Result with traceable ownership.**
+Jarvis understands before it plans.
+
+Jarvis plans before it executes.
+
+The Workflow Engine coordinates execution.
+
+Tasks define executable work.
+
+Capabilities define required operations.
+
+The Capability Registry discovers available implementations.
+
+The Capability Resolver selects the appropriate implementation.
+
+Skills perform work.
+
+Validation evaluates execution.
+
+Learning preserves validated experience.
+
+The user remains in control throughout the lifecycle.
+
+---
+
+# Related Documents
+
+- 06_Context_Engine.md
+- 07_Planner_Engine.md
+- 08_Workflow_Engine.md
+- 10_Memory_Framework.md
+- 11_Knowledge_Framework.md
+- 12_Resource_Framework.md
+- 14_Validation_Framework.md
+- 15_Skill_Framework.md
+
+---
+
+# Related ADRs
+
+- ADR_0005 — Deterministic Planner
+- ADR_0007 — Knowledge Promotion
+- ADR_0008 — Context
+- ADR_0009 — Skill Architecture
+- ADR_0010 — Human Control
+- ADR_0013 — Workflow Ownership
+- ADR_0014 — Workflow Determinism
+- ADR_0020 — Runtime vs. Cross-Cutting Architecture
+- ADR_0021 — Control Plane and Data Plane Separation
+- ADR_0022 — Context Lifecycle and Ownership
+- ADR_0023 — Capability Discovery and Resolution

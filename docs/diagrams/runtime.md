@@ -1,48 +1,67 @@
+                 Control Plane
+
+          +------------------------+
+          |    Platform Kernel     |
+          |                        |
+          | • Lifecycle            |
+          | • Registration         |
+          | • Configuration        |
+          | • Policies             |
+          | • Service Provision    |
+          +-----------┬------------+
+                      │
+      Provisions the runtime environment
+                      │
+
+========================================================
+
+                  Data Plane
+
 User Query
-        │
-        ▼
+     │
+     ▼
 Presentation Layer
-        │
-        ▼
-Platform Kernel
-        │
-        ▼
-Context Engine
-        │
-        ▼
+     │
+     ▼
+Understanding
+     │
+     ▼
+Context
+     │
+     ▼
 Intent
-        │
-        ▼
+     │
+     ▼
 Planner
-        │
-        ▼
-Execution Plan
-        │
-        ▼
+     │
+     ▼
+Plan
+     │
+     ▼
 Workflow
-        │
-        ▼
-Task Queue
-        │
-        ▼
-Capability Resolver
-        │
-        ▼
+     │
+     ▼
+Task
+     │
+     ▼
+Capability
+     │
+     ▼
 Skill
-        │
-        ▼
-Intermediate Result
-        │
-        ▼
+     │
+     ▼
+Result
+     │
+     ▼
 Validation Framework
-        │
-        ▼
+     │
+     ▼
 Continue?
-     │        │
-    Yes      No
-     │        │
-     ▼        ▼
-Next Task   Planner
-                │
-                ▼
-        Revised Plan
+  │          │
+ Yes         No
+  │          │
+  ▼          ▼
+Next Task  Planner
+             │
+             ▼
+       Revised Plan

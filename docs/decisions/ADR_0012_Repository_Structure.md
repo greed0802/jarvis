@@ -10,7 +10,7 @@ tags:
   - Structure
 related:
   - 02_System_Blueprint.md
-  - 15_Development_Guide.md
+  - 24_Development_Guide.md
 supersedes: null
 superseded_by: null
 ---

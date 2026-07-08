@@ -9,7 +9,7 @@ tags:
 - Memory
 - Knowledge
 related:
-- 10_Knowledge_Framework.md
+- 11_Knowledge_Framework.md
 supersedes: null
 superseded_by: null
 ---

@@ -7,7 +7,7 @@ Core / Platform
 
 # Definition
 
-A Capability represents a standardized function that Jarvis can perform.
+A Capability represents a standardized function that the Jarvis Platform can perform.
 
 Capabilities define **what** can be accomplished.
 
@@ -15,7 +15,7 @@ They never define **how** it is accomplished.
 
 The implementation is provided by one or more Skills.
 
-Capabilities act as contracts between the Planner, Workflow Engine, and Skills.
+Capabilities act as architectural contracts between the Planner Engine, Workflow Engine, and Skill Framework.
 
 ---
 
@@ -23,161 +23,163 @@ Capabilities act as contracts between the Planner, Workflow Engine, and Skills.
 
 Capabilities decouple planning from implementation.
 
-The Planner should never know which Skill performs a task.
+The Planner Engine identifies the Capabilities required to accomplish an objective without knowing how they will be implemented.
 
-Instead, it requests the required Capability.
+The Workflow Engine requests those Capabilities during execution.
 
-The Capability Registry identifies the most appropriate Skill to fulfill that request.
+The Capability Registry discovers available Skill implementations.
+
+The Capability Resolver selects the most appropriate implementation at runtime.
 
 ---
 
 # Capability Answers
 
-"What can be done?"
+> **What can be accomplished?**
 
 Not
 
-"How is it done?"
+> **How is it accomplished?**
 
 ---
 
 # Examples
 
-Engineering
+## Engineering
 
-• Build BOQ
-
-• Generate Formula
-
-• Validate Formula
-
-• Compare BOQs
-
-• Generate Description
-
-• QA Check
+- Build BOQ
+- Generate Formula
+- Validate Formula
+- Compare BOQs
+- Generate Description
+- QA Check
 
 ---
 
-Documents
+## Documents
 
-• Read Excel
-
-• Write Excel
-
-• Read PDF
-
-• OCR Image
-
-• Generate Report
+- Read Excel
+- Write Excel
+- Read PDF
+- OCR Image
+- Generate Report
 
 ---
 
-Development
+## Development
 
-• Execute Python
-
-• Execute SQL
-
-• Read Git Repository
-
-• Run Tests
+- Execute Python
+- Execute SQL
+- Read Git Repository
+- Run Tests
 
 ---
 
-Artificial Intelligence
+## Artificial Intelligence
 
-• Summarize
-
-• Translate
-
-• Reason
-
-• Plan
-
-• Explain
-
-• Research
+- Summarize
+- Translate
+- Reason
+- Plan
+- Explain
+- Research
 
 ---
 
-Automation
+## Automation
 
-• Send Email
-
-• Schedule Task
-
-• Notify User
-
-• Synchronize Resources
+- Send Email
+- Schedule Task
+- Notify User
+- Synchronize Resources
 
 ---
 
 # Capability Does NOT
 
-A Capability does not:
+A Capability never:
 
-• Execute code
+- Execute work
+- Store data
+- Own Resources
+- Plan execution
+- Coordinate Workflows
+- Select Skill implementations
+- Maintain Context
+- Produce Results
 
-• Store data
+Capabilities describe platform functionality.
 
-• Own files
-
-• Choose Skills
-
-• Plan Workflows
-
-• Remember Context
-
-Capabilities describe available functions.
+Execution belongs to Skills coordinated by the Workflow Engine.
 
 ---
 
-# Capability Provider
+# Skill Implementations
 
-Every Capability is provided by one or more Skills.
+Each Capability may be implemented by one or more Skills.
 
 Example
 
 Capability
 
+```
 Read Excel
+```
 
-Providers
+Available Skill Implementations
 
-• OpenPyXL Skill
+- OpenPyXL Skill
+- LibreOffice Skill
+- Microsoft Excel Skill
 
-• LibreOffice Skill
+The Workflow Engine requests the Capability.
 
-• Microsoft Excel Skill
+The Capability Registry identifies all compatible Skill implementations.
 
-The Capability Registry determines which provider should execute.
+The Capability Resolver selects the most appropriate implementation based on runtime conditions.
 
 ---
 
 # Capability Registry
 
-Capabilities are registered when Skills are installed.
+The Capability Registry is responsible for Capability discovery.
+
+Capabilities are registered when Skills become available.
 
 The Registry maintains:
 
-• Name
+- Capability name
+- Description
+- Version
+- Available Skill implementations
+- Provider metadata
+- Requirements
+- Dependencies
+- Permissions
+- Availability
+- Compatibility information
 
-• Description
+The Capability Registry never selects which Skill implementation will execute.
 
-• Version
+---
 
-• Provider
+# Capability Resolver
 
-• Requirements
+The Capability Resolver is responsible for runtime implementation selection.
 
-• Dependencies
+It evaluates:
 
-• Permissions
+- Approved Plan
+- Current Context
+- Workflow requirements
+- User preferences
+- Platform policies
+- Permissions
+- Provider availability
+- Resource availability
+- Execution constraints
 
-• Confidence
-
-• Availability
+The Capability Resolver selects the most appropriate Skill implementation for the requested Capability.
 
 ---
 
@@ -185,40 +187,35 @@ The Registry maintains:
 
 A Capability may require:
 
-• Resources
+- Resources
+- Context
+- User approval
+- Permissions
+- Installed Skills
+- Available Providers
 
-• Knowledge
-
-• Context
-
-• User Approval
-
-• Specific Permissions
-
-• Installed Skills
-
-Execution cannot begin until all requirements are satisfied.
+Execution cannot begin until all mandatory requirements have been satisfied.
 
 ---
 
 # Capability Lifecycle
 
+```text
 Registered
-
-↓
-
-Available
-
-↓
-
-Selected
-
-↓
-
+      │
+      ▼
+Discovered
+      │
+      ▼
+Requested
+      │
+      ▼
+Resolved
+      │
+      ▼
 Executing
-
-↓
-
+      │
+      ▼
 Completed
 
 or
@@ -228,63 +225,95 @@ Unavailable
 or
 
 Failed
+```
 
 ---
 
 # Relationships
 
-Planner
+Planner Engine
+
+identifies
+
+Capability
+
+↓
+
+Workflow Engine
 
 requests
 
 Capability
 
-Workflow
+↓
 
-uses
+Capability Registry
 
-Capability
+discovers
 
-Capability
+Candidate Skill Implementations
 
-provided by
+↓
+
+Capability Resolver
+
+selects
 
 Skill
 
-Capability
+↓
 
-requires
+Skill
 
-Resources
-
-Capability
-
-uses
-
-Knowledge
+implements
 
 Capability
 
-operates within
+---
 
-Context
+# Information Boundaries
 
-Capability
+Capability defines platform functionality.
 
-produces
+It never owns:
 
-Result
+- Plans
+- Workflows
+- Tasks
+- Results
+- Resources
+- Knowledge
+- Context
+
+Capabilities remain implementation-independent throughout their lifecycle.
 
 ---
 
 # Guiding Principle
 
-Capabilities define what Jarvis can do.
+Capabilities define **what** the platform can do.
 
-Skills define how Jarvis performs it.
+Skills define **how** work is performed.
 
-The Planner decides when it should happen.
+The Planner Engine determines **what Capabilities are required**.
 
-The Workflow decides the execution order.
+The Workflow Engine determines **when they are used**.
 
-The Capability Registry decides who performs it.
+The Capability Registry determines **what implementations are available**.
+
+The Capability Resolver determines **which implementation should execute**.
+
+---
+
+# Related Documents
+
+- 07_Planner_Engine.md
+- 08_Workflow_Engine.md
+- 15_Skill_Framework.md
+
+---
+
+# Related ADRs
+
+- ADR_0009 — Skill Architecture
+- ADR_0023 — Capability Discovery and Resolution
