@@ -9,6 +9,7 @@ import asyncio
 
 from jarvis import __version__
 from jarvis.application import Application
+from jarvis.configuration import Configuration
 
 
 async def main() -> None:
@@ -16,13 +17,10 @@ async def main() -> None:
     print(f"Jarvis Platform v{__version__}")
     print("Application Runtime v0.1")
 
-    app = Application(config={"log_level": "INFO"})
+    config = Configuration()
+    app = Application(config)
 
-    try:
-        await app.run()
-    except Exception as e:
-        print(f"Platform error: {e}")
-        raise
+    await app.run()
 
 
 if __name__ == "__main__":

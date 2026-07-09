@@ -8,6 +8,7 @@ from jarvis.version import __version__
 from jarvis.contracts import LifecycleAware, LifecycleState
 from jarvis.core.jarvis.kernel import Kernel
 from jarvis.application import Application
+from jarvis.configuration import Configuration
 
 __all__ = [
     "__version__",
@@ -15,4 +16,5 @@ __all__ = [
     "LifecycleAware",
     "LifecycleState",
     "Application",
+    "Configuration",
 ]

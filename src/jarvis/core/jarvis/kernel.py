@@ -13,8 +13,8 @@ from __future__ import annotations
 import logging
 from typing import Any
 
+from jarvis.configuration import Configuration
 from jarvis.contracts.lifecycle import LifecycleAware, LifecycleState
-
 
 logger = logging.getLogger(__name__)
 
@@ -27,14 +27,14 @@ class Kernel:
     One Kernel exists per platform instance for its entire lifetime.
     """
 
-    def __init__(self, config: dict[str, Any] | None = None):
+    def __init__(self, config: Configuration | None = None) -> None:
         """
         Initialize the Kernel with optional configuration.
 
-        Note: Configuration is a simple dict for Sprint 1 bootstrap.
-        This will be replaced with a proper Configuration service in a future phase.
+        Args:
+            config: Platform configuration instance. If None, uses defaults.
         """
-        self._config = config or {}
+        self._config = config or Configuration()
         self._state: LifecycleState = LifecycleState.UNINITIALIZED
         self._components: list[LifecycleAware] = []
         self._services: dict[str, Any] = {}
@@ -50,7 +50,7 @@ class Kernel:
         return self._state == LifecycleState.RUNNING
 
     @property
-    def config(self) -> dict[str, Any]:
+    def config(self) -> Configuration:
         """Get platform configuration (read-only)."""
         return self._config
 

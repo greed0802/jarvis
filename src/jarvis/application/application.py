@@ -13,8 +13,8 @@ from __future__ import annotations
 import asyncio
 import logging
 import signal
-from typing import Any
 
+from jarvis.configuration import Configuration
 from jarvis.contracts.lifecycle import LifecycleState
 from jarvis.core.jarvis.kernel import Kernel
 
@@ -35,14 +35,14 @@ class Application:
     managing components and services without process-level concerns.
     """
 
-    def __init__(self, config: dict[str, Any] | None = None) -> None:
+    def __init__(self, config: Configuration | None = None) -> None:
         """
         Initialize the Application with optional configuration.
 
         Args:
-            config: Platform configuration dictionary.
+            config: Platform configuration instance. If None, uses defaults.
         """
-        self._config = config or {}
+        self._config = config or Configuration()
         self._kernel = Kernel(config=self._config)
         self._shutdown_event = asyncio.Event()
 
