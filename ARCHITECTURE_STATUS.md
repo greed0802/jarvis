@@ -1,6 +1,6 @@
 # Jarvis Architecture
 
-**Architecture Version:** v0.1.0
+**Architecture Version:** v0.0.1-alpha
 
 **Status:** Frozen
 
