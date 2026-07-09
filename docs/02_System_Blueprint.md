@@ -67,6 +67,16 @@ Responsibilities
 
 ---
 
+## Application (Composition Root)
+
+Responsible for platform bootstrap assembly.
+
+The Application creates platform components, assembles the runtime, and registers runtime-managed components with the Platform Kernel. It owns the bootstrap lifecycle and yields to the Platform Kernel for runtime coordination.
+
+The Application is not a runtime subsystem. It completes its function during bootstrap.
+
+---
+
 # 2. Platform Kernel
 
 The runtime coordinator of the Jarvis Platform.
@@ -152,10 +162,9 @@ Includes
 
 - Storage
 - Logging
-- Configuration
 - Backup
 - Infrastructure Monitoring
-- Cachings
+- Caching
 
 ---
 
@@ -194,6 +203,10 @@ Examples
 
 ```
 Presentation
+
+↓
+
+Application (Composition Root)
 
 ↓
 

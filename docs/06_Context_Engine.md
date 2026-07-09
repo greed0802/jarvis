@@ -264,9 +264,12 @@ It never decides what should be done.
 
 ## Related Documents
 
+- 02_System_Blueprint.md
 - 03_Core_Ontology_Relationships.md
+- 04_Platform_Kernel.md
 - 05_Data_Flow.md
 - 07_Planner_Engine.md
+- 08_Workflow_Engine.md
 
 ---
 

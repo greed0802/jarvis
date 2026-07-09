@@ -281,6 +281,8 @@ It never performs work.
 
 # Related Documents
 
+- 02_System_Blueprint.md
+- 04_Platform_Kernel.md
 - 05_Data_Flow.md
 - 06_Context_Engine.md
 - 07_Planner_Engine.md

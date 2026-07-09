@@ -302,6 +302,8 @@ The user remains in control throughout the lifecycle.
 
 # Related Documents
 
+- 02_System_Blueprint.md
+- 04_Platform_Kernel.md
 - 06_Context_Engine.md
 - 07_Planner_Engine.md
 - 08_Workflow_Engine.md
