@@ -17,6 +17,7 @@ import signal
 from jarvis.configuration import Configuration
 from jarvis.contracts.lifecycle import LifecycleState
 from jarvis.core.jarvis.kernel import Kernel
+from jarvis.services import LoggingService
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,7 @@ class Application:
 
     The Application is responsible for:
     - Creating and owning the Kernel (composition root)
+    - Creating platform services and registering them with the Kernel
     - Initializing the platform
     - Starting the platform
     - Handling graceful shutdown via signal handlers
@@ -39,17 +41,27 @@ class Application:
         """
         Initialize the Application with optional configuration.
 
+        The Application is the Composition Root. It creates platform components
+        and registers them with the Kernel.
+
         Args:
             config: Platform configuration instance. If None, uses defaults.
         """
         self._config = config or Configuration()
         self._kernel = Kernel(config=self._config)
+        self._logging_service = LoggingService(config=self._config)
+        self._kernel.register_component(self._logging_service)
         self._shutdown_event = asyncio.Event()
 
     @property
     def kernel(self) -> Kernel:
         """Get the platform kernel (read-only)."""
         return self._kernel
+
+    @property
+    def logging_service(self) -> LoggingService:
+        """Get the platform logging service (read-only)."""
+        return self._logging_service
 
     @property
     def state(self) -> LifecycleState:

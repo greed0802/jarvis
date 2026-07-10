@@ -22,9 +22,9 @@ The architecture is defined by:
 | Property | Value |
 |----------|-------|
 | Architecture Version | v0.1.0 |
-| Software Version | 0.0.1-alpha |
+| Software Version | 0.0.1-alpha.4 |
 | Current Phase | Phase 1 — Foundation |
-| Current Milestone | M4 Runtime Assembly (planned) |
+| Current Milestone | M4 Runtime Assembly (complete) |
 
 ---
 
@@ -85,24 +85,74 @@ The architecture is defined by:
 
 ---
 
-# Next Milestone
-
 ## M4 — Runtime Assembly
 
 | Property | Value |
 |----------|-------|
-| Goal | Demonstrate that the runtime assembly can register any LifecycleAware component and drive it through the full initialize → start → shutdown lifecycle end-to-end. |
-| Scope | Implement the Application's responsibility as Composition Root by registering a runtime-managed component with the Platform Kernel and verifying the complete lifecycle sequence. The specific component type is an implementation detail — the milestone validates the capability, not a specific service. |
-| Acceptance Criteria | A LifecycleAware component can be created by the Application, registered with the Kernel, successfully initialized and started, then cleanly shut down. Error handling for registration after initialization, failed initialization, and failed startup is demonstrated. The Component cannot be registered after initialization has begun. |
-| Out of Scope | Event Bus, Service Container, Security, Storage, Context Engine, Planner Engine, Workflow Engine, Skills, Frameworks, or any Data Plane functionality. Any specific component type beyond the LifecycleAware contract. |
+| Goal | Demonstrate that the Application (Composition Root) can construct, register, and lifecycle a concrete Platform Service through the Platform Kernel using the LifecycleAware contract. |
+| Status | **Complete** |
+| Files Created | `src/jarvis/services/logging_service.py`, `src/jarvis/services/__init__.py`, `tests/test_lifecycle.py`, `tests/__init__.py`, `pytest.ini` |
+| Files Modified | `src/jarvis/application/application.py` |
+| Tests | 18 tests covering: successful lifecycle, component registration, initialize, start, shutdown, invalid registration, initialization failure, startup failure |
+
+## Architecture Audit for M4
+
+### Architecture Compliance
+
+✓ **Platform Kernel Philosophy** (ADR_0017): The Kernel remains pure Control Plane, managing lifecycle without business logic.
+
+✓ **Runtime Lifecycle** (ADR_0018): One Kernel per platform instance, managing initialization, coordination, and shutdown.
+
+✓ **Component Coordination** (ADR_0019): Components communicate through contracts (LifecycleAware), not direct dependencies.
+
+✓ **Control Plane / Data Plane Separation** (ADR_0021): LoggingService is a Control Plane service, not Data Plane. No Context, Intent, Workflows, or Skills introduced.
+
+✓ **Platform Kernel Documentation** (04_Platform_Kernel.md): Configuration ownership correct - Kernel holds Config, Application creates both Kernel and LoggingService. Component registration rejected after UNINITIALIZED state. State machine transitions are correct.
+
+### Principle Compliance
+
+✓ **Human Authority**: No user-facing changes.
+
+✓ **Platform First**: LoggingService is a reusable platform capability.
+
+✓ **Modular Architecture**: LoggingService has single responsibility (platform logging).
+
+✓ **YAGNI**: No speculative features added. Only lifecycle behavior implemented.
+
+✓ **Evidence Before Assumptions**: Implementation proves the lifecycle assembly works.
+
+### ADR Compliance
+
+No ADRs were violated. No new ADRs required.
+
+### Implementation Assumptions Discovered
+
+None. The implementation aligns with documented architecture.
+
+### Architectural Changes Required
+
+None. The implementation did not require modifications to the frozen architecture or accepted ADRs.
+
+---
+
+# Next Milestone
+
+## M5 — Context Engine Runtime
+
+| Property | Value |
+|----------|-------|
+| Goal | Validate the Context Engine architecture through the first real data flowing into the Data Plane. |
+| Scope | Implement only the minimum Context Engine functionality required by the first working vertical slice. Domain concepts should remain local until repeated use justifies promotion into shared architecture. |
+| Out of Scope | Planner, Workflow, Skills, AI, Memory, Knowledge, or speculative domain abstractions. |
 
 ---
 
 # Future Milestones
 
+These milestones represent the current implementation roadmap and may evolve based on implementation evidence and future ADRs.
+
 | Milestone | Description |
 |-----------|-------------|
-| M5 — Context Engine Runtime | Implement the Context Engine stub with the Context and Intent ownership model, ready for first data plane integration. |
 | M6 — Planner Runtime | Implement the Planner Engine with deterministic plan construction and approval flow, consuming Context and producing Plans. |
 | M7 — Workflow Runtime | Implement the Workflow Engine with Task management, Capability resolution, and the execution control loop. |
 | M8 — Skill Runtime | Implement the Skill Framework with Capability Registry, Capability Resolver, and the first working Skill. |
@@ -159,3 +209,17 @@ Next Milestone
 **Tag** — Tag the commit with the next version (e.g., `v0.0.1-alpha.4`).
 
 **Next Milestone** — Advance to the next milestone in sequence.
+
+# Implementation Principles
+
+Implementation exists to validate the architecture through real features.
+
+Features should introduce the minimum code necessary.
+
+Architectural layers are implemented only when required by working functionality.
+
+Domain concepts begin as local implementation details.
+
+Evidence Before Promotion: Shared architectural concepts should emerge from repeated implementation experience rather than anticipation. Local implementations should be promoted to shared abstractions only after they demonstrate sustained value.
+
+If implementation demonstrates that an architectural assumption is incorrect, the architecture evolves through the ADR process rather than forcing the implementation to conform.
