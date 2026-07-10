@@ -7,6 +7,8 @@ M6.1 establishes the parser lifecycle only:
 - retain a workbook reference
 - release workbook resources
 
+M6.2 adds workbook validation for the supported format.
+
 Workbook validation, worksheet discovery, row iteration,
 and data extraction are implemented in later milestones.
 """
@@ -78,6 +80,44 @@ class WorkbookParser:
             True if a workbook is loaded, False otherwise.
         """
         return self._workbook is not None
+
+    def validate(self) -> None:
+        """Validate the loaded workbook matches the supported CostX BOQ format.
+
+        Validates:
+        - Workbook is loaded
+        - Workbook contains worksheet "CostX"
+        - Workbook contains exactly one worksheet
+        - Worksheet is not empty
+
+        Raises:
+            RuntimeError: If workbook is not loaded.
+            ValueError: If workbook does not match the supported format.
+        """
+        # Check workbook is loaded
+        workbook = self._workbook
+        if workbook is None:
+            raise RuntimeError("Cannot validate: no workbook loaded")
+
+        sheet_names = workbook.sheetnames
+
+        # Validate exactly one worksheet
+        if len(sheet_names) != 1:
+            raise ValueError(
+                f"Expected exactly 1 worksheet, found {len(sheet_names)}"
+            )
+
+        # Validate worksheet named "CostX"
+        if sheet_names[0] != "CostX":
+            raise ValueError(
+                f"Expected worksheet named 'CostX', found '{sheet_names[0]}'"
+            )
+
+        # Validate worksheet is not empty
+        # Use the known worksheet name since we validated above
+        ws = workbook["CostX"]
+        if ws.max_row < 1:
+            raise ValueError("Worksheet is empty")
 
     def close(self) -> None:
         """Close the loaded workbook if open."""
