@@ -1,301 +1,357 @@
 # M5 – CostX Export Analysis (Engineering Discovery)
 
-> **Scope**: This document provides observable facts about the three CostX reference workbooks.  
-> It does NOT recommend architecture changes, parser design, or business logic.
+> **Scope**: This document records observable facts gathered from three CostX reference workbooks using `tools/workbook_inspector.py`.
+>
+> It does **not** recommend parser implementation, architecture changes, business logic, or runtime design.
 
 ---
 
-## Overview
+# Overview
 
-This analysis was produced by `tools/workbook_inspector.py` running in summary mode (`--formulas`) and verbose mode (`--verbose --formulas`) against each workbook.
+This analysis was produced by `tools/workbook_inspector.py` using summary mode (`--formulas`) and verbose mode (`--verbose --formulas`) against each reference workbook.
 
-| File | Size | Sheets | Total Rows | Total Columns |
-|------|------|--------|------------|---------------|
-| `full_boq.xlsx` | 241,295 bytes | 1 | 6,354 | 9 |
-| `formula_workbook.xlsx` | 34,205 bytes | 1 | 543 | 4 |
-| `dimensions_export.xlsx` | (large) | 90 | ~3,500 - 4,200 per sheet | 40 |
-
----
-
-## Workbook 1: `full_boq.xlsx`
-
-### Observed Workbook Characteristics
-
-| Fact | Value |
-|------|-------|
-| File Size | 241,295 bytes |
-| Sheet Count | 1 |
-| Sheet Names | `['CostX']` |
-| Calculation Mode | `fullCalcOnLoad=True` (formulas calculated on load) |
-| Excel Base Date | 1899-12-30 (1900 date system) |
-| Creator | `openpyxl` (workbook was regenerated) |
-| Merged Cells | 2 ranges: `A1:I1`, `A2:I2` |
-| Freeze Panes | None |
-| Auto-filter | None |
-| Hidden Sheets | None |
-| Named Ranges | 0 |
-
-### Column Statistics
-
-| Column | Non-Empty | Type Breakdown |
-|--------|-----------|----------------|
-| A | 4,260 | text=4,260 (appears to be codes: "A", "A/1", "A/2", etc.) |
-| B | 6,279 | text=6,279 (descriptions) |
-| C | 3,606 | numeric=3,605, text=1 (quantities) |
-| D | 6,162 | text=6,162 (UOM codes: "m2", etc.) |
-| E | 1 | text=1 (appears to be a label) |
-| F | 61 | numeric=3, text=1, formula=57 (SubTotal column with formulas) |
-| G | 1 | text=1 (label) |
-| H | 1 | text=1 (label) |
-| I | 63 | numeric=0, text=1, formula=62 (Total column with formulas) |
-
-### Header Row (Row 4)
-
-Observed column headers (bold, centered, font=Calibri 8pt):
-
-| Column | Header | Observable Style |
-|--------|--------|----------------|
-| A | Code | bold, align_h=left |
-| B | Description | bold, align_h=left |
-| C | Quantity | bold, align_h=right, numfmt=#,##0.00 |
-| D | UOM | bold, align_h=left |
-| E | Rate | bold, align_h=right |
-| F | SubTotal | bold, align_h=right |
-| G | Factor | bold, align_h=right |
-| H | Total | bold, align_h=right |
-| I | Total | bold, align_h=right |
-
-### Row Hierarchy Observations
-
-Rows 1-2 are merged title rows (FULL BOQ, bold, centered).
-
-Rows 6+ show structured hierarchy with indentation patterns observable in column A:
-
-| Row | Column A Value | Column D Value | Observable Pattern |
-|-----|----------------|--------------|-------------------|
-| 6 | (empty) | | Appears to be section header |
-| 6 | — | | Value "MAIN WORKS" in column B, bold |
-| 7 | — | | Empty (subtotal separator?) |
-| 8 | "A" | — | Code with bold formatting, appears to be trade code |
-| 8 | — | — | "GROSS FLOOR AREA (GFA)" in column B, bold |
-| 9 | "A/1" | "Head1" | Definition/assumption marker in column D |
-| 10 | — | "Head2" | Sub-section marker in column D |
-| 11 | "A/1" | "Note" | Note marker in column D |
-
-**Key observation**: Column D contains row type markers that appear consistent:
-- `"Head1"` – Top-level headings
-- `"Head2"` – Sub-headings  
-- `"Note"` – Explanatory notes
-- `"Item"` – BOQ line items (observed in formula_workbook.xlsx)
-
-### Formula Observations (Column F and I)
-
-57 formulas in column F, 62 formulas in column I. These are CostX-calculated quantity totals. All calculated values were observed as numeric (not shown in truncated output).
-
-### Possible Interpretation (Low Confidence)
-
-- Column A: Hierarchical code structure (Trade/Item reference)
-- Column D: Row classification markers (Head1/Head2/Note/Item)
-- Column C: Measurable quantity values
-- Columns F, I: Computed cost values derived from CostX measurements
+| File                     | Size          | Sheets | Total Rows             | Total Columns |
+| ------------------------ | ------------- | ------ | ---------------------- | ------------- |
+| `full_boq.xlsx`          | 241,295 bytes | 1      | 6,354                  | 9             |
+| `formula_workbook.xlsx`  | 34,205 bytes  | 1      | 543                    | 4             |
+| `dimensions_export.xlsx` | (large)       | 90     | ~3,500–4,200 per sheet | 40            |
 
 ---
 
-## Workbook 2: `formula_workbook.xlsx`
+# Workbook 1 — `full_boq.xlsx`
 
-### Observed Workbook Characteristics
+## Workbook Metadata
 
-| Fact | Value |
-|------|-------|
-| File Size | 34,205 bytes |
-| Sheet Names | `['Sheet1']` |
-| Sheet Dimensions | 543 rows x 4 columns |
-| Creator | `365` (Excel 365) |
+| Property         | Observation                   |
+| ---------------- | ----------------------------- |
+| File Size        | 241,295 bytes                 |
+| Sheet Count      | 1                             |
+| Sheet Name       | `CostX`                       |
+| Calculation Mode | `fullCalcOnLoad=True`         |
+| Excel Base Date  | 1899-12-30 (1900 date system) |
+| Creator          | `openpyxl`                    |
+| Merged Cells     | `A1:I1`, `A2:I2`              |
+| Freeze Panes     | None                          |
+| Auto-filter      | None                          |
+| Hidden Sheets    | None                          |
+| Named Ranges     | None observed                 |
+
+---
+
+## Column Statistics
+
+| Column | Non-empty | Observation                          |
+| ------ | --------- | ------------------------------------ |
+| A      | 4,260     | Text values                          |
+| B      | 6,279     | Text values                          |
+| C      | 3,606     | Predominantly numeric values         |
+| D      | 6,162     | Text values                          |
+| E      | 1         | Text                                 |
+| F      | 61        | Formula cells with calculated values |
+| G      | 1         | Text                                 |
+| H      | 1         | Text                                 |
+| I      | 63        | Formula cells with calculated values |
+
+---
+
+## Header Row
+
+Observed at Row 4.
+
+| Column | Header      |
+| ------ | ----------- |
+| A      | Code        |
+| B      | Description |
+| C      | Quantity    |
+| D      | UOM         |
+| E      | Rate        |
+| F      | SubTotal    |
+| G      | Factor      |
+| H      | Total       |
+| I      | Total       |
+
+Formatting observations:
+
+* Bold
+* Calibri 8 pt
+* Horizontal alignment applied
+* Numeric formatting on quantity-related columns
+
+---
+
+## Row Structure Observations
+
+Rows 1–2 are merged title rows.
+
+Rows beginning around Row 6 exhibit recurring formatting and value patterns.
+
+Examples observed:
+
+| Row | Observation                                                         |
+| --- | ------------------------------------------------------------------- |
+| 6   | Column B contains bold text `"MAIN WORKS"` while Column A is empty. |
+| 8   | Column A contains value `"A"` with bold formatting.                 |
+| 9   | Column A contains `"A/1"` while Column D contains `"Head1"`.        |
+| 10  | Column D contains `"Head2"`.                                        |
+| 11  | Column D contains `"Note"`.                                         |
+
+Observation:
+
+Column D contains recurring text values throughout the workbook, including:
+
+* `Head1`
+* `Head2`
+* `Note`
+* `Item`
+
+The semantic meaning of these values has not been established by this analysis.
+
+---
+
+## Formula Observations
+
+Columns F and I contain Excel formulas.
+
+When loaded using `data_only=True`, these cells return numeric calculated values.
+
+Observed counts:
+
+* Column F: 57 formulas
+* Column I: 62 formulas
+
+---
+
+## Additional Observations
+
+Observed patterns include:
+
+* Column A contains hierarchical identifiers such as `A`, `A/1`, `A/2`.
+* Numeric values are predominantly located in Column C.
+* Formula cells are concentrated in Columns F and I.
+* Column D contains recurring textual markers.
+
+No semantic interpretation is assigned.
+
+---
+
+# Workbook 2 — `formula_workbook.xlsx`
+
+## Workbook Metadata
+
+| Property         | Observation           |
+| ---------------- | --------------------- |
+| File Size        | 34,205 bytes          |
+| Sheet Name       | `Sheet1`              |
+| Dimensions       | 543 rows × 4 columns  |
+| Creator          | Excel 365             |
 | Calculation Mode | `fullCalcOnLoad=True` |
-| Merged Cells | None |
-| Freeze Panes | None |
-| Auto-filter | None |
-| Hidden Sheets | None |
-| Named Ranges | 0 |
+| Merged Cells     | None                  |
+| Freeze Panes     | None                  |
+| Auto-filter      | None                  |
+| Hidden Sheets    | None                  |
+| Named Ranges     | None observed         |
 
-### Column Statistics
+---
 
-| Column | Non-Empty | Type Breakdown |
-|--------|-----------|--------------|
-| A | 454 | text=454 (codes: "F/1", "F/2", etc.) |
-| B | 543 | text=543 (descriptions, wrapped text) |
-| C | 420 | numeric=11, formula=409 (quantities via XGET formulas) |
-| D | 543 | text=543 (row type markers) |
+## Column Statistics
 
-### Row Type Marker Values Observed (Column D)
+| Column | Observation                      |
+| ------ | -------------------------------- |
+| A      | Text identifiers                 |
+| B      | Text descriptions                |
+| C      | Numeric values and XGET formulas |
+| D      | Recurring text values            |
 
-From inspection output:
-- `"Head1"` – Top-level sections (GENERALLY, REFERENCES, PRICES, GENERAL ITEMS)
-- `"Head2"` – Sub-sections
-- `"Note"` – Descriptive/definitional rows
-- `"Item"` – BOQ line items with quantity values in column C
+---
 
-### Formula Observations
+## Observed Recurring Values
 
-409 cells in column C contain formulas. These are ArrayFormula objects (CostX XGET type).
+Column D contains recurring values including:
 
-When loaded with `data_only=True`, calculated values appear as `#NAME?` because the XGET functions are CostX-specific and not recognized by openpyxl.
+* `Head1`
+* `Head2`
+* `Note`
+* `Item`
 
-Observed formula pattern (from inspecting cell C33):
+The semantic meaning of these values has not been established by this analysis.
+
+---
+
+## Formula Observations
+
+Column C contains 409 CostX `XGET(...)` formulas.
+
+Example pattern:
+
+```text
+XGET(...)
 ```
-XGET("...", ...)  # Specific CostX lookup function
-```
 
-The formulas reference external CostX measurement data that cannot be resolved without the CostX application context.
+When the workbook is loaded with `data_only=True`, these cells evaluate to `#NAME?`.
 
-### Possible Interpretation (Low Confidence)
-
-This workbook represents the "formula layer" – a view of the BOQ with XGET formulas still embedded, ready to pull live measurement data from CostX. This differs from `full_boq.xlsx` which has pre-calculated values.
+This behavior was consistently observed using openpyxl and indicates that the function is not evaluated outside the originating CostX environment.
 
 ---
 
-## Workbook 3: `dimensions_export.xlsx`
+## Additional Observations
 
-### Observed Workbook Characteristics
+Compared with `full_boq.xlsx`:
 
-| Fact | Value |
-|------|-------|
-| Sheet Count | 90 sheets |
-| Typical Sheet Dimensions | ~3,500-4,200 rows x 40 columns |
-| Freeze Panes | None on all sheets |
-| Auto-filter | None on all sheets |
-| Merged Cells | Not detected (or not reported) |
-| Hidden Sheets | None |
-| Named Ranges | 0 |
-
-### Sheet Name Patterns
-
-Sheet names follow these patterns (observed from inspection):
-
-| Pattern | Example |
-|---------|---------|
-| Trade + Drawing ID | `Ceiling Finishes  3015 A1007 LE` |
-| Trade + Reference | `Doors  3015 A1001 LEVEL 1 GA PL` |
-| Trade + Level | `Floor Finish  3015 A0130 LEVEL` |
-| Trade + Code | `Wall Types  3015 A1201 LEVEL 1` |
-
-Some sheets have underscore patterns: `HDR M100 _T1_`, indicating dimensional references.
-
-### Column Statistics (Representative Sheet)
-
-All inspected sheets show consistent structure:
-
-| Column | Non-Empty (per sheet) | Type |
-|--------|----------------------|------|
-| A | varies | text (appears to be measurement references) |
-| B | varies | text (descriptions) |
-| ... | ... | ... |
-| AN | 58 | text (appears to be a computed total or summary column) |
-
-### Possible Interpretation (Low Confidence)
-
-Each sheet represents a **Dimension Group** – measurements for a specific trade/drawing combination. Column AN consistently contains 58 non-empty text values across sheets, suggesting it holds either totals or lookup keys.
+* Formula expressions are retained rather than replaced with stored numeric values.
+* Workbook structure differs while preserving recurring identifiers and formatting patterns.
 
 ---
 
-## Cross-Workbook Comparison Table
+# Workbook 3 — `dimensions_export.xlsx`
 
-| Aspect | `full_boq.xlsx` | `formula_workbook.xlsx` | `dimensions_export.xlsx` |
-|--------|-----------------|----------------------|------------------------|
-| **Purpose (per README)** | Final BOQ with calculated values | Formula layer (XGET formulas) | Raw dimension measurements |
-| **Sheet Count** | 1 | 1 | ~90 |
-| **Row Count** | 6,354 | 543 | 3,400-4,200 per sheet |
-| **Column Count** | 9 | 4 | 40 |
-| **Formulas Present** | Yes (57 in F, 62 in I) | Yes (409 in C) | No |
-| **CostX XGET Formulas** | No | Yes | No |
-| **Calculation Mode** | fullCalcOnLoad=True | fullCalcOnLoad=True | fullCalcOnLoad=True |
-| **Merged Header Rows** | Yes (A1:I1, A2:I2) | No | Not detected |
-| **Column Headers** | Explicit in row 4 | None observed | None (raw data) |
-| **Row Type Markers** | Column D (Head1/Head2/Note) | Column D (Head1/Head2/Note/Item) | No explicit markers |
-| **Numeric Quantities** | Column C | Column C (via formulas) | Multiple columns |
-| **File Size** | ~240 KB | ~34 KB | ~? (large) |
+## Workbook Metadata
+
+| Property           | Observation                    |
+| ------------------ | ------------------------------ |
+| Sheet Count        | 90                             |
+| Typical Dimensions | ~3,500–4,200 rows × 40 columns |
+| Freeze Panes       | None observed                  |
+| Auto-filter        | None observed                  |
+| Hidden Sheets      | None observed                  |
+| Named Ranges       | None observed                  |
 
 ---
 
-## Library Compatibility Observations
+## Worksheet Naming Patterns
 
-### openpyxl Compatibility
+Observed worksheet names combine descriptive labels with drawing or reference identifiers.
 
-| Issue | Observation | Workaround |
-|-------|-------------|------------|
-| Named Style with None name | CostX exports contain `_NamedCellStyle` entries with `name=None` | Patched in `_load_workbook()` to coerce None to "" |
-| ArrayFormula display | `cell.value` returns `ArrayFormula` object, not string | Extract `.formula` attribute for display |
-| XGET function resolution | `#NAME?` error when loaded with `data_only=True` | Expected – XGET is CostX-specific, not an Excel function |
-| iter_rows performance | Successful iteration over 6,000+ rows | Works correctly, no memory issues observed |
+Examples include:
 
-### openpyxl Data Loading Behavior
+* Ceiling Finishes
+* Doors
+* Floor Finish
+* Wall Types
 
-1. `data_only=False`: Returns formula objects (ArrayFormula for XGET)
-2. `data_only=True`: Returns `#NAME?` for XGET formulas (function unavailable)
-3. Style preservation: All formatting (font, alignment, number format) preserved under both modes
+Several worksheet names also include codes and underscore-delimited identifiers.
+
+No semantic interpretation is assigned.
 
 ---
 
-## Special CostX Conventions Observed
+## Column Observations
 
-| Convention | Evidence |
-|-----------|----------|
-| Sheet naming pattern | Trade + Drawing ID + Level/Phase suffix |
-| Code hierarchy | "A", "A/1", "A/2"... or "F/1", "F/2"... |
-| Row classification column | Column D contains "Head1", "Head2", "Note", "Item" |
-| Quantity column | Numeric values with `#,##0.00` format, right-aligned |
-| UOM column | Text values like "m2", "m3", "ea" |
-| XGET functions | ArrayFormula objects referencing CostX measurement database |
-| Excel base date 1899-12-30 | Confirms 1900 date system compatibility |
+Across inspected worksheets:
+
+* Approximately 40 populated columns were observed.
+* Column AN consistently contained approximately 58 populated text cells.
+
+The purpose of Column AN was not determined during this analysis.
 
 ---
 
-## Parsing Challenges Identified
+# Cross-Workbook Comparison
 
-| Challenge | Evidence | Risk Level |
-|-----------|----------|------------|
-| Nested code hierarchy | Codes like "A", "A/1", "A/2" suggest tree structure | Medium |
-| Row type classification via Column D | Relies on exact string match ("Head1", "Note") | High (format may vary) |
-| XGET formula parsing | CostX-specific syntax, returns `#NAME?` externally | High |
-| Large sheet count | 90 sheets in dimensions_export.xlsx | Low (library handles it) |
-| Merged header rows | A1:I1, A2:I2 in full_boq.xlsx | Low (detectable) |
-| No auto-filter | Cannot use filter metadata for structure detection | Low (use style/formatting) |
-| Theme font colors | Font colors use `theme:1` (not RGB) | Low |
-| Wrap text on descriptions | Long text may span visual rows | Low |
-
----
-
-## Deterministic QA Opportunities
-
-| QA Check | Observable Evidence |
-|----------|-------------------|
-| Row count consistency | Verify expected row counts per sheet type |
-| Column count consistency | All dimensions sheets have 40 columns |
-| Required column presence | Column D (row type marker) should exist |
-| Code hierarchy format | Regex check for "A", "A/n" or "F/n" patterns |
-| Numeric format validation | Quantity columns should have numeric values or formulas |
-| Merge range detection | Expected merges at A1:I1, A2:I1 for BOQ sheets |
-| Named range expectation | Currently none observed, but could be added |
-| Workbook property check | Creator, calculation mode consistent across exports |
-| Hidden row/column detection | Could indicate collapsed sections |
+| Aspect           | `full_boq.xlsx`              | `formula_workbook.xlsx`      | `dimensions_export.xlsx` |
+| ---------------- | ---------------------------- | ---------------------------- | ------------------------ |
+| Sheets           | 1                            | 1                            | 90                       |
+| Rows             | 6,354                        | 543                          | ~3,500–4,200             |
+| Columns          | 9                            | 4                            | 40                       |
+| Excel formulas   | Yes                          | Yes                          | None observed            |
+| XGET formulas    | No                           | Yes                          | No                       |
+| Calculation Mode | fullCalcOnLoad               | fullCalcOnLoad               | fullCalcOnLoad           |
+| Merged Cells     | Yes                          | None observed                | None observed            |
+| Row markers      | Recurring values in Column D | Recurring values in Column D | None observed            |
 
 ---
 
-## Files Generated
+# Library Compatibility Observations
 
-- `tools/workbook_inspector.py` – Engineering inspection utility
-- `docs/reference/M5_CostX_Export_Analysis.md` – This document
+## openpyxl Compatibility
 
----
-
-## Next Steps (Not Part of This Analysis)
-
-This document presents only observable facts. Future work (outside scope of this discovery task):
-
-1. Create a `--compare` mode for cross-file analysis
-2. Add `--json` output for machine-readable consumption
-3. Design parser based on observed structures (only after consensus on format)
+| Observation                          | Result                                             |
+| ------------------------------------ | -------------------------------------------------- |
+| Named style entries with `name=None` | Requires compatibility patch                       |
+| ArrayFormula handling                | Returns ArrayFormula objects                       |
+| XGET evaluation                      | Returns `#NAME?` when loaded with `data_only=True` |
+| Style preservation                   | Formatting preserved                               |
 
 ---
 
-*Generated by workbook_inspector.py – a reusable engineering tool under `tools/` with no runtime dependencies.*
+## Workbook Loading Behavior
+
+Observed behavior:
+
+* `data_only=False` returns formula expressions.
+* `data_only=True` returns calculated values where available.
+* CostX `XGET(...)` formulas remain unresolved outside CostX.
+
+---
+
+# Recurring Workbook Patterns
+
+Observed recurring characteristics include:
+
+* Hierarchical identifiers such as `A`, `A/1`, `A/2`
+* Recurring values `Head1`, `Head2`, `Note`, and `Item`
+* Quantity-related numeric columns
+* Consistent worksheet naming patterns
+* CostX `XGET(...)` formulas in formula workbooks
+* Excel 1900 date system
+
+These observations describe recurring workbook characteristics only.
+
+---
+
+# Parser Considerations (Evidence-Based)
+
+The following characteristics were consistently observed and may require consideration during future parser design:
+
+| Observation                         |
+| ----------------------------------- |
+| Hierarchical identifier patterns    |
+| Recurring values in Column D        |
+| CostX-specific `XGET(...)` formulas |
+| Large multi-sheet workbooks         |
+| Merged title rows                   |
+| Theme-based formatting              |
+| Wrapped description cells           |
+
+This section documents observable workbook characteristics and does not prescribe implementation.
+
+---
+
+# Deterministic QA Opportunities
+
+Observable characteristics suitable for deterministic validation include:
+
+* Workbook readability
+* Sheet count
+* Worksheet existence
+* Column count
+* Merge ranges
+* Presence of recurring values
+* Formula presence
+* Hidden sheet detection
+* Workbook calculation properties
+* Numeric column validation
+
+No validation algorithms are proposed in this document.
+
+---
+
+# Generated Engineering Artifacts
+
+* `tools/workbook_inspector.py`
+* `docs/reference/M5_CostX_Export_Analysis.md`
+
+---
+
+# Summary
+
+Engineering discovery identified three structurally distinct CostX workbook types:
+
+* A workbook containing stored calculated values.
+* A workbook containing CostX-specific `XGET(...)` formulas.
+* A large multi-sheet workbook containing measurement-related data.
+
+Recurring workbook characteristics, workbook metadata, formatting, formulas, worksheet structures, and compatibility observations were documented using direct inspection.
+
+No parser design, business interpretation, architectural decisions, or runtime implementation are included in this document.
+
+This document serves as the evidence base for subsequent parser design work.

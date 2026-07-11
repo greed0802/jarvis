@@ -22,9 +22,9 @@ The architecture is defined by:
 | Property | Value |
 |----------|-------|
 | Architecture Version | v0.1.0 |
-| Software Version | 0.0.1-alpha.4 |
+| Software Version | 0.0.1-alpha.5 |
 | Current Phase | Phase 1 — Foundation |
-| Current Milestone | M4 Runtime Assembly (complete) |
+| Current Milestone | M6 — Observation Ontology Runtime (complete) |
 
 ---
 
@@ -135,9 +135,64 @@ None. The implementation did not require modifications to the frozen architectur
 
 ---
 
+## M5 — Context Engine Runtime
+
+| Property | Value |
+|----------|-------|
+| Goal | Validate the Context Engine architecture through the first real data flowing into the Data Plane. |
+| Scope | Implement only the minimum Context Engine functionality required by the first working vertical slice. Domain concepts should remain local until repeated use justifies promotion into shared architecture. |
+| Out of Scope | Planner, Workflow, Skills, AI, Memory, Knowledge, or speculative domain abstractions. |
+| Status | **Complete (Architecture Validation)** |
+
+---
+
+## M6 — Observation Ontology Runtime
+
+| Property | Value |
+|----------|-------|
+| Goal | Refactor WorkbookParser to emit immutable ObservationSet instances conforming to the established Observation Ontology Family. |
+| Status | **Complete** |
+| Files Created | `src/jarvis/parsers/observation.py`, `tests/parser/test_observation_models.py` |
+| Files Modified | `src/jarvis/parsers/costx/workbook_parser.py`, `src/jarvis/parsers/__init__.py`, `tests/parser/test_workbook_parser.py` |
+| Tests | 28 tests covering: Provenance immutability, ObservationSet invariant enforcement, observation types immutability, observe() contract, provenance validation |
+
+### Architecture Compliance
+
+✓ **Observation Ontology Family (Frozen)**: `Observation` base type with specializations (`WorkbookObservation`, `WorksheetObservation`, `RowObservation`, `CellObservation`) mirrors the ontology hierarchy while using Python composition for maintainability.
+
+✓ **ObservationSet Contract**: Immutable container with enforced invariant (at least one Observation). Deep immutability via frozen dataclasses and Mapping types for presentation properties.
+
+✓ **Deterministic Identity**: Acquisition IDs derived from structural fingerprints (source path + workbook dimensions), not wall-clock timestamps or UUIDs. Observation IDs are deterministic sequences within each acquisition run.
+
+✓ **Provenance**: Source identifier, Observer, and Procedure preserved for every Observation. Timestamp represents when the observation was recorded.
+
+✓ **Acquisition/Interpretation Boundary**: Observations contain only directly observable properties. No interpretation, classification, or business semantics embedded.
+
+### Principle Compliance
+
+✓ **Documentation First**: Runtime types in `observation.py` documented as implementation of frozen ontology with architectural commitment statement.
+
+✓ **YAGNI**: Presentation properties (font, fill, alignment, border) supported in type model but `None` when not acquired — honest Procedure scope.
+
+✓ **Evidence Before Assumptions**: Implementation validates ontology design through real openpyxl integration.
+
+✓ **Modular Architecture**: Observation types isolated in `parsers/observation.py` for eventual promotion to shared package when multiple consumers exist.
+
+### ADR Compliance
+
+No ADRs violated. No new ADRs required.
+
+### Implementation Assumptions Discovered
+
+- Worksheet name is part of RowObservation observable properties (container context), not provenance — row is observed within a worksheet.
+- Structural fingerprint produces deterministic acquisition IDs for the same source under equivalent conditions.
+- Single Procedure (`"CostX workbook observation"`) for the entire acquisition run; Observation type distinguishes the level.
+
+---
+
 # Next Milestone
 
-## M5 — Context Engine Runtime
+## M7 — Context Engine Runtime
 
 | Property | Value |
 |----------|-------|
@@ -153,13 +208,13 @@ These milestones represent the current implementation roadmap and may evolve bas
 
 | Milestone | Description |
 |-----------|-------------|
-| M6 — Planner Runtime | Implement the Planner Engine with deterministic plan construction and approval flow, consuming Context and producing Plans. |
-| M7 — Workflow Runtime | Implement the Workflow Engine with Task management, Capability resolution, and the execution control loop. |
-| M8 — Skill Runtime | Implement the Skill Framework with Capability Registry, Capability Resolver, and the first working Skill. |
-| M9 — First End-to-End Request | Wire Context → Planner → Workflow → Skill → Result into the first complete data plane request cycle. |
-| M10 — Validation Framework | Implement the Validation Framework as a cross-cutting concern integrated with the Workflow Engine's execution loop. |
-| M11 — Memory Framework | Implement the Memory Framework for preserving experience and supporting Context construction. |
-| M12 — Provider Framework | Implement the Provider/Resource abstraction layer for external system integration. |
+| M8 — Planner Runtime | Implement the Planner Engine with deterministic plan construction and approval flow, consuming Context and producing Plans. |
+| M9 — Workflow Runtime | Implement the Workflow Engine with Task management, Capability resolution, and the execution control loop. |
+| M10 — Skill Runtime | Implement the Skill Framework with Capability Registry, Capability Resolver, and the first working Skill. |
+| M11 — First End-to-End Request | Wire Context → Planner → Workflow → Skill → Result into the first complete data plane request cycle. |
+| M12 — Validation Framework | Implement the Validation Framework as a cross-cutting concern integrated with the Workflow Engine's execution loop. |
+| M13 — Memory Framework | Implement the Memory Framework for preserving experience and supporting Context construction. |
+| M14 — Provider Framework | Implement the Provider/Resource abstraction layer for external system integration. |
 
 ---
 

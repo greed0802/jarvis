@@ -5,17 +5,48 @@ ROOT = Path(__file__).resolve().parent.parent
 DECISIONS = ROOT / "docs" / "decisions"
 README = DECISIONS / "README.md"
 
-pattern = re.compile(r"adr:\s*(\d+).*?title:\s*(.+?)\n.*?status:\s*(.+?)\n", re.S | re.I)
+# Pattern 1: YAML front matter (ADRs 0001–0021)
+yaml_pattern = re.compile(
+    r"adr:\s*(\d+).*?title:\s*(.+?)\n.*?status:\s*(.+?)\n", re.S | re.I
+)
+
+# Pattern 2: Heading-based formats (ADR_0022+, no YAML front matter).
+# Handles both "ADR_NNNN — Title" and "ADR_NNNN_Title" heading styles.
+heading_pattern = re.compile(
+    r"^#\s+ADR_(\d+)[ _]+(.+?)$\n\n^Status:\s*(.+?)$", re.M | re.I
+)
+
+# Pattern 3: Heading-based format where Status is a separate heading (e.g. ADR_0024).
+# Handles "ADR_NNNN_Title" heading with "# Status" section below.
+heading_section_status_pattern = re.compile(
+    r"^#\s+ADR_(\d+)[ _]+(.+?)$\n\n^# Status$\n\n^(.+?)$", re.M | re.I
+)
 
 records = []
 
 for file in sorted(DECISIONS.glob("ADR_*.md")):
     text = file.read_text(encoding="utf-8")
-    m = pattern.search(text)
-    if not m:
+
+    m = yaml_pattern.search(text)
+    if m:
+        num, title, status = m.groups()
+        records.append((int(num), title.strip(), status.strip(), file.name))
         continue
-    num, title, status = m.groups()
-    records.append((int(num), title.strip(), status.strip(), file.name))
+
+    m = heading_pattern.search(text)
+    if m:
+        # Clean title: remove trailing em-dash/whitespace artifacts
+        num, title, status = m.groups()
+        title = title.strip().rstrip("\u2014\u2013- ")
+        records.append((int(num), title.strip(), status.strip(), file.name))
+        continue
+
+    m = heading_section_status_pattern.search(text)
+    if m:
+        num, title, status = m.groups()
+        title = title.strip().rstrip("\u2014\u2013- ")
+        records.append((int(num), title.strip(), status.strip(), file.name))
+        continue
 
 records.sort()
 

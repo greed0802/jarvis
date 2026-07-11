@@ -27,3 +27,6 @@
 | ADR_0019 | Platform Component Coordination | Accepted | ADR_0019_Platform_Component_Coordination.md |
 | ADR_0020 | Runtime vs Cross-Cutting Architecture | Accepted | ADR_0020_Runtime_vs_Cross_Cutting_Architecture.md |
 | ADR_0021 | Control Plane and Data Plane Separation | Accepted | ADR_0021_Control_Plane_and_Data_Plane_Separation.md |
+| ADR_0022 | — Context Lifecycle and Ownership | Accepted | ADR_0022_Context_Lifecycle_and_Ownership.md |
+| ADR_0023 | — Capability Discovery and Resolution | Accepted | ADR_0023_Capability_Discovery_and_Resolution.md |
+| ADR_0024 | Workflow_Execution_Model | Accepted | ADR_0024_Workflow_Execution_Model.md |
