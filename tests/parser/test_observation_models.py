@@ -1,6 +1,14 @@
 """Tests for Observation ontology runtime types.
 
-Verifies:
+This file is retained as a historical artifact.
+
+ADR-0025 (2026-07-11) evaluated and rejected the Observation Runtime as the active
+production architecture. The observe() method is not part of the supported production
+parser interface and these tests are preserved for historical reference only.
+
+See: docs/decisions/ADR_0025_Observation_Runtime_Architecture.md
+
+Verifies (historical):
 - Provenance is immutable and hashable
 - ObservationSet enforces invariant (at least one Observation)
 - All observation types are immutable

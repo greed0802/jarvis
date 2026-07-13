@@ -3,25 +3,11 @@
 This package contains engineering components for parsing various file formats.
 Parsers are independent of the runtime and perform deterministic extraction.
 
-Observation types are exported for downstream platform consumers.
+NOTE: Observation types were historically exported for downstream platform
+consumers. ADR-0025 (2026-07-11) rejected the Observation Runtime as the
+active production architecture. The observation.py module is retained as a
+historical artifact. Access observation types directly from
+jarvis.parsers.observation if needed.
+
+See: docs/decisions/ADR_0025_Observation_Runtime_Architecture.md
 """
-
-from jarvis.parsers.observation import (
-    CellObservation,
-    Observation,
-    ObservationSet,
-    Provenance,
-    RowObservation,
-    WorkbookObservation,
-    WorksheetObservation,
-)
-
-__all__ = [
-    "Observation",
-    "ObservationSet",
-    "Provenance",
-    "WorkbookObservation",
-    "WorksheetObservation",
-    "RowObservation",
-    "CellObservation",
-]

@@ -93,3 +93,36 @@ None required at this spike scope. Two rules handled classification; one variabl
 **Confidence**: MEDIUM
 
 **Supporting Evidence**: The spike demonstrates that deterministic identification is possible with the observed rules. However, the presence of 7 positive-quantity items in the OMISSION section, combined with the lack of validation against additional fixtures, prevents a complete answer. The anomalies require domain or architectural review before the sign convention can be confirmed as valid or invalid.
+
+---
+
+## Post-EQ-0007 Reconciliation
+
+This section documents the production implementation reconciliation. The original Spike #1 report above is preserved as historical engineering evidence.
+
+### EQ-0007 Production Extraction Results
+
+| Type | Spike #1 | Production | Difference |
+|------|----------|------------|------------|
+| Head | 2011 | 2011 | 0 |
+| Note | 520 | 520 | 0 |
+| Section | 15 | 15 | 0 |
+| Item | 3615 | 3605 | -10 |
+| Other | 188 | 198 | +10 |
+| Total | 6349 | 6349 | 0 |
+
+### Production Implementation Changes
+
+- **Item classification**: Changed from identifier-pattern fallback (`'/' in Column A`) to semantic UOM-based classification. This corrects the misclassification of 10 rows (5 Assumption + 5 endh1) that were incorrectly classified as Item.
+- **BOQRow dataclass**: Added to production module (`src/jarvis/parsers/costx/boq_extraction.py`) for structured output.
+- **Section context**: Added to BOQRow to preserve deterministic section state.
+
+### Engineering Evidence Reinforced
+
+- **EQ-0001**: Column A is confirmed as an opaque identifier. Identifier-based heuristics must not be used for semantic classification.
+- **EQ-0002**: Sign convention mechanism (section-aware validation) remains valid and unchanged.
+- **EQ-0006**: QS review confirmed the 7 positive-quantity OMISSION items are data-entry errors. The fixture remains unchanged per Engineering_Fixtures.md.
+
+### Reference
+
+Full evidence: `docs/reference/EQ_0007_Production_Extraction_Report.md`

@@ -30,3 +30,4 @@
 | ADR_0022 | — Context Lifecycle and Ownership | Accepted | ADR_0022_Context_Lifecycle_and_Ownership.md |
 | ADR_0023 | — Capability Discovery and Resolution | Accepted | ADR_0023_Capability_Discovery_and_Resolution.md |
 | ADR_0024 | Workflow_Execution_Model | Accepted | ADR_0024_Workflow_Execution_Model.md |
+| ADR_0025 | Observation Runtime Architecture | Rejected | ADR_0025_Observation_Runtime_Architecture.md |
