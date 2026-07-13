@@ -131,7 +131,7 @@ Knowledge organization is earned through repeated engineering evidence. It is ne
 
 | Field | Value |
 |-------|-------|
-| **Status** | EVIDENCE COMPLETE — PENDING PROJECT OWNER DISPOSITION |
+| **Status** | EVIDENCE COMPLETE — ACCEPTED |
 | **Scope** | Row classification semantic generalization across CostX BOQ exports |
 | **Evidence** | Investigation completed. See `docs/reference/EQ_0005_CostX_Export_Generalization_Report.md` for full report. Two fixtures analyzed: `full_boq.xlsx` and `Structural Reinforcement Only.xlsx`. |
 | **Answer** | UOM-based classification semantics are supported across the two observed CostX BOQ exports. Structural assumptions (worksheet name, header position, first data row) are falsified — current fixed-row assumptions are unsupported. The core UOM-based classification logic is semantically sound and can be reused, but header/discovery logic requires independent engineering. No generalization is justified yet — two fixtures provide directional evidence but do not meet the Rule of Three. |
@@ -140,11 +140,24 @@ Knowledge organization is earned through repeated engineering evidence. It is ne
 | **Recommendation** | Maintain intentionally narrow production parser. Recommend Project Owner consider activating candidate EQ-0008 for deterministic worksheet/header discovery when sufficient additional fixtures become available. |
 | **Evidence Report** | `docs/reference/EQ_0005_CostX_Export_Generalization_Report.md` |
 
+### EQ-0009: What observable information can be deterministically assembled from the current production pipeline, and to what extent, if any, does the observed production output satisfy the architectural definition of Context?
+
+| Field | Value |
+|-------|-------|
+| **Status** | EVIDENCE COMPLETE — ACCEPTED |
+| **Scope** | This investigation is limited to observations obtainable from the current production parser pipeline using the primary production fixture (`full_boq.xlsx`). Findings shall not be interpreted as defining the architectural concept of Context, nor assumed to generalize across additional CostX export variants previously investigated under EQ-0005. |
+| **Evidence** | Context Discovery Spike completed. See `docs/reference/EQ_0009_Context_Discovery_Report.md` for full report. Spike executed production pipeline (WorkbookParser, extract_boq, BOQRow) against `full_boq.xlsx`, recorded all observable outputs, verified determinism (Run 1 == Run 2: True). |
+| **Answer** | Based on the evidence collected during EQ-0009, the current production pipeline produces structured, deterministic, semantically classified output (6349 BOQRow objects with 7 fields each, plus workbook metadata and validation). This output does not satisfy the architectural definition of Context as documented in `06_Context_Engine.md`. The pipeline performs extraction, not Context assembly. No Intent is produced, no cross-source assembly occurs, no runtime interfaces exist, no Context lifecycle is managed, no refresh mechanism exists, and no semantic completeness detection exists. |
+| **Owner** | Project Owner |
+| **Milestone** | M7 Sprint 2 |
+| **Evidence Report** | `docs/reference/EQ_0009_Context_Discovery_Report.md` |
+| **Source** | M7 Sprint 1 Engineering Proposal (`docs/reference/M7_Sprint_1_Engineering_Proposal.md`) — accepted by Project Owner. |
+
 ---
 
 ## Active
 
-*No active Engineering Questions at this time.*
+No active engineering questions.
 
 ---
 
@@ -172,10 +185,11 @@ Knowledge organization is earned through repeated engineering evidence. It is ne
 | EQ-0002 | ANSWERED | OMISSION/ADDITION sign convention (mechanism) |
 | EQ-0003 | ANSWERED | CostX export format characteristics |
 | EQ-0004 | ANSWERED | Observation Runtime architecture (ADR-0025) |
-| EQ-0005 | EVIDENCE COMPLETE — PENDING PROJECT OWNER DISPOSITION | BOQ semantic generalization |
+| EQ-0005 | EVIDENCE COMPLETE — ACCEPTED | BOQ semantic generalization |
 | EQ-0006 | ANSWERED | OMISSION positive-quantity anomalies (domain interpretation) |
 | EQ-0007 | ANSWERED | Minimum deterministic production BOQ extraction |
 | EQ-0008 | CANDIDATE | Deterministic worksheet/header discovery across CostX BOQ exports |
+| EQ-0009 | EVIDENCE COMPLETE — ACCEPTED | Observable information from production pipeline vs. architectural Context definition |
 
 ---
 
@@ -197,6 +211,26 @@ until engineering evidence demonstrates they are required.
 
 ---
 
+## Engineering Workflow (Frozen)
+
+The following workflow is permanently established. Future governance refinements shall be evidence-driven. Editorial refinement alone is insufficient justification for changing this workflow.
+
+```
+Engineering Proposal
+        ↓
+Project Owner Approval
+        ↓
+Engineering Question Registration
+        ↓
+Engineering Spike
+        ↓
+Engineering Evidence
+        ↓
+Project Owner Disposition
+```
+
+---
+
 ## Repository Status
 
 Current architectural state:
@@ -211,6 +245,8 @@ Current architectural state:
 - ✅ **EQ-0007 closed — production BOQ extraction (`boq_extraction.py`) verified against `full_boq.xlsx`; 10 committed regression tests passing**
 - ✅ **EQ-0005 evidence complete — generalization report published, pending Project Owner disposition**
 - ✅ **EQ-0008 registered as Candidate — requires additional engineering fixtures before investigation**
+- ✅ **EQ-0009 registered as Active — M7 Sprint 2 Context Discovery Spike, accepted by Project Owner**
+- ✅ **EQ-0009 evidence complete — Context Discovery Report published, determinism verified, M7 Sprint 2 closed**
 
 ---
 
