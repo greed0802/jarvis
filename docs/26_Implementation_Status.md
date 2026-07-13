@@ -4,6 +4,8 @@ Version: 0.1
 
 **This document is not architecture.**
 
+It records the engineering execution history and current implementation state of the repository. Architectural authority remains with the Vision, Principles, Blueprint, Platform Kernel, and accepted ADRs.
+
 It is the engineering execution tracker for the Jarvis Platform.
 
 The architecture is defined by:
@@ -24,7 +26,19 @@ The architecture is defined by:
 | Architecture Version | v0.1.0 |
 | Software Version | 0.0.1-alpha.5 |
 | Current Phase | Phase 1 — Foundation |
-| Current Milestone | M6 — Observation Ontology Runtime (complete) |
+| Current Milestone | M7 — Context Engine Runtime (pending) |
+
+---
+
+# Repository State
+
+| Property | Value |
+|----------|-------|
+| Parser Foundation | Complete |
+| Repository Stabilization | Complete |
+| Current Active Milestone | M7 — Context Engine Runtime |
+| Current Active Engineering Questions | No active Engineering Question (between milestones) |
+| Next Engineering Question | To be defined during M7 planning |
 
 ---
 
@@ -35,6 +49,7 @@ The architecture is defined by:
 | Property | Value |
 |----------|-------|
 | Objective | Define and freeze the Jarvis Platform architecture before implementation begins. Establish the architectural documents, principles, ontology, and ADR process. |
+| Engineering Question | Can the platform architecture be fully specified before any implementation begins? |
 | Status | **Complete** |
 | Commit | `b8a195f` |
 | Tag | `v0.1.0` |
@@ -46,6 +61,7 @@ The architecture is defined by:
 | Property | Value |
 |----------|-------|
 | Objective | Establish the platform entry point, package structure, and minimal runtime bootstrap. Deliver `app.py`, `src/jarvis/__init__.py`, and the Application class that orchestrates the platform lifecycle. |
+| Engineering Question | Can the platform entry point and package structure be established with minimal code? |
 | Status | **Complete** |
 | Commit | `747b0f3` |
 | Tag | `v0.0.1-alpha.2` |
@@ -57,6 +73,7 @@ The architecture is defined by:
 | Property | Value |
 |----------|-------|
 | Objective | Implement the Platform Kernel (Control Plane) with lifecycle management, component registration, service registration, and the LifecycleAware contract. Deliver the full initialize → start → shutdown lifecycle with state enforcement. |
+| Engineering Question | Can the Platform Kernel manage component lifecycle through initialize → start → shutdown with state enforcement? |
 | Status | **Complete** |
 | Commit | `747b0f3` |
 | Tag | `v0.0.1-alpha.2` |
@@ -68,6 +85,7 @@ The architecture is defined by:
 | Property | Value |
 |----------|-------|
 | Objective | Introduce strongly typed, immutable platform Configuration owned by the Platform Kernel as a Control Plane concept. Implement the `Configuration` frozen dataclass with YAGNI-minimal fields. |
+| Engineering Question | Can platform Configuration be strongly typed, immutable, and owned by the Kernel without speculative features? |
 | Status | **Complete** |
 | Commit | `dc96e01` |
 | Tag | `v0.0.1-alpha.3` |
@@ -90,14 +108,15 @@ The architecture is defined by:
 | Property | Value |
 |----------|-------|
 | Goal | Demonstrate that the Application (Composition Root) can construct, register, and lifecycle a concrete Platform Service through the Platform Kernel using the LifecycleAware contract. |
+| Engineering Question | Can the Composition Root construct, register, and lifecycle a concrete Platform Service through the Kernel? |
 | Status | **Complete** |
 | Files Created | `src/jarvis/services/logging_service.py`, `src/jarvis/services/__init__.py`, `tests/test_lifecycle.py`, `tests/__init__.py`, `pytest.ini` |
 | Files Modified | `src/jarvis/application/application.py` |
 | Tests | 18 tests covering: successful lifecycle, component registration, initialize, start, shutdown, invalid registration, initialization failure, startup failure |
 
-## Architecture Audit for M4
+### Architecture Audit for M4
 
-### Architecture Compliance
+#### Architecture Compliance
 
 ✓ **Platform Kernel Philosophy** (ADR_0017): The Kernel remains pure Control Plane, managing lifecycle without business logic.
 
@@ -109,7 +128,7 @@ The architecture is defined by:
 
 ✓ **Platform Kernel Documentation** (04_Platform_Kernel.md): Configuration ownership correct - Kernel holds Config, Application creates both Kernel and LoggingService. Component registration rejected after UNINITIALIZED state. State machine transitions are correct.
 
-### Principle Compliance
+#### Principle Compliance
 
 ✓ **Human Authority**: No user-facing changes.
 
@@ -121,42 +140,74 @@ The architecture is defined by:
 
 ✓ **Evidence Before Assumptions**: Implementation proves the lifecycle assembly works.
 
-### ADR Compliance
+#### ADR Compliance
 
 No ADRs were violated. No new ADRs required.
 
-### Implementation Assumptions Discovered
+#### Implementation Assumptions Discovered
 
 None. The implementation aligns with documented architecture.
 
-### Architectural Changes Required
+#### Architectural Changes Required
 
 None. The implementation did not require modifications to the frozen architecture or accepted ADRs.
 
 ---
 
-## M5 — Context Engine Runtime
+## M5 — CostX Parser Discovery
 
 | Property | Value |
 |----------|-------|
-| Goal | Validate the Context Engine architecture through the first real data flowing into the Data Plane. |
-| Scope | Implement only the minimum Context Engine functionality required by the first working vertical slice. Domain concepts should remain local until repeated use justifies promotion into shared architecture. |
-| Out of Scope | Planner, Workflow, Skills, AI, Memory, Knowledge, or speculative domain abstractions. |
-| Status | **Complete (Architecture Validation)** |
+| Goal | Discover the structure of real CostX workbook exports through engineering inspection. Produce the parser specification and reference analysis from empirical evidence. |
+| Engineering Question | What is the observable structure of CostX BOQ workbooks, and what engineering considerations arise from real fixture data? |
+| Status | **Complete** |
+| Files Created | `tools/workbook_inspector.py`, `docs/reference/M5_CostX_Export_Analysis.md`, `docs/design/M5_First_CostX_Parser_Specification.md` |
+| Fixture Evidence | `tests/fixtures/costx/full_boq.xlsx`, `tests/fixtures/costx/formula_workbook.xlsx`, `tests/fixtures/costx/dimensions_export.xlsx` |
+
+### Architecture Audit for M5
+
+#### Architecture Compliance
+
+✓ **Parser Specification**: Design document scoped to deterministic extraction only. No business logic, classification, or interpretation.
+
+✓ **Engineering Discovery**: Reference analysis records observable facts only. No architectural decisions embedded.
+
+✓ **Tool Independence**: `workbook_inspector.py` lives under `tools/` with no Kernel, Application, Context, Planner, or Skill dependencies.
+
+#### Principle Compliance
+
+✓ **Evidence Before Assumptions**: All design decisions trace to M5 Phase 1 evidence.
+
+✓ **YAGNI**: Only the minimum parser scope defined. No speculative features.
+
+✓ **Documentation First**: Specification written before implementation.
+
+#### ADR Compliance
+
+No ADRs were violated. No new ADRs required.
 
 ---
 
-## M6 — Observation Ontology Runtime
+## M6 — Observation Runtime Investigation (Historical)
 
 | Property | Value |
 |----------|-------|
 | Goal | Refactor WorkbookParser to emit immutable ObservationSet instances conforming to the established Observation Ontology Family. |
-| Status | **Complete** |
+| Engineering Question | Can the Observation Ontology be implemented as runtime types that produce immutable, deterministic observations from real workbook data? |
+| Status | **Architecture Rejected — see ADR-0025** |
 | Files Created | `src/jarvis/parsers/observation.py`, `tests/parser/test_observation_models.py` |
 | Files Modified | `src/jarvis/parsers/costx/workbook_parser.py`, `src/jarvis/parsers/__init__.py`, `tests/parser/test_workbook_parser.py` |
 | Tests | 28 tests covering: Provenance immutability, ObservationSet invariant enforcement, observation types immutability, observe() contract, provenance validation |
 
-### Architecture Compliance
+### Disposition
+
+ADR-0025 (rejected 2026-07-11) evaluated the M6 proposal and rejected the Observation Runtime as the active production architecture for the current CostX acquisition scope. Implementation artifacts are preserved as **Historical Engineering** per the Repository Knowledge Preservation Strategy. Production parsing continues through the deterministic BOQ extraction architecture.
+
+### Architecture Audit for M6
+
+The architecture audit below is a historical record of the original M6 review. It does not represent current production architecture.
+
+#### Architecture Compliance (Historical)
 
 ✓ **Observation Ontology Family (Frozen)**: `Observation` base type with specializations (`WorkbookObservation`, `WorksheetObservation`, `RowObservation`, `CellObservation`) mirrors the ontology hierarchy while using Python composition for maintainability.
 
@@ -168,21 +219,19 @@ None. The implementation did not require modifications to the frozen architectur
 
 ✓ **Acquisition/Interpretation Boundary**: Observations contain only directly observable properties. No interpretation, classification, or business semantics embedded.
 
-### Principle Compliance
+#### Principle Compliance (Historical)
 
 ✓ **Documentation First**: Runtime types in `observation.py` documented as implementation of frozen ontology with architectural commitment statement.
 
 ✓ **YAGNI**: Presentation properties (font, fill, alignment, border) supported in type model but `None` when not acquired — honest Procedure scope.
 
-✓ **Evidence Before Assumptions**: Implementation validates ontology design through real openpyxl integration.
-
 ✓ **Modular Architecture**: Observation types isolated in `parsers/observation.py` for eventual promotion to shared package when multiple consumers exist.
 
-### ADR Compliance
+#### ADR Compliance (Historical)
 
-No ADRs violated. No new ADRs required.
+Historical Note: During M6 the Observation Runtime was implemented prior to formal architectural ratification. ADR-0025 subsequently evaluated the architecture and rejected it for the current production scope. The implementation and supporting documentation are preserved as Historical Engineering in accordance with the Repository Knowledge Preservation Strategy.
 
-### Implementation Assumptions Discovered
+#### Implementation Assumptions Discovered (Historical)
 
 - Worksheet name is part of RowObservation observable properties (container context), not provenance — row is observed within a worksheet.
 - Structural fingerprint produces deterministic acquisition IDs for the same source under equivalent conditions.
@@ -197,6 +246,7 @@ No ADRs violated. No new ADRs required.
 | Property | Value |
 |----------|-------|
 | Goal | Validate the Context Engine architecture through the first real data flowing into the Data Plane. |
+| Engineering Question | TBD — to be defined before implementation begins. |
 | Scope | Implement only the minimum Context Engine functionality required by the first working vertical slice. Domain concepts should remain local until repeated use justifies promotion into shared architecture. |
 | Out of Scope | Planner, Workflow, Skills, AI, Memory, Knowledge, or speculative domain abstractions. |
 
@@ -223,37 +273,47 @@ These milestones represent the current implementation roadmap and may evolve bas
 Every milestone follows this standard development cycle:
 
 ```
+Engineering Question
+        │
+        ▼
 Architecture Review
-    │
-    ▼
+        │
+        ▼
 Implementation
-    │
-    ▼
+        │
+        ▼
+Real Fixture Demonstration
+        │
+        ▼
 Architecture Audit
-    │
-    ▼
+        │
+        ▼
 Tests
-    │
-    ▼
+        │
+        ▼
 Documentation Synchronization
-    │
-    ▼
+        │
+        ▼
 Commit
-    │
-    ▼
+        │
+        ▼
 Tag
-    │
-    ▼
+        │
+        ▼
 Next Milestone
 ```
 
 ### Phase Descriptions
 
+**Engineering Question** — Every milestone shall define the engineering question it is intended to answer before implementation begins. This question frames the milestone's purpose and provides an objective basis for completion review.
+
 **Architecture Review** — Confirm the milestone objective against architecture documents and accepted ADRs. No implementation begins without architectural alignment.
 
-**Implementation** — Write the smallest production-ready code that satisfies the milestone acceptance criteria. Follow YAGNI — no speculative features.
+**Implementation** — Write the smallest implementation necessary to answer the Engineering Question. For milestone implementations this should be production-ready. For engineering spikes, optimize for learning rather than production quality. Follow YAGNI — no speculative features.
 
-**Architecture Audit** — Verify that the implementation conforms to the existing architecture. Stop if any architectural decision is violated. Propose an ADR if a change is necessary.
+**Real Fixture Demonstration** — No milestone is complete without same-implementation demonstration against real fixtures. Implementation must be exercised against actual fixture files (e.g., `tests/fixtures/costx/full_boq.xlsx`) to validate that the code produces correct results on real data, not only on synthetic test cases. This requirement applies before the milestone is tagged and closed.
+
+**Architecture Audit** — Verify that the implementation conforms to the existing architecture. Stop if any architectural decision is violated. Propose an ADR if a change is necessary. Confirm whether the Engineering Question was answered.
 
 **Tests** — Write tests that verify the acceptance criteria are met. Cover normal operation, error paths, and boundary conditions.
 
@@ -264,6 +324,29 @@ Next Milestone
 **Tag** — Tag the commit with the next version (e.g., `v0.0.1-alpha.4`).
 
 **Next Milestone** — Advance to the next milestone in sequence.
+
+### Engineering Spikes
+
+Engineering Spikes are temporary investigations intended to answer engineering questions or reduce architectural uncertainty. They do not establish production architecture and should not introduce new production abstractions unless subsequently ratified.
+
+Spikes follow a lighter process:
+
+```
+Engineering Question
+        │
+        ▼
+Implementation (learning-optimized)
+        │
+        ▼
+Report
+        │
+        ▼
+Architecture Review (if applicable)
+```
+
+Spike output is a report, not production code. Any abstractions that emerge during a spike must be ratified through the ADR process before they become part of the platform architecture.
+
+---
 
 # Implementation Principles
 

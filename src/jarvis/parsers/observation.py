@@ -1,4 +1,17 @@
-"""Observation ontology runtime types.
+"""
+HISTORICAL ENGINEERING — ADR_0025 REJECTED ARCHITECTURE
+
+Engineering Traceability
+
+ADR: ADR_0025 (rejected 2026-07-11)
+Classification: Historical Engineering (2026-07-13)
+See also: Repository Knowledge Preservation Strategy (Draft v1.0)
+
+This module is not part of the supported production dependency graph.
+
+--- Original docstring preserved below ---
+
+Observation ontology runtime types.
 
 The runtime types defined here are an implementation of the Observation ontology
 and SHALL remain structurally consistent with the ontology documents. Divergence
