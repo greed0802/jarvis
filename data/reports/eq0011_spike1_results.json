@@ -1,0 +1,387 @@
+{
+  "vocabulary_analysis": {
+    "structural_terms": [
+      {
+        "term": "Hierarchy Level",
+        "definition": "Position in nested structure (Level 1, Level 2, etc.)",
+        "source_section": "Definitions - Domain Concepts",
+        "classification_hint": "structural",
+        "examples": [
+          "Head1",
+          "Head2",
+          "Head3",
+          "Head4",
+          "Head5"
+        ],
+        "related_capabilities": [
+          "V-003",
+          "V-004"
+        ]
+      },
+      {
+        "term": "Parent-Child Relationship",
+        "definition": "Structural connection between header levels",
+        "source_section": "Hierarchy - Properties",
+        "classification_hint": "structural",
+        "examples": [
+          "Head2 under Head1",
+          "Head3 under Head2"
+        ],
+        "related_capabilities": [
+          "V-001",
+          "V-002",
+          "V-003"
+        ]
+      },
+      {
+        "term": "Measured Item",
+        "definition": "A measurable quantity with description, UOM, and quantity",
+        "source_section": "Definitions - Domain Concepts",
+        "classification_hint": "structural",
+        "examples": [
+          "Plain concrete 20MPa to footings: m\u00b3: 12.50"
+        ],
+        "related_capabilities": [
+          "SEM-003"
+        ]
+      },
+      {
+        "term": "Header",
+        "definition": "Hierarchy element that provides context but does not quantify",
+        "source_section": "Hierarchy - Semantic Rules",
+        "classification_hint": "structural",
+        "examples": [
+          "SUBSTRUCTURE",
+          "Strip Footings",
+          "Concrete Work"
+        ],
+        "related_capabilities": [
+          "SEM-001",
+          "SEM-002"
+        ]
+      },
+      {
+        "term": "Section",
+        "definition": "Top-level organizational unit (Hierarchy Level 1)",
+        "source_section": "Definitions - Domain Concepts",
+        "classification_hint": "structural",
+        "examples": [
+          "SUBSTRUCTURE",
+          "SUPERSTRUCTURE",
+          "FINISHES"
+        ],
+        "related_capabilities": [
+          "SEM-001",
+          "V-005"
+        ]
+      }
+    ],
+    "semantic_terms": [
+      {
+        "term": "Semantic Inheritance",
+        "definition": "Child elements inherit meaning from all parents",
+        "source_section": "Hierarchy - Semantic Rules",
+        "classification_hint": "semantic",
+        "examples": [
+          "Full item meaning = inherited context + item specification"
+        ],
+        "related_capabilities": [
+          "SEM-004",
+          "SEM-005",
+          "V-004"
+        ]
+      },
+      {
+        "term": "Scope",
+        "definition": "The work package or domain an element represents",
+        "source_section": "Hierarchy - Semantic Rules",
+        "classification_hint": "semantic",
+        "examples": [
+          "Scope: SUBSTRUCTURE",
+          "Element: Strip Footings"
+        ],
+        "related_capabilities": [
+          "V-004"
+        ]
+      },
+      {
+        "term": "Completeness",
+        "definition": "No missing work, all required measurable work represented",
+        "source_section": "Semantic Validation Rules - SEM-005",
+        "classification_hint": "semantic",
+        "examples": [
+          "All foundation work items present"
+        ],
+        "related_capabilities": [
+          "V-005"
+        ]
+      },
+      {
+        "term": "Context",
+        "definition": "Semantic meaning provided by hierarchy structure",
+        "source_section": "Hierarchy - Semantic Rules",
+        "classification_hint": "semantic",
+        "examples": [
+          "Headers provide context only"
+        ],
+        "related_capabilities": [
+          "SEM-002",
+          "V-004"
+        ]
+      },
+      {
+        "term": "Logical Consistency",
+        "definition": "BOQ structure remains meaningful and hierarchically sound",
+        "source_section": "Definitions - Domain Concepts",
+        "classification_hint": "semantic",
+        "examples": [
+          "Hierarchy follows logical decomposition"
+        ],
+        "related_capabilities": [
+          "V-003",
+          "V-004"
+        ]
+      }
+    ],
+    "judgment_terms": [
+      {
+        "term": "Legitimate",
+        "definition": "Acceptable according to professional QS standards",
+        "source_section": "(Implicit throughout domain rules)",
+        "classification_hint": "judgment",
+        "examples": [
+          "Legitimate organizational pattern",
+          "Legitimate placeholder"
+        ],
+        "related_capabilities": [
+          "V-003",
+          "SEM-003"
+        ]
+      },
+      {
+        "term": "Error",
+        "definition": "Violation requiring correction",
+        "source_section": "Semantic Validation Rules - Severity",
+        "classification_hint": "judgment",
+        "examples": [
+          "Data entry error",
+          "Structural violation"
+        ],
+        "related_capabilities": [
+          "V-003",
+          "SEM-003"
+        ]
+      },
+      {
+        "term": "Project Complexity",
+        "definition": "Characteristics requiring deeper hierarchy",
+        "source_section": "Definitions - Domain Concepts",
+        "classification_hint": "judgment",
+        "examples": [
+          "Hierarchy Level N: Additional subdivision as required"
+        ],
+        "related_capabilities": [
+          "V-003",
+          "V-005"
+        ]
+      },
+      {
+        "term": "Required Work",
+        "definition": "Work items mandated by project scope",
+        "source_section": "Semantic Validation Rules - SEM-005",
+        "classification_hint": "judgment",
+        "examples": [
+          "All required measurable work represented"
+        ],
+        "related_capabilities": [
+          "V-005"
+        ]
+      },
+      {
+        "term": "Acceptable",
+        "definition": "Meeting professional QS standards",
+        "source_section": "(Implicit in validation rules)",
+        "classification_hint": "judgment",
+        "examples": [
+          "Acceptable level progression",
+          "Acceptable zero quantity"
+        ],
+        "related_capabilities": [
+          "V-003",
+          "SEM-003"
+        ]
+      }
+    ],
+    "mixed_terms": [
+      {
+        "term": "Level Progression",
+        "definition": "Sequence of hierarchy levels from parent to child",
+        "source_section": "Valid Hierarchy Patterns",
+        "classification_hint": "mixed",
+        "examples": [
+          "Head1 \u2192 Head2 \u2192 Head3",
+          "Head1 \u2192 Head3 (skip)"
+        ],
+        "related_capabilities": [
+          "V-003"
+        ]
+      },
+      {
+        "term": "Orphan",
+        "definition": "Item without proper hierarchical parent",
+        "source_section": "(From EQ-0010 Spike 5 taxonomy)",
+        "classification_hint": "mixed",
+        "examples": [
+          "Item with no preceding Head",
+          "Item without quantity"
+        ],
+        "related_capabilities": [
+          "V-002",
+          "SEM-003"
+        ]
+      },
+      {
+        "term": "Quantify",
+        "definition": "Assign numerical measurement value",
+        "source_section": "Semantic Validation Rules - SEM-003",
+        "classification_hint": "mixed",
+        "examples": [
+          "Items must have quantity and UOM",
+          "quantity = 0.0"
+        ],
+        "related_capabilities": [
+          "SEM-003"
+        ]
+      },
+      {
+        "term": "Containment",
+        "definition": "Child elements fit within parent scope",
+        "source_section": "Semantic Validation Rules - V-004",
+        "classification_hint": "mixed",
+        "examples": [
+          "Structural: child_level <= parent_level",
+          "Semantic: work scope alignment"
+        ],
+        "related_capabilities": [
+          "V-004"
+        ]
+      }
+    ],
+    "validation_verbs": [
+      "validate",
+      "verify",
+      "check",
+      "confirm",
+      "ensure",
+      "must",
+      "should",
+      "require",
+      "prohibit",
+      "allow",
+      "acceptable",
+      "legitimate",
+      "correct",
+      "proper",
+      "sound"
+    ],
+    "detection_verbs": [
+      "detect",
+      "observe",
+      "identify",
+      "measure",
+      "count",
+      "extract",
+      "find",
+      "locate",
+      "determine",
+      "calculate",
+      "exists",
+      "present",
+      "absent",
+      "equal",
+      "matches"
+    ],
+    "rule_patterns": [
+      "never measure/quantify",
+      "always quantify",
+      "must exist/have/be",
+      "should follow/progress",
+      "fit within scope",
+      "all required work"
+    ],
+    "boundary_indicators": [
+      "legitimate",
+      "acceptable",
+      "proper",
+      "as required",
+      "project complexity",
+      "professional standards",
+      "QS judgment",
+      "domain knowledge",
+      "interpretation",
+      "understanding"
+    ]
+  },
+  "capability_analyses": {
+    "V-003": {
+      "capability": "V-003: Level Progression Validation",
+      "detection_vocabulary": [
+        "level skip detected",
+        "Head1 \u2192 Head3 (no Head2)",
+        "parent_level - child_level > 1"
+      ],
+      "judgment_vocabulary": [
+        "legitimate organizational pattern",
+        "project complexity requires",
+        "acceptable level skip"
+      ],
+      "boundary_observation": "Detection is structural (observable). Validation requires judging if skip is legitimate for this project context."
+    },
+    "SEM-003": {
+      "capability": "SEM-003: Items Always Quantify",
+      "detection_vocabulary": [
+        "quantity == 0",
+        "zero-quantity item",
+        "measured item with no measurement"
+      ],
+      "judgment_vocabulary": [
+        "legitimate placeholder",
+        "data entry error",
+        "incomplete takeoff",
+        "acceptable zero quantity"
+      ],
+      "boundary_observation": "Detection is structural (quantity field value). Validation requires judging whether zero is error or intentional placeholder."
+    },
+    "V-004": {
+      "capability": "V-004: Scope Containment",
+      "detection_vocabulary": [
+        "child_level <= parent_level",
+        "structural parent-child relationship",
+        "hierarchy level consistency"
+      ],
+      "judgment_vocabulary": [
+        "semantic scope alignment",
+        "work package containment",
+        "project intent",
+        "understanding header meaning"
+      ],
+      "boundary_observation": "Structural containment is derivable (parent-level consistency). Semantic containment requires understanding what each header represents."
+    },
+    "V-005": {
+      "capability": "V-005: Completeness",
+      "detection_vocabulary": [
+        "section has measurable items",
+        "at least one Item row",
+        "non-empty section"
+      ],
+      "judgment_vocabulary": [
+        "all required work represented",
+        "no missing work",
+        "project scope knowledge",
+        "complete work package"
+      ],
+      "boundary_observation": "Structural completeness is derivable (section has items). Full QS completeness requires knowing what work should be present."
+    }
+  },
+  "key_finding": "All four Domain Dependent capabilities exhibit a Detection/Decision split. Detection is Structurally Deterministic (observable from BOQRow + hierarchy). Decision requires either Semantically Deterministic rules (if formalized) or Professional Judgment (if project-specific or contextual)."
+}

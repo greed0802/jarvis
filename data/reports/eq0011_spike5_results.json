@@ -1,0 +1,77 @@
+{
+  "capability_dispositions": [
+    {
+      "capability_id": "V-003",
+      "capability_name": "Level Progression Validation",
+      "evidence_classification": "Structurally Deterministic",
+      "assessment_classification": "Professional Judgment",
+      "confidence": "High",
+      "detection_responsibility": "Detect and report level skip magnitude and location",
+      "decision_responsibility": "Determine whether skip is legitimate (QS judgment)",
+      "implementation_status": "not_permitted",
+      "implementation_constraint": "Engineering may detect and report skips but must not assess legitimacy. FP-003: Professional Judgment capabilities must not be automated."
+    },
+    {
+      "capability_id": "SEM-003",
+      "capability_name": "Items Always Quantify",
+      "evidence_classification": "Structurally Deterministic",
+      "assessment_classification": "Professional Judgment",
+      "confidence": "High",
+      "detection_responsibility": "Detect and report items with quantity == 0.0",
+      "decision_responsibility": "Determine whether zero is error or acceptable (QS judgment)",
+      "implementation_status": "not_permitted",
+      "implementation_constraint": "Engineering may detect and report zero-quantity items but must not assess acceptability. FP-003: Professional Judgment capabilities must not be automated."
+    },
+    {
+      "capability_id": "V-004",
+      "capability_name": "Scope Containment (Semantic)",
+      "evidence_classification": "Structurally Deterministic",
+      "assessment_classification": "Semantically Deterministic (future) OR Professional Judgment",
+      "confidence": "Medium",
+      "detection_responsibility": "Verify child_level <= parent_level (structural containment)",
+      "decision_responsibility": "Determine semantic scope alignment (domain rules or QS judgment)",
+      "implementation_status": "contingent",
+      "implementation_constraint": "Structural containment detection is permitted. Semantic assessment requires formal domain rules via new Engineering Question. FP-004: Without formal rules, assessment remains Professional Judgment."
+    },
+    {
+      "capability_id": "V-005",
+      "capability_name": "Completeness (Full QS)",
+      "evidence_classification": "Structurally Deterministic",
+      "assessment_classification": "Semantically Deterministic (future) OR Professional Judgment",
+      "confidence": "Medium",
+      "detection_responsibility": "Verify each section contains at least one measurable item",
+      "decision_responsibility": "Determine whether all required work is represented (domain rules or QS judgment)",
+      "implementation_status": "contingent",
+      "implementation_constraint": "Basic completeness detection is permitted. Full QS completeness assessment requires project scope definitions via new Engineering Question. FP-004: Without formal rules, assessment remains Professional Judgment."
+    }
+  ],
+  "increment3_scope": {
+    "permitted": [
+      "Level skip detection (evidence component of V-003)",
+      "Zero-quantity item detection (evidence component of SEM-003)",
+      "Structural containment check (evidence component of V-004)",
+      "Section-has-items basic completeness check (evidence component of V-005)",
+      "Structural evidence presentation for all observed facts"
+    ],
+    "contingent": [
+      "Semantic scope containment (V-004) \u2014 requires formal scope taxonomy via EQ",
+      "Full QS completeness (V-005) \u2014 requires project scope definitions via EQ"
+    ],
+    "not_permitted": [
+      "V-003: Skip legitimacy assessment (Professional Judgment)",
+      "SEM-003: Zero-quantity acceptability assessment (Professional Judgment)",
+      "V-004: Semantic scope containment without formal rules (FP-004)",
+      "V-005: Full completeness without project scope definitions (FP-004)",
+      "Any automated inference of professional intent (FP-001, P-005)",
+      "Any 'should' conclusion without formalized rules (FP-005)"
+    ]
+  },
+  "investigation_conclusion": {
+    "status": "Complete",
+    "gate_2_ready": true,
+    "core_question": "Where is the engineering boundary between deterministic structural evidence and professional QS judgment?",
+    "answer": "The boundary is defined by 7 engineering principles (P-001 through P-007), 5 first principles (FP-001 through FP-005), and 6 responsibility boundaries. Detection of structural facts is always deterministic. Assessment of meaning, legitimacy, and acceptability is either Semantically Deterministic (requiring formalized rules via new Engineering Question) or Professional Judgment (cannot be automated with current evidence).",
+    "increment3_recommendation": "Implement detection components (permitted list) only. Do not attempt semantic assessment without formal domain rules. V-003 and SEM-003 assessment components must remain Professional Judgment unless new evidence demonstrates otherwise.",
+    "non_goals": "This investigation did not convert professional QS judgment into deterministic rules. It did not propose architecture. It did not implement anything. Every conclusion is traceable to EQ-0010 or EQ-0011 frozen evidence."
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "decompositions": [
+    {
+      "capability_id": "V-003",
+      "capability_name": "Level Progression Validation",
+      "evidence": {
+        "capability": "V-003",
+        "evidence_description": "Level skip detection: identify when child level > parent level + 1",
+        "data_source": "BOQRow.uom field + reconstructed hierarchy parent relationships",
+        "computation": "For each header: extract level from UOM (Head1\u21921, Head2\u21922, etc.), compare child_level to parent_level, flag if gap > 1",
+        "example_from_fixture": "Row 1661: Head3 under Head1 (skip=2), Rows 5709-5745: 7\u00d7 Head4 under Head2 (skip=2)",
+        "traceability": "EQ-0010 Spike 5: 12 skip violations detected deterministically"
+      },
+      "assessment": {
+        "capability": "V-003",
+        "assessment_description": "Determine whether detected skip is legitimate organizational pattern or structural error",
+        "why_not_deterministic": "Domain rule states levels 'should' progress sequentially but allows 'additional subdivision as required by project complexity'",
+        "context_required": "Understanding of: (1) project organizational requirements, (2) whether skip serves legitimate purpose, (3) QS office standards for this project type",
+        "could_formalize": "no_requires_judgment",
+        "formalization_prerequisite": "Would require: (1) project-specific organizational rules, (2) client-specific hierarchy standards, (3) definition of 'legitimate' for each context. These vary per project and cannot be pre-formalized.",
+        "traceability": "Domain Layer: 'Hierarchy Level N: Additional subdivision levels as required by project complexity' \u2014 'as required' signals judgment"
+      },
+      "boundary_statement": "Evidence: Skip detection is Structurally Deterministic (gap computation over hierarchy). Assessment: Skip legitimacy requires Professional Judgment (project-specific context)."
+    },
+    {
+      "capability_id": "SEM-003",
+      "capability_name": "Items Always Quantify",
+      "evidence": {
+        "capability": "SEM-003",
+        "evidence_description": "Zero-quantity detection: identify items where quantity field == 0",
+        "data_source": "BOQRow.quantity field for rows where row_type == 'Item'",
+        "computation": "For each Item row: check if quantity == 0.0, flag if true",
+        "example_from_fixture": "Rows 5698, 6088, 6091, 6130, 6133: all have quantity=0.0",
+        "traceability": "EQ-0010 Spike 5: 5 zero-quantity items detected deterministically"
+      },
+      "assessment": {
+        "capability": "SEM-003",
+        "assessment_description": "Determine whether zero quantity is data entry error, incomplete takeoff, or legitimate placeholder",
+        "why_not_deterministic": "Domain rule states items 'always' quantify but zero-quantity items exist in production. Disposition depends on QS intent and project stage.",
+        "context_required": "Understanding of: (1) whether item is placeholder for future measurement, (2) whether takeoff is complete, (3) whether zero is intentional (e.g., omission item)",
+        "could_formalize": "no_requires_judgment",
+        "formalization_prerequisite": "Would require: (1) project stage tracking (draft vs final), (2) QS intent capture (placeholder vs error), (3) omission/addition context. These are project-state dependent and require QS interpretation.",
+        "traceability": "Domain Layer: 'SEM-003: Items must have quantity and UOM' \u2014 production evidence shows 5 zero-quantity items; rule cannot be absolute without context"
+      },
+      "boundary_statement": "Evidence: Zero-quantity detection is Structurally Deterministic (field value comparison). Assessment: Zero-quantity acceptability requires Professional Judgment (QS intent and project state)."
+    },
+    {
+      "capability_id": "V-004",
+      "capability_name": "Scope Containment",
+      "evidence": {
+        "capability": "V-004",
+        "evidence_description": "Parent-level consistency: verify child_level <= parent_level (structural containment)",
+        "data_source": "Reconstructed hierarchy with level assignments",
+        "computation": "For each parent-child pair: compare levels, flag if child_level > parent_level (structural inversion)",
+        "example_from_fixture": "EQ-0010 Spike 5: 0 structural inversions detected (all parent-level relationships consistent)",
+        "traceability": "EQ-0010 Spike 5: Parent-level consistency classified as Derivable"
+      },
+      "assessment": {
+        "capability": "V-004",
+        "assessment_description": "Determine whether child work scope semantically fits within parent scope (semantic containment)",
+        "why_not_deterministic": "Structural containment ensures level consistency but not scope alignment. Requires understanding what each header represents, not just its level.",
+        "context_required": "Understanding of: (1) semantic meaning of parent header, (2) semantic meaning of child header, (3) whether child scope is subset of parent scope",
+        "could_formalize": "yes_with_rules",
+        "formalization_prerequisite": "Would require: (1) explicit scope definitions for standard headers (e.g., 'SUBSTRUCTURE' contains foundation work), (2) scope taxonomy (trade-based, location-based, element-based), (3) containment rules (e.g., 'Concrete Work' contains 'Reinforcement'). These could be formalized as Semantic Rules for standard BOQ patterns.",
+        "traceability": "Domain Layer: 'Hierarchy - Semantic Inheritance: Child elements inherit meaning from parents' \u2014 requires understanding meaning, not just observing structure"
+      },
+      "boundary_statement": "Evidence: Parent-level consistency is Structurally Deterministic (already confirmed in EQ-0010). Assessment: Semantic scope containment could become Semantically Deterministic with formalized scope rules, otherwise requires Professional Judgment for non-standard structures."
+    },
+    {
+      "capability_id": "V-005",
+      "capability_name": "Completeness",
+      "evidence": {
+        "capability": "V-005",
+        "evidence_description": "Section-has-items: verify each section contains at least one measurable item",
+        "data_source": "BOQRow section field + row_type field",
+        "computation": "Group rows by section, count Item rows per section, flag sections with 0 items",
+        "example_from_fixture": "EQ-0010 Spike 5: All sections contain at least one Item row (basic completeness satisfied)",
+        "traceability": "EQ-0010 Spike 5: Section-has-measurable-items classified as Derivable"
+      },
+      "assessment": {
+        "capability": "V-005",
+        "assessment_description": "Determine whether all required work for project scope is represented (full QS completeness)",
+        "why_not_deterministic": "Structural completeness (section has items) does not prove scope completeness (all required work present). Requires knowledge of project requirements.",
+        "context_required": "Understanding of: (1) project scope and deliverables, (2) work breakdown structure requirements, (3) trade/element coverage expectations, (4) client-specific completeness criteria",
+        "could_formalize": "yes_with_rules",
+        "formalization_prerequisite": "Would require: (1) project scope definition (deliverables, trades, elements), (2) completeness checklist per project type, (3) required work packages mapped to BOQ structure. These could be formalized as Semantic Rules for standard project types, but vary per project and client.",
+        "traceability": "Domain Layer: 'Completeness: No missing work, all required measurable work represented' \u2014 'required work' is project-specific and cannot be determined from BOQ structure alone"
+      },
+      "boundary_statement": "Evidence: Section-has-items is Structurally Deterministic (already confirmed in EQ-0010). Assessment: Full completeness could become Semantically Deterministic with project scope definitions, otherwise requires Professional Judgment based on project knowledge."
+    }
+  ],
+  "formalization_analysis": {
+    "potentially_formalizable": {
+      "V-004": {
+        "capability": "Scope Containment (semantic)",
+        "evidence": "Parent-level consistency already deterministic",
+        "formalization_path": "Define scope taxonomy + containment rules for standard BOQ patterns",
+        "prerequisite": "Explicit scope definitions and containment mappings",
+        "caveat": "Non-standard organizational patterns still require judgment",
+        "classification_if_formalized": "Semantically Deterministic"
+      },
+      "V-005": {
+        "capability": "Completeness (full QS)",
+        "evidence": "Section-has-items already deterministic",
+        "formalization_path": "Define required work packages per project type",
+        "prerequisite": "Project scope definition and completeness checklists",
+        "caveat": "Project-specific requirements vary; formalization limited to standard project types",
+        "classification_if_formalized": "Semantically Deterministic (for standard projects)"
+      }
+    },
+    "not_formalizable": {
+      "V-003": {
+        "capability": "Level Progression (skip legitimacy)",
+        "evidence": "Skip detection already deterministic",
+        "why_not_formalizable": "Legitimacy depends on project-specific organizational decisions that vary per project and cannot be pre-defined",
+        "classification": "Professional Judgment"
+      },
+      "SEM-003": {
+        "capability": "Items Always Quantify (zero acceptability)",
+        "evidence": "Zero-quantity detection already deterministic",
+        "why_not_formalizable": "Acceptability depends on QS intent, project stage, and whether zero is error or placeholder \u2014 context-specific interpretation required",
+        "classification": "Professional Judgment"
+      }
+    }
+  },
+  "summary": {
+    "evidence_classification": "All 4 evidence components: Structurally Deterministic",
+    "assessment_classification": {
+      "semantically_deterministic_potential": [
+        "V-004",
+        "V-005"
+      ],
+      "professional_judgment": [
+        "V-003",
+        "SEM-003"
+      ]
+    },
+    "key_distinction": "Evidence (what is) vs Assessment (what it means). Evidence is always structural and deterministic. Assessment requires either formalized semantic rules or professional judgment."
+  }
+}
