@@ -25,8 +25,9 @@ The architecture is defined by:
 |----------|-------|
 | Architecture Version | v0.1.0 |
 | Software Version | 0.0.1-alpha.5 |
-| Current Phase | Phase 1 — Foundation |
-| Current Milestone | M7 — Context Engine Runtime (pending) |
+| Current Phase | Phase 2 — Capability Era |
+| Current Active Capability | BOQ Intelligence |
+| Capability Status | Increment 1 Complete |
 
 ---
 
@@ -36,9 +37,8 @@ The architecture is defined by:
 |----------|-------|
 | Parser Foundation | Complete |
 | Repository Stabilization | Complete |
-| Current Active Milestone | M7 — Context Engine Runtime |
-| Current Active Engineering Questions | No active Engineering Question (between milestones) |
-| Next Engineering Question | To be defined during M7 planning |
+| Current Active Capability | BOQ Intelligence (Increment 1 Complete) |
+| Capability Planning Authority | `docs/planning/Capability_Register.md`, `docs/planning/Capability_Roadmap.md` |
 
 ---
 
@@ -239,38 +239,70 @@ Historical Note: During M6 the Observation Runtime was implemented prior to form
 
 ---
 
-# Next Milestone
-
-## M7 — Context Engine Runtime
+## BOQ Intelligence Increment 1 — Capability Era Implementation
 
 | Property | Value |
 |----------|-------|
-| Goal | Validate the Context Engine architecture through the first real data flowing into the Data Plane. |
-| Engineering Question | TBD — to be defined before implementation begins. |
-| Scope | Implement only the minimum Context Engine functionality required by the first working vertical slice. Domain concepts should remain local until repeated use justifies promotion into shared architecture. |
-| Out of Scope | Planner, Workflow, Skills, AI, Memory, Knowledge, or speculative domain abstractions. |
+| Goal | Implement the first approved Capability (BOQ Intelligence) as pure functions over existing production types, with full regression testing against authoritative fixture and centralized evidence reference. |
+| Engineering Question | Can the approved BOQ Intelligence capability be implemented as pure functions over `list[BOQRow]` without architectural expansion, and can all acceptance criteria be verified against EQ-0007 evidence? |
+| Status | **Complete** |
+| Date | 2026-07-14 |
+| Files Created | `src/jarvis/parsers/costx/boq_intelligence.py`, `tests/parser/test_boq_intelligence.py`, `tests/reference/eq0007_evidence.py`, `tests/reference/__init__.py`, `tests/fixtures/fixtures.json`, `tests/fixtures/FIXTURE_METADATA.py`, `tests/fixtures/README.md`, `tools/register_fixture.py` |
+| Files Deleted | `tests/fixtures/costx/FIXTURE_METADATA.py` (superseded by global fixture registry) |
+| Tests | 26 new acceptance tests covering: production pipeline verification, identity-level anomaly detection, determinism, fixture integrity, edge cases |
+| Test Results | 73 passed, 8 skipped (pre-existing historical), 0 failures |
+
+### Evidence Package
+
+**Acceptance Criteria Met:**
+- Row classification counts match EQ-0007 accepted values exactly (Head: 2011, Note: 520, Section: 15, Item: 3605, Other: 198)
+- Total row count: 6349 (matches EQ-0007)
+- Section statistics match exactly (OMISSION: 169 negative, 7 positive; ADDITION: 0 negative, 3 positive)
+- All 7 known anomalies detected with exact identity (row_number, code, quantity, section)
+- BOQ statistics computed correctly (code_rows: 4257, description_rows: 6278, quantity_rows: 3605, uom_rows: 6161, section_rows: 491)
+- Deterministic output verified across multiple runs
+
+**No Regressions Introduced:**
+- All 10 existing BOQ extraction tests pass unchanged
+- All 10 existing workbook parser tests pass unchanged
+- All 10 existing observation model tests pass unchanged
+- All 18 existing lifecycle tests pass unchanged
+- Total test suite: 73 passed (was 47 before implementation, now 73 with 26 new tests)
+
+**Existing Parser Behavior Unchanged:**
+- `WorkbookParser` API unchanged (load, validate, close, workbook property)
+- `extract_boq()` function unchanged (same signature, same output)
+- `BOQRow` dataclass unchanged (same fields, same types)
+- No modifications to `src/jarvis/parsers/costx/workbook_parser.py`
+- No modifications to `src/jarvis/parsers/costx/boq_extraction.py`
+
+### Architecture Compliance
+
+- **Capability Constraint**: Implementation is pure functions over `list[BOQRow]`. No architectural expansion.
+- **YAGNI**: Only approved capabilities implemented. No speculative features.
+- **Modular Architecture**: `boq_intelligence.py` is isolated module with single responsibility.
+- **Evidence Before Abstraction**: All values trace to EQ-0007 production evidence.
+- **Fixture Integrity**: SHA-256 verification ensures fixture identity. Registration is explicit governance action.
+- **Deterministic Engineering**: Frozen dataclass, sorted outputs, atomic metadata writes.
 
 ---
 
-# Future Milestones
+# Current Capability State
 
-These milestones represent the current implementation roadmap and may evolve based on implementation evidence and future ADRs.
+The Capability Era replaced milestone-driven planning with capability-driven governance.
 
-| Milestone | Description |
-|-----------|-------------|
-| M8 — Planner Runtime | Implement the Planner Engine with deterministic plan construction and approval flow, consuming Context and producing Plans. |
-| M9 — Workflow Runtime | Implement the Workflow Engine with Task management, Capability resolution, and the execution control loop. |
-| M10 — Skill Runtime | Implement the Skill Framework with Capability Registry, Capability Resolver, and the first working Skill. |
-| M11 — First End-to-End Request | Wire Context → Planner → Workflow → Skill → Result into the first complete data plane request cycle. |
-| M12 — Validation Framework | Implement the Validation Framework as a cross-cutting concern integrated with the Workflow Engine's execution loop. |
-| M13 — Memory Framework | Implement the Memory Framework for preserving experience and supporting Context construction. |
-| M14 — Provider Framework | Implement the Provider/Resource abstraction layer for external system integration. |
+Planning authority is maintained in:
+- `docs/planning/Capability_Register.md` — current state of all capabilities
+- `docs/planning/Capability_Roadmap.md` — capability relationships and sequencing
 
 ---
 
 # Engineering Workflow
 
-Every milestone follows this standard development cycle:
+This workflow begins after a capability has been approved through the Capability Era governance process described in `docs/planning/Capability_Roadmap.md`.
+
+Every capability implementation follows this standard development cycle:
+
 
 ```
 Engineering Question
@@ -300,18 +332,20 @@ Commit
 Tag
         │
         ▼
-Next Milestone
+Next Capability
 ```
+
+After implementation is complete, capability selection resumes through the Capability Era governance process.
 
 ### Phase Descriptions
 
-**Engineering Question** — Every milestone shall define the engineering question it is intended to answer before implementation begins. This question frames the milestone's purpose and provides an objective basis for completion review.
+**Engineering Question** — Every capability implementation shall define the engineering question it is intended to answer before implementation begins. This question frames the implementation's purpose and provides an objective basis for completion review.
 
 **Architecture Review** — Confirm the milestone objective against architecture documents and accepted ADRs. No implementation begins without architectural alignment.
 
-**Implementation** — Write the smallest implementation necessary to answer the Engineering Question. For milestone implementations this should be production-ready. For engineering spikes, optimize for learning rather than production quality. Follow YAGNI — no speculative features.
+**Implementation** — Write the smallest implementation necessary to answer the Engineering Question. Production implementations should be production-ready. For engineering spikes, optimize for learning rather than production quality. Follow YAGNI — no speculative features.
 
-**Real Fixture Demonstration** — No milestone is complete without same-implementation demonstration against real fixtures. Implementation must be exercised against actual fixture files (e.g., `tests/fixtures/costx/full_boq.xlsx`) to validate that the code produces correct results on real data, not only on synthetic test cases. This requirement applies before the milestone is tagged and closed.
+**Real Fixture Demonstration** — No capability implementation is complete without demonstration against real fixtures. Implementation must be exercised against actual fixture files (e.g., `tests/fixtures/costx/full_boq.xlsx`) to validate that the code produces correct results on real data, not only on synthetic test cases.
 
 **Architecture Audit** — Verify that the implementation conforms to the existing architecture. Stop if any architectural decision is violated. Propose an ADR if a change is necessary. Confirm whether the Engineering Question was answered.
 
@@ -319,11 +353,11 @@ Next Milestone
 
 **Documentation Synchronization** — Update architecture documents only if the implementation revealed a gap or clarified a previously abstract concept. Never introduce new architecture during synchronization.
 
-**Commit** — Commit with a descriptive message referencing the milestone.
+**Commit** — Commit with a descriptive message referencing the capability.
 
 **Tag** — Tag the commit with the next version (e.g., `v0.0.1-alpha.4`).
 
-**Next Milestone** — Advance to the next milestone in sequence.
+**Next Capability** — Advance to the next capability in the Capability Roadmap.
 
 ### Engineering Spikes
 

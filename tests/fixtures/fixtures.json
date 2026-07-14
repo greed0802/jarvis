@@ -1,0 +1,8 @@
+{
+  "full_boq.xlsx": {
+    "path": "costx/full_boq.xlsx",
+    "sha256": "d8afb0fe54110d45fb268a28acfedaab5fd11258225dabbd944db1b84a252844",
+    "description": "Primary CostX BOQ export (EQ-0007, EQ-0009)",
+    "acquired": "2026-07-14"
+  }
+}
