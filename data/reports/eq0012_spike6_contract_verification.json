@@ -1,0 +1,331 @@
+{
+  "audit_date": "2026-07-15",
+  "investigation": "EQ-0012 Spike 6: Contract Publication Verification",
+  "contract": "docs\\contracts\\BOQ_Intelligence_Public_Evidence_Contract_v1.0.md",
+  "verifications": [
+    {
+      "claim": "Field 'row_classification' type 'dict[str, int]' present",
+      "category": "production_type",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Field 'section_statistics' type 'dict[str, dict[str, int]]' present",
+      "category": "production_type",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Field 'boq_statistics' type 'dict[str, int | float]' present",
+      "category": "production_type",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Field 'known_anomalies' type 'list[dict[str, int | str | float]]' present",
+      "category": "production_type",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Field 'hierarchy' type 'tuple[BOQHeaderNode, ...] | None' present",
+      "category": "production_type",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Field 'hierarchy_statistics' type 'dict[str, int | float] | None' present",
+      "category": "production_type",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Field 'detected_level_skips' type 'tuple[dict[str, int], ...] | None' present",
+      "category": "production_type",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Field 'zero_quantity_items' type 'tuple[dict[str, int | str | float | None], ...] | None' present",
+      "category": "production_type",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Field 'structural_containment_findings' type 'tuple[dict[str, int], ...] | None' present",
+      "category": "production_type",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Field 'completeness_findings' type 'tuple[dict[str, int | str], ...] | None' present",
+      "category": "production_type",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Evidence field 'row_classification' documented",
+      "category": "field_presence",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Evidence field 'section_statistics' documented",
+      "category": "field_presence",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Evidence field 'boq_statistics' documented",
+      "category": "field_presence",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Evidence field 'known_anomalies' documented",
+      "category": "field_presence",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Evidence field 'hierarchy' documented",
+      "category": "field_presence",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Evidence field 'hierarchy_statistics' documented",
+      "category": "field_presence",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Evidence field 'detected_level_skips' documented",
+      "category": "field_presence",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Evidence field 'zero_quantity_items' documented",
+      "category": "field_presence",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Evidence field 'structural_containment_findings' documented",
+      "category": "field_presence",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Evidence field 'completeness_findings' documented",
+      "category": "field_presence",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-01' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-02' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-03' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-04' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-05' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-06' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-07' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-08' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-09' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-10' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-11' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-12' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-13' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-14' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-15' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Consumer guarantee 'G-16' present",
+      "category": "guarantee",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Required section 'Contract Header' present",
+      "category": "document_structure",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Required section 'Contract Overview' present",
+      "category": "document_structure",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Required section 'Versioning Policy' present",
+      "category": "document_structure",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Required section 'Deprecation Lifecycle' present",
+      "category": "document_structure",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Required section 'Consumer Access Patterns' present",
+      "category": "document_structure",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Required section 'Evidence Field Specifications' present",
+      "category": "document_structure",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Required section 'BOQHeaderNode Specification' present",
+      "category": "document_structure",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Required section 'Contract Invariants Summary' present",
+      "category": "document_structure",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Stable import path documented: from jarvis.parsers.costx.boq_intelligence import analyze_boq",
+      "category": "consumer_access",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Stable import path documented: from jarvis.parsers.costx.boq_intelligence import BOQIntelligenceResult",
+      "category": "consumer_access",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Stable import path documented: from jarvis.parsers.costx.boq_intelligence import BOQHeaderNode",
+      "category": "consumer_access",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Stable import path documented: from jarvis.parsers.costx.boq_extraction import BOQRow",
+      "category": "consumer_access",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Stable import path documented: from jarvis.parsers.costx.boq_extraction import extract_boq",
+      "category": "consumer_access",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Versioning policy element 'Semantic Versioning' present",
+      "category": "versioning",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Versioning policy element 'MAJOR.MINOR.PATCH' present",
+      "category": "versioning",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Versioning policy element 'Candidate 1.0.0' present",
+      "category": "versioning",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Deprecation lifecycle element 'Phase 1' present",
+      "category": "deprecation",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Deprecation lifecycle element 'Deprecation Announcement' present",
+      "category": "deprecation",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Deprecation lifecycle element 'Phase 2' present",
+      "category": "deprecation",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Deprecation lifecycle element 'Removal Notice' present",
+      "category": "deprecation",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Deprecation lifecycle element 'Phase 3' present",
+      "category": "deprecation",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Deprecation lifecycle element 'Removal' present",
+      "category": "deprecation",
+      "status": "MATCH"
+    },
+    {
+      "claim": "EQ-0011 engineering boundary preserved (observation/detection classification)",
+      "category": "boundary",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Traceability reference present: Production\\s*(Line|Location)",
+      "category": "traceability",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Traceability reference present: Engineering\\s*(Evidence|Question)",
+      "category": "traceability",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Traceability reference present: boq_intelligence\\.py",
+      "category": "traceability",
+      "status": "MATCH"
+    },
+    {
+      "claim": "No speculative future content present",
+      "category": "no_speculation",
+      "status": "MATCH"
+    }
+  ],
+  "summary": {
+    "total_verifications": 63,
+    "matches": 63,
+    "drifts": 0,
+    "errors": 0,
+    "ambiguous": 0,
+    "match_percentage": 100.0
+  },
+  "recommendation": "Freeze and Publish - Contract faithfully represents all frozen evidence"
+}

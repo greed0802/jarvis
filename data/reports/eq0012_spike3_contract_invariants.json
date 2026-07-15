@@ -1,0 +1,718 @@
+{
+  "investigation": "EQ-0012 Spike 3: Contract Invariants",
+  "date": "2026-07-15",
+  "summary": {
+    "total_fields": 10,
+    "required_fields": 4,
+    "optional_fields": 6,
+    "total_structural_invariants": 39,
+    "total_semantic_invariants": 31
+  },
+  "field_invariants": [
+    {
+      "field_name": "row_classification",
+      "field_type": "dict[str, int]",
+      "required": true,
+      "structural_invariants": [
+        {
+          "invariant_id": "SI-RC-01",
+          "category": "presence",
+          "description": "Field must always exist and never be None",
+          "verification": "Assert field is not None",
+          "violation_impact": "MAJOR - consumer code expects field"
+        },
+        {
+          "invariant_id": "SI-RC-02",
+          "category": "type",
+          "description": "Field must be dict[str, int]",
+          "verification": "Assert isinstance(field, dict) and all(isinstance(k, str) and isinstance(v, int) for k, v in field.items())",
+          "violation_impact": "MAJOR - type mismatch breaks consumers"
+        },
+        {
+          "invariant_id": "SI-RC-03",
+          "category": "immutability",
+          "description": "Evidence is immutable after creation",
+          "verification": "Dataclass frozen=True",
+          "violation_impact": "MAJOR - consumers depend on immutability"
+        },
+        {
+          "invariant_id": "SI-RC-04",
+          "category": "shape",
+          "description": "Keys are row type strings ('Head', 'Note', 'Section', 'Item', 'Other'), values are integer counts",
+          "verification": "Assert set(field.keys()) == {'Head', 'Note', 'Section', 'Item', 'Other'}",
+          "violation_impact": "MAJOR - shape contract violated"
+        }
+      ],
+      "semantic_invariants": [
+        {
+          "invariant_id": "SE-RC-01",
+          "category": "determinism",
+          "description": "Same worksheet produces same classifications",
+          "verification": "Run analysis twice, compare results",
+          "violation_impact": "MAJOR - non-determinism breaks consumer trust"
+        },
+        {
+          "invariant_id": "SE-RC-02",
+          "category": "boundary",
+          "description": "Classification is observation only - no decision language",
+          "verification": "Check RowType enum values against EQ-0011 forbidden terms",
+          "violation_impact": "MAJOR - engineering boundary violation"
+        },
+        {
+          "invariant_id": "SE-RC-03",
+          "category": "provenance",
+          "description": "Classification traceable to Increment 1 engineering evidence",
+          "verification": "Assert classification logic matches EQ-0007 specification",
+          "violation_impact": "MAJOR - untraceable evidence"
+        },
+        {
+          "invariant_id": "SE-RC-04",
+          "category": "reproducibility",
+          "description": "Classification reproducible from worksheet observation alone",
+          "verification": "Assert no external state dependencies",
+          "violation_impact": "MAJOR - non-reproducible evidence"
+        }
+      ],
+      "cross_field_dependencies": [
+        "section_statistics",
+        "boq_statistics"
+      ]
+    },
+    {
+      "field_name": "section_statistics",
+      "field_type": "dict[str, dict[str, int]]",
+      "required": true,
+      "structural_invariants": [
+        {
+          "invariant_id": "SI-SS-01",
+          "category": "presence",
+          "description": "Field must always exist and never be None",
+          "verification": "Assert field is not None",
+          "violation_impact": "MAJOR - consumer code expects field"
+        },
+        {
+          "invariant_id": "SI-SS-02",
+          "category": "type",
+          "description": "Field must be dict[str, dict[str, int]]",
+          "verification": "Assert isinstance(field, dict) and all(isinstance(v, dict) for v in field.values())",
+          "violation_impact": "MAJOR - type mismatch breaks consumers"
+        },
+        {
+          "invariant_id": "SI-SS-03",
+          "category": "shape",
+          "description": "Outer dict: section name \u2192 section stats dict. Inner dict keys: 'negative_qty', 'positive_qty' \u2192 integer counts",
+          "verification": "For each section dict, assert set(section.keys()).issubset({'negative_qty', 'positive_qty'})",
+          "violation_impact": "MAJOR - shape contract violated"
+        },
+        {
+          "invariant_id": "SI-SS-04",
+          "category": "immutability",
+          "description": "Evidence is immutable after creation",
+          "verification": "Dataclass frozen=True",
+          "violation_impact": "MAJOR - consumers depend on immutability"
+        }
+      ],
+      "semantic_invariants": [
+        {
+          "invariant_id": "SE-SS-01",
+          "category": "determinism",
+          "description": "Same worksheet produces same section statistics",
+          "verification": "Run analysis twice, compare results",
+          "violation_impact": "MAJOR - non-determinism breaks consumer trust"
+        },
+        {
+          "invariant_id": "SE-SS-02",
+          "category": "meaning",
+          "description": "Section statistics represent structural observation only",
+          "verification": "Verify no decision semantics in keys or values",
+          "violation_impact": "MAJOR - engineering boundary violation"
+        },
+        {
+          "invariant_id": "SE-SS-03",
+          "category": "provenance",
+          "description": "Statistics traceable to Increment 1 engineering evidence",
+          "verification": "Assert logic matches EQ-0007 specification",
+          "violation_impact": "MAJOR - untraceable evidence"
+        }
+      ],
+      "cross_field_dependencies": [
+        "row_classification",
+        "boq_statistics"
+      ]
+    },
+    {
+      "field_name": "boq_statistics",
+      "field_type": "dict[str, int | float]",
+      "required": true,
+      "structural_invariants": [
+        {
+          "invariant_id": "SI-BS-01",
+          "category": "presence",
+          "description": "Field must always exist and never be None",
+          "verification": "Assert field is not None",
+          "violation_impact": "MAJOR - consumer code expects field"
+        },
+        {
+          "invariant_id": "SI-BS-02",
+          "category": "type",
+          "description": "Field must be dict[str, int | float]",
+          "verification": "Assert isinstance(field, dict) and all(isinstance(v, (int, float)) for v in field.values())",
+          "violation_impact": "MAJOR - type mismatch breaks consumers"
+        },
+        {
+          "invariant_id": "SI-BS-03",
+          "category": "shape",
+          "description": "Required keys: 'total_rows', 'code_rows', 'description_rows', 'quantity_rows', 'uom_rows', 'section_rows' \u2192 int or float values",
+          "verification": "Assert set(field.keys()) == {'total_rows', 'code_rows', 'description_rows', 'quantity_rows', 'uom_rows', 'section_rows'}",
+          "violation_impact": "MAJOR - shape contract violated"
+        },
+        {
+          "invariant_id": "SI-BS-04",
+          "category": "immutability",
+          "description": "Evidence is immutable after creation",
+          "verification": "Dataclass frozen=True",
+          "violation_impact": "MAJOR - consumers depend on immutability"
+        }
+      ],
+      "semantic_invariants": [
+        {
+          "invariant_id": "SE-BS-01",
+          "category": "determinism",
+          "description": "Same worksheet produces same BOQ statistics",
+          "verification": "Run analysis twice, compare results",
+          "violation_impact": "MAJOR - non-determinism breaks consumer trust"
+        },
+        {
+          "invariant_id": "SE-BS-02",
+          "category": "meaning",
+          "description": "BOQ statistics represent quantitative observation only",
+          "verification": "Verify no decision semantics in keys or values",
+          "violation_impact": "MAJOR - engineering boundary violation"
+        },
+        {
+          "invariant_id": "SE-BS-03",
+          "category": "provenance",
+          "description": "Statistics traceable to Increment 1 engineering evidence",
+          "verification": "Assert logic matches EQ-0007 specification",
+          "violation_impact": "MAJOR - untraceable evidence"
+        }
+      ],
+      "cross_field_dependencies": [
+        "row_classification",
+        "section_statistics"
+      ]
+    },
+    {
+      "field_name": "known_anomalies",
+      "field_type": "list[dict[str, int | str | float]]",
+      "required": true,
+      "structural_invariants": [
+        {
+          "invariant_id": "SI-KA-01",
+          "category": "presence",
+          "description": "Field must always exist (may be empty list)",
+          "verification": "Assert field is not None",
+          "violation_impact": "MAJOR - consumer code expects field"
+        },
+        {
+          "invariant_id": "SI-KA-02",
+          "category": "type",
+          "description": "Field must be list[dict[str, int | str | float]]",
+          "verification": "Assert isinstance(field, list) and all(isinstance(x, dict) for x in field)",
+          "violation_impact": "MAJOR - type mismatch breaks consumers"
+        },
+        {
+          "invariant_id": "SI-KA-03",
+          "category": "shape",
+          "description": "Each anomaly dict contains keys: 'row_number' (int), 'code' (str), 'quantity' (float), 'section' (str)",
+          "verification": "For each anomaly, assert set(anomaly.keys()) == {'row_number', 'code', 'quantity', 'section'}",
+          "violation_impact": "MAJOR - shape contract violated"
+        },
+        {
+          "invariant_id": "SI-KA-04",
+          "category": "immutability",
+          "description": "Evidence is immutable after creation",
+          "verification": "Dataclass frozen=True",
+          "violation_impact": "MAJOR - consumers depend on immutability"
+        }
+      ],
+      "semantic_invariants": [
+        {
+          "invariant_id": "SE-KA-01",
+          "category": "determinism",
+          "description": "Same worksheet produces same anomaly list",
+          "verification": "Run analysis twice, compare results",
+          "violation_impact": "MAJOR - non-determinism breaks consumer trust"
+        },
+        {
+          "invariant_id": "SE-KA-02",
+          "category": "boundary",
+          "description": "Anomalies describe observations only - no decision language",
+          "verification": "Check strings against EQ-0011 forbidden terms",
+          "violation_impact": "MAJOR - engineering boundary violation"
+        },
+        {
+          "invariant_id": "SE-KA-03",
+          "category": "provenance",
+          "description": "Anomalies traceable to Increment 1 engineering evidence",
+          "verification": "Assert logic matches EQ-0007 specification",
+          "violation_impact": "MAJOR - untraceable evidence"
+        }
+      ],
+      "cross_field_dependencies": []
+    },
+    {
+      "field_name": "hierarchy",
+      "field_type": "tuple[BOQHeaderNode, ...] | None",
+      "required": false,
+      "structural_invariants": [
+        {
+          "invariant_id": "SI-H-01",
+          "category": "presence",
+          "description": "Field may be None (controlled by include_hierarchy parameter)",
+          "verification": "Assert field is None or isinstance(field, tuple)",
+          "violation_impact": "MINOR - optional field behavior"
+        },
+        {
+          "invariant_id": "SI-H-02",
+          "category": "type",
+          "description": "When present, must be tuple[BOQHeaderNode, ...]",
+          "verification": "If not None, assert isinstance(field, tuple) and all(isinstance(n, BOQHeaderNode) for n in field)",
+          "violation_impact": "MAJOR - type mismatch breaks consumers"
+        },
+        {
+          "invariant_id": "SI-H-03",
+          "category": "immutability",
+          "description": "Evidence is immutable after creation (tuple + frozen BOQHeaderNode)",
+          "verification": "Dataclass frozen=True, tuple immutable, BOQHeaderNode frozen",
+          "violation_impact": "MAJOR - consumers depend on immutability"
+        }
+      ],
+      "semantic_invariants": [
+        {
+          "invariant_id": "SE-H-01",
+          "category": "determinism",
+          "description": "Same worksheet produces same hierarchy when include_hierarchy=True",
+          "verification": "Run analysis twice with same parameters, compare results",
+          "violation_impact": "MAJOR - non-determinism breaks consumer trust"
+        },
+        {
+          "invariant_id": "SE-H-02",
+          "category": "meaning",
+          "description": "Hierarchy represents structural relationships only",
+          "verification": "Verify no decision semantics in node attributes",
+          "violation_impact": "MAJOR - engineering boundary violation"
+        },
+        {
+          "invariant_id": "SE-H-03",
+          "category": "provenance",
+          "description": "Hierarchy traceable to Increment 2 engineering evidence",
+          "verification": "Assert logic matches increment 2 specification",
+          "violation_impact": "MAJOR - untraceable evidence"
+        }
+      ],
+      "cross_field_dependencies": [
+        "hierarchy_statistics"
+      ]
+    },
+    {
+      "field_name": "hierarchy_statistics",
+      "field_type": "dict[str, int | float] | None",
+      "required": false,
+      "structural_invariants": [
+        {
+          "invariant_id": "SI-HS-01",
+          "category": "presence",
+          "description": "Field may be None (controlled by include_hierarchy parameter)",
+          "verification": "Assert field is None or isinstance(field, dict)",
+          "violation_impact": "MINOR - optional field behavior"
+        },
+        {
+          "invariant_id": "SI-HS-02",
+          "category": "type",
+          "description": "When present, must be dict[str, int | float]",
+          "verification": "If not None, assert isinstance(field, dict) and all(isinstance(v, (int, float)) for v in field.values())",
+          "violation_impact": "MAJOR - type mismatch breaks consumers"
+        },
+        {
+          "invariant_id": "SI-HS-03",
+          "category": "shape",
+          "description": "Required keys: 'total_headers', 'root_headers', 'depth_distribution', 'items_per_header_by_uom' \u2192 int or float values",
+          "verification": "If not None, assert set(field.keys()) == {'total_headers', 'root_headers', 'depth_distribution', 'items_per_header_by_uom'}",
+          "violation_impact": "MAJOR - shape contract violated"
+        },
+        {
+          "invariant_id": "SI-HS-04",
+          "category": "immutability",
+          "description": "Evidence is immutable after creation",
+          "verification": "Dataclass frozen=True",
+          "violation_impact": "MAJOR - consumers depend on immutability"
+        }
+      ],
+      "semantic_invariants": [
+        {
+          "invariant_id": "SE-HS-01",
+          "category": "determinism",
+          "description": "Same worksheet produces same hierarchy statistics when include_hierarchy=True",
+          "verification": "Run analysis twice with same parameters, compare results",
+          "violation_impact": "MAJOR - non-determinism breaks consumer trust"
+        },
+        {
+          "invariant_id": "SE-HS-02",
+          "category": "meaning",
+          "description": "Statistics represent quantitative hierarchy observation only",
+          "verification": "Verify no decision semantics in keys or values",
+          "violation_impact": "MAJOR - engineering boundary violation"
+        },
+        {
+          "invariant_id": "SE-HS-03",
+          "category": "provenance",
+          "description": "Statistics traceable to Increment 2 engineering evidence",
+          "verification": "Assert logic matches increment 2 specification",
+          "violation_impact": "MAJOR - untraceable evidence"
+        }
+      ],
+      "cross_field_dependencies": [
+        "hierarchy"
+      ]
+    },
+    {
+      "field_name": "detected_level_skips",
+      "field_type": "tuple[dict[str, int], ...] | None",
+      "required": false,
+      "structural_invariants": [
+        {
+          "invariant_id": "SI-DLS-01",
+          "category": "presence",
+          "description": "Field may be None (controlled by include_detection parameter)",
+          "verification": "Assert field is None or isinstance(field, tuple)",
+          "violation_impact": "MINOR - optional field behavior"
+        },
+        {
+          "invariant_id": "SI-DLS-02",
+          "category": "type",
+          "description": "When present, must be tuple[dict[str, int], ...]",
+          "verification": "If not None, assert isinstance(field, tuple) and all(isinstance(x, dict) for x in field)",
+          "violation_impact": "MAJOR - type mismatch breaks consumers"
+        },
+        {
+          "invariant_id": "SI-DLS-03",
+          "category": "shape",
+          "description": "Each skip dict contains keys: 'parent_row_number', 'parent_level', 'child_row_number', 'child_level', 'skip_magnitude' \u2192 int values",
+          "verification": "For each skip, verify all keys present and all values are int",
+          "violation_impact": "MAJOR - shape contract violated"
+        },
+        {
+          "invariant_id": "SI-DLS-04",
+          "category": "immutability",
+          "description": "Evidence is immutable after creation (tuple immutability)",
+          "verification": "Dataclass frozen=True, tuple immutable",
+          "violation_impact": "MAJOR - consumers depend on immutability"
+        }
+      ],
+      "semantic_invariants": [
+        {
+          "invariant_id": "SE-DLS-01",
+          "category": "determinism",
+          "description": "Same worksheet produces same level skips when include_detection=True",
+          "verification": "Run analysis twice with same parameters, compare results",
+          "violation_impact": "MAJOR - non-determinism breaks consumer trust"
+        },
+        {
+          "invariant_id": "SE-DLS-02",
+          "category": "boundary",
+          "description": "Detections describe patterns only - no decision language",
+          "verification": "Check field keys/values against EQ-0011 forbidden terms",
+          "violation_impact": "MAJOR - engineering boundary violation"
+        },
+        {
+          "invariant_id": "SE-DLS-03",
+          "category": "provenance",
+          "description": "Detections traceable to Increment 3 engineering evidence",
+          "verification": "Assert logic matches increment 3 specification",
+          "violation_impact": "MAJOR - untraceable evidence"
+        }
+      ],
+      "cross_field_dependencies": [
+        "hierarchy"
+      ]
+    },
+    {
+      "field_name": "zero_quantity_items",
+      "field_type": "tuple[dict[str, int | str | float | None], ...] | None",
+      "required": false,
+      "structural_invariants": [
+        {
+          "invariant_id": "SI-ZQI-01",
+          "category": "presence",
+          "description": "Field may be None (controlled by include_detection parameter)",
+          "verification": "Assert field is None or isinstance(field, tuple)",
+          "violation_impact": "MINOR - optional field behavior"
+        },
+        {
+          "invariant_id": "SI-ZQI-02",
+          "category": "type",
+          "description": "When present, must be tuple[dict[str, int | str | float | None], ...]",
+          "verification": "If not None, assert isinstance(field, tuple) and all(isinstance(x, dict) for x in field)",
+          "violation_impact": "MAJOR - type mismatch breaks consumers"
+        },
+        {
+          "invariant_id": "SI-ZQI-03",
+          "category": "shape",
+          "description": "Each item dict contains keys: 'row_number', 'code', 'description', 'section', 'quantity', 'uom'",
+          "verification": "For each item, verify all keys present",
+          "violation_impact": "MAJOR - shape contract violated"
+        },
+        {
+          "invariant_id": "SI-ZQI-04",
+          "category": "immutability",
+          "description": "Evidence is immutable after creation (tuple immutability)",
+          "verification": "Dataclass frozen=True, tuple immutable",
+          "violation_impact": "MAJOR - consumers depend on immutability"
+        }
+      ],
+      "semantic_invariants": [
+        {
+          "invariant_id": "SE-ZQI-01",
+          "category": "determinism",
+          "description": "Same worksheet produces same zero quantity items when include_detection=True",
+          "verification": "Run analysis twice with same parameters, compare results",
+          "violation_impact": "MAJOR - non-determinism breaks consumer trust"
+        },
+        {
+          "invariant_id": "SE-ZQI-02",
+          "category": "boundary",
+          "description": "Detections describe patterns only - no decision language",
+          "verification": "Check field keys/values against EQ-0011 forbidden terms",
+          "violation_impact": "MAJOR - engineering boundary violation"
+        },
+        {
+          "invariant_id": "SE-ZQI-03",
+          "category": "provenance",
+          "description": "Detections traceable to Increment 3 engineering evidence",
+          "verification": "Assert logic matches increment 3 specification",
+          "violation_impact": "MAJOR - untraceable evidence"
+        }
+      ],
+      "cross_field_dependencies": [
+        "row_classification"
+      ]
+    },
+    {
+      "field_name": "structural_containment_findings",
+      "field_type": "tuple[dict[str, int], ...] | None",
+      "required": false,
+      "structural_invariants": [
+        {
+          "invariant_id": "SI-SCF-01",
+          "category": "presence",
+          "description": "Field may be None (controlled by include_detection parameter)",
+          "verification": "Assert field is None or isinstance(field, tuple)",
+          "violation_impact": "MINOR - optional field behavior"
+        },
+        {
+          "invariant_id": "SI-SCF-02",
+          "category": "type",
+          "description": "When present, must be tuple[dict[str, int], ...]",
+          "verification": "If not None, assert isinstance(field, tuple) and all(isinstance(x, dict) for x in field)",
+          "violation_impact": "MAJOR - type mismatch breaks consumers"
+        },
+        {
+          "invariant_id": "SI-SCF-03",
+          "category": "shape",
+          "description": "Each finding dict contains keys: 'parent_row_number', 'parent_level', 'child_row_number', 'child_level' \u2192 int values",
+          "verification": "For each finding, verify all keys present and all values are int",
+          "violation_impact": "MAJOR - shape contract violated"
+        },
+        {
+          "invariant_id": "SI-SCF-04",
+          "category": "immutability",
+          "description": "Evidence is immutable after creation (tuple immutability)",
+          "verification": "Dataclass frozen=True, tuple immutable",
+          "violation_impact": "MAJOR - consumers depend on immutability"
+        }
+      ],
+      "semantic_invariants": [
+        {
+          "invariant_id": "SE-SCF-01",
+          "category": "determinism",
+          "description": "Same worksheet produces same structural findings when include_detection=True",
+          "verification": "Run analysis twice with same parameters, compare results",
+          "violation_impact": "MAJOR - non-determinism breaks consumer trust"
+        },
+        {
+          "invariant_id": "SE-SCF-02",
+          "category": "boundary",
+          "description": "Findings describe patterns only - no decision language",
+          "verification": "Check field keys/values against EQ-0011 forbidden terms",
+          "violation_impact": "MAJOR - engineering boundary violation"
+        },
+        {
+          "invariant_id": "SE-SCF-03",
+          "category": "provenance",
+          "description": "Findings traceable to Increment 3 engineering evidence",
+          "verification": "Assert logic matches increment 3 specification",
+          "violation_impact": "MAJOR - untraceable evidence"
+        }
+      ],
+      "cross_field_dependencies": [
+        "hierarchy",
+        "row_classification"
+      ]
+    },
+    {
+      "field_name": "completeness_findings",
+      "field_type": "tuple[dict[str, int | str], ...] | None",
+      "required": false,
+      "structural_invariants": [
+        {
+          "invariant_id": "SI-CF-01",
+          "category": "presence",
+          "description": "Field may be None (controlled by include_detection parameter)",
+          "verification": "Assert field is None or isinstance(field, tuple)",
+          "violation_impact": "MINOR - optional field behavior"
+        },
+        {
+          "invariant_id": "SI-CF-02",
+          "category": "type",
+          "description": "When present, must be tuple[dict[str, int | str], ...]",
+          "verification": "If not None, assert isinstance(field, tuple) and all(isinstance(x, dict) for x in field)",
+          "violation_impact": "MAJOR - type mismatch breaks consumers"
+        },
+        {
+          "invariant_id": "SI-CF-03",
+          "category": "shape",
+          "description": "Each finding dict contains keys: 'section' (str), 'item_count' (int)",
+          "verification": "For each finding, assert set(finding.keys()) == {'section', 'item_count'}",
+          "violation_impact": "MAJOR - shape contract violated"
+        },
+        {
+          "invariant_id": "SI-CF-04",
+          "category": "immutability",
+          "description": "Evidence is immutable after creation (tuple immutability)",
+          "verification": "Dataclass frozen=True, tuple immutable",
+          "violation_impact": "MAJOR - consumers depend on immutability"
+        }
+      ],
+      "semantic_invariants": [
+        {
+          "invariant_id": "SE-CF-01",
+          "category": "determinism",
+          "description": "Same worksheet produces same completeness findings when include_detection=True",
+          "verification": "Run analysis twice with same parameters, compare results",
+          "violation_impact": "MAJOR - non-determinism breaks consumer trust"
+        },
+        {
+          "invariant_id": "SE-CF-02",
+          "category": "boundary",
+          "description": "Findings describe patterns only - no decision language",
+          "verification": "Check field keys/values against EQ-0011 forbidden terms",
+          "violation_impact": "MAJOR - engineering boundary violation"
+        },
+        {
+          "invariant_id": "SE-CF-03",
+          "category": "provenance",
+          "description": "Findings traceable to Increment 3 engineering evidence",
+          "verification": "Assert logic matches increment 3 specification",
+          "violation_impact": "MAJOR - untraceable evidence"
+        }
+      ],
+      "cross_field_dependencies": [
+        "row_classification",
+        "section_statistics"
+      ]
+    }
+  ],
+  "verification_approach": {
+    "verification_strategy": {
+      "structural_verification": {
+        "approach": "Static type checking + runtime assertions",
+        "tools": [
+          "mypy",
+          "pytest assertions",
+          "dataclass validation"
+        ],
+        "frequency": "Every test run",
+        "scope": "All fields, all tests"
+      },
+      "semantic_verification": {
+        "approach": "Determinism tests + boundary tests + provenance tests",
+        "tools": [
+          "pytest",
+          "frozen engineering evidence",
+          "EQ-0011 term checker"
+        ],
+        "frequency": "Every test run + regression suite",
+        "scope": "All fields, comprehensive test matrix"
+      }
+    },
+    "verification_phases": {
+      "phase_1_development": {
+        "description": "Verification during development",
+        "actions": [
+          "Type checker (mypy) on every file save",
+          "Unit tests on every commit",
+          "Determinism tests in CI pipeline"
+        ]
+      },
+      "phase_2_integration": {
+        "description": "Verification during integration",
+        "actions": [
+          "Full test suite execution",
+          "Historical fixture regression tests",
+          "Cross-field dependency validation"
+        ]
+      },
+      "phase_3_release": {
+        "description": "Verification before release",
+        "actions": [
+          "Complete evidence inventory validation",
+          "Provenance traceability check",
+          "Boundary compliance audit"
+        ]
+      }
+    }
+  },
+  "violation_handling": {
+    "violation_handling_policy": {
+      "structural_violations": {
+        "detection": "Immediate - fail fast at analysis time",
+        "handling": "Raise InvariantViolationError with diagnostic details",
+        "recovery": "None - structural violations are fatal",
+        "consumer_impact": "Analysis fails, no evidence produced"
+      },
+      "semantic_violations": {
+        "detection": "Test-time detection via assertions",
+        "handling": "Raise InvariantViolationError with evidence trace",
+        "recovery": "None - semantic violations indicate implementation defect",
+        "consumer_impact": "No impact (caught in testing before release)"
+      }
+    },
+    "error_reporting": {
+      "required_details": [
+        "Invariant ID violated",
+        "Field name",
+        "Expected behavior",
+        "Actual behavior",
+        "Input that triggered violation",
+        "Engineering evidence reference"
+      ],
+      "format": "Structured error with full diagnostic context",
+      "logging": "Error logged with full trace for debugging"
+    },
+    "governance": {
+      "on_violation_discovery": [
+        "Create Engineering Question to investigate",
+        "Classify as defect or specification gap",
+        "If defect: fix implementation",
+        "If specification gap: update engineering evidence and contract",
+        "Add regression test",
+        "Update contract documentation if needed"
+      ],
+      "version_impact": {
+        "structural_fix": "PATCH if no behavior change, MAJOR if behavior change",
+        "semantic_fix": "PATCH if clarification, MAJOR if meaning change"
+      }
+    }
+  }
+}

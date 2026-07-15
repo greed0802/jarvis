@@ -7,3 +7,35 @@
 **Release Date:** 2026-07-08
 
 This architecture baseline is governed through Architecture Decision Records (ADRs). Changes to the core runtime architecture require a new ADR.
+
+M7 — BOQ Intelligence
+
+Status
+
+COMPLETE
+
+Production Components
+
+✓ Observation Layer
+
+✓ Hierarchy Reconstruction
+
+✓ Structural Detection
+
+Engineering Questions
+
+✓ EQ-0010
+
+✓ EQ-0011
+
+Production Tests
+
+66 Passing
+
+Frozen
+
+YES
+
+Next Milestone
+
+M8 — Consumer Layer (CheckMate Integration)

@@ -1,0 +1,112 @@
+{
+  "increment_1": [
+    {
+      "field_name": "row_classification",
+      "increment": 1,
+      "python_type": "dict[str, int]",
+      "required": true,
+      "semantics": "Count of rows by type (Head, Note, Section, Item, Other). Deterministic row type classification from BOQRow.row_type field.",
+      "traceability": "EQ-0007 Production Extraction Report, EQ-0009 Context Discovery Report. Row types defined in boq_extraction.py.",
+      "stability": "Stable",
+      "notes": "Frozen structure. Keys: {'Head', 'Note', 'Section', 'Item', 'Other'}. Values: non-negative integers. Sum equals total row count."
+    },
+    {
+      "field_name": "section_statistics",
+      "increment": 1,
+      "python_type": "dict[str, dict[str, int]]",
+      "required": true,
+      "semantics": "Per-section quantity distribution. Outer key: section name. Inner keys: 'negative_qty' (count of rows with quantity < 0), 'positive_qty' (count of rows with quantity > 0).",
+      "traceability": "EQ-0009 Context Discovery Report. Section-based analysis of quantity patterns.",
+      "stability": "Stable",
+      "notes": "Sorted by section name. Only sections with quantities are included. Inner dict always has both 'negative_qty' and 'positive_qty' keys."
+    },
+    {
+      "field_name": "boq_statistics",
+      "increment": 1,
+      "python_type": "dict[str, int | float]",
+      "required": true,
+      "semantics": "BOQ-wide statistics: total_rows, code_rows, description_rows, quantity_rows, uom_rows, section_rows. Count of rows where each field is non-None.",
+      "traceability": "EQ-0007 Production Extraction Report. Field presence analysis.",
+      "stability": "Stable",
+      "notes": "Fixed keys: {'total_rows', 'code_rows', 'description_rows', 'quantity_rows', 'uom_rows', 'section_rows'}. All values are non-negative integers."
+    },
+    {
+      "field_name": "known_anomalies",
+      "increment": 1,
+      "python_type": "list[dict[str, int | str | float]]",
+      "required": true,
+      "semantics": "Identity-level anomalies detected through deterministic rules. Currently: OMISSION section items with positive quantity (expected negative).",
+      "traceability": "EQ-0009 Context Discovery Report. Omission/Addition domain rules.",
+      "stability": "Stable",
+      "notes": "Each anomaly dict contains: {'row_number': int, 'code': str | None, 'quantity': float, 'section': str}. Sorted by row_number."
+    }
+  ],
+  "increment_2": [
+    {
+      "field_name": "hierarchy",
+      "increment": 2,
+      "python_type": "tuple[BOQHeaderNode, ...] | None",
+      "required": false,
+      "semantics": "Reconstructed BOQ heading tree. Root-level headers (Head1 nodes) with recursive children. None if include_hierarchy=False.",
+      "traceability": "EQ-0010 Spike 4: Hierarchy Reconstruction. Stack-based deterministic algorithm.",
+      "stability": "Stable",
+      "notes": "BOQHeaderNode is frozen dataclass with fields: level, row_number, uom, description, section, depth, parent_row_number, children_headers, children_items. Tree structure reflects Head1-5 nesting."
+    },
+    {
+      "field_name": "hierarchy_statistics",
+      "increment": 2,
+      "python_type": "dict[str, int | float] | None",
+      "required": false,
+      "semantics": "Statistics derived from reconstructed hierarchy: total_headers, total_items, max_depth, headers_by_level, root_count.",
+      "traceability": "EQ-0010 Spike 4: Hierarchy reconstruction statistics.",
+      "stability": "Stable",
+      "notes": "None if include_hierarchy=False. Keys: {'total_headers', 'total_items', 'max_depth', 'headers_by_level', 'root_count'}. headers_by_level is nested dict."
+    }
+  ],
+  "increment_3": [
+    {
+      "field_name": "detected_level_skips",
+      "increment": 3,
+      "python_type": "tuple[dict[str, int], ...] | None",
+      "required": false,
+      "semantics": "Level progression skips detected in hierarchy. Records parent\u2192child transitions where child_level - parent_level > 1 (e.g., Head1\u2192Head3).",
+      "traceability": "EQ-0010 Spike 3: Row Sequence Analysis. EQ-0011 Spike 2: Evidence vs Assessment Decomposition (detection only, not legitimacy).",
+      "stability": "Stable",
+      "notes": "None if include_detection=False. Each dict: {'parent_row': int, 'child_row': int, 'parent_level': int, 'child_level': int, 'skip': int}. No assessment of legitimacy."
+    },
+    {
+      "field_name": "zero_quantity_items",
+      "increment": 3,
+      "python_type": "tuple[dict[str, int | str | float | None], ...] | None",
+      "required": false,
+      "semantics": "Items with quantity exactly equal to 0.0. Detection only, no assessment of acceptability.",
+      "traceability": "EQ-0010 Spike 1: Direct Field Observation. EQ-0011 Spike 2: Evidence vs Assessment Decomposition (detection only).",
+      "stability": "Stable",
+      "notes": "None if include_detection=False. Each dict: {'row_number': int, 'code': str | None, 'description': str | None, 'quantity': float, 'uom': str | None, 'section': str | None}."
+    },
+    {
+      "field_name": "structural_containment_findings",
+      "increment": 3,
+      "python_type": "tuple[dict[str, int], ...] | None",
+      "required": false,
+      "semantics": "Structural parent-child level consistency. Reports cases where child header level exceeds parent level (e.g., Head3 under Head2 but child is Head4).",
+      "traceability": "EQ-0010 Spike 4: Hierarchy Reconstruction. EQ-0011 Spike 3: Boundary Validation (structural only, not semantic).",
+      "stability": "Stable",
+      "notes": "None if include_detection=False. Each dict: {'parent_row': int, 'child_row': int, 'parent_level': int, 'child_level': int}. Structural containment only."
+    },
+    {
+      "field_name": "completeness_findings",
+      "increment": 3,
+      "python_type": "tuple[dict[str, int | str], ...] | None",
+      "required": false,
+      "semantics": "Basic completeness: sections that lack measurable items (quantity field present). Detection only, does not assess whether this is acceptable.",
+      "traceability": "EQ-0010 Spike 3: Row Sequence Analysis. EQ-0011 Spike 3: Boundary Validation (basic structural, not project scope).",
+      "stability": "Stable",
+      "notes": "None if include_detection=False. Each dict: {'section': str, 'total_rows': int, 'item_count': int}. item_count=0 indicates no measurable items."
+    }
+  ],
+  "total_fields": 10,
+  "required_fields": 4,
+  "optional_fields": 6,
+  "stable_fields": 10
+}

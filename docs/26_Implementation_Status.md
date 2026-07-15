@@ -24,10 +24,10 @@ The architecture is defined by:
 | Property | Value |
 |----------|-------|
 | Architecture Version | v0.1.0 |
-| Software Version | 0.0.1-alpha.5 |
+| Software Version | 0.0.1-alpha.10 |
 | Current Phase | Phase 2 — Capability Era |
 | Current Active Capability | BOQ Intelligence |
-| Capability Status | Increment 1 Complete |
+| Capability Status | Increment 3 Complete, Evidence Contract v1.0 Frozen |
 
 ---
 
@@ -37,8 +37,9 @@ The architecture is defined by:
 |----------|-------|
 | Parser Foundation | Complete |
 | Repository Stabilization | Complete |
-| Current Active Capability | BOQ Intelligence (Increment 1 Complete) |
+| Current Active Capability | BOQ Intelligence (Increment 3 Complete, Evidence Contract v1.0 Frozen) |
 | Capability Planning Authority | `docs/planning/Capability_Register.md`, `docs/planning/Capability_Roadmap.md` |
+| Evidence Contract Authority | `docs/contracts/BOQ_Intelligence_Public_Evidence_Contract_v1.0.md` |
 
 ---
 
@@ -284,6 +285,80 @@ Historical Note: During M6 the Observation Runtime was implemented prior to form
 - **Evidence Before Abstraction**: All values trace to EQ-0007 production evidence.
 - **Fixture Integrity**: SHA-256 verification ensures fixture identity. Registration is explicit governance action.
 - **Deterministic Engineering**: Frozen dataclass, sorted outputs, atomic metadata writes.
+
+---
+
+## BOQ Intelligence — Public Evidence Contract v1.0
+
+| Property | Value |
+|----------|-------|
+| Goal | Define stable, versioned Public Evidence Contract for BOQ Intelligence that enables multiple consumers to depend on deterministic evidence without coupling to internal implementation details. |
+| Engineering Question | EQ-0012: What constitutes a stable, versioned Public Evidence Contract for BOQ Intelligence? |
+| Status | **Complete — Frozen v1.0.0** |
+| Date | 2026-07-15 |
+| Investigation Duration | 6 days (6 spikes) |
+| Files Created | `docs/contracts/BOQ_Intelligence_Public_Evidence_Contract_v1.0.md`, `docs/engineering/questions/EQ_0012_BOQ_Intelligence_Public_Evidence_Contract.md`, 6 evidence reports in `docs/engineering/evidence/`, 4 verification tools in `tools/`, `docs/retrospectives/EQ_0012_BOQ_Intelligence_Public_Evidence_Contract.md` |
+| Contract Status | Frozen 1.0.0 (Gate 2 approved) |
+| Verification Result | 63/63 MATCH (100%) — all contract elements verified against production |
+
+### Evidence Package
+
+**Contract Deliverables:**
+- 857-line Public Evidence Contract v1.0 document
+- 10 evidence field specifications (Increments 1-3)
+- 77 contract invariants (43 structural + 34 semantic)
+- 16 consumer guarantees
+- MAJOR/MINOR/PATCH versioning policy with explicit required-field and tuple-extension rules
+- Three-phase deprecation lifecycle
+- 5 stable import paths with direct dataclass+function access pattern
+- 9 forbidden internal imports
+- BOQHeaderNode specification with structural and semantic invariants
+
+**Verification Tooling:**
+- `tools/eq0012_spike3_verification_audit.py` — Verifies 77 invariants
+- `tools/eq0012_spike4_verification_audit.py` — Verifies 16 consumer guarantees
+- `tools/eq0012_spike5_verification_audit.py` — Verifies 13 documentation standards
+- `tools/eq0012_spike6_contract_verification.py` — Comprehensive contract verification (63 categories)
+
+**Evidence Reports (All Frozen):**
+- EQ-0012 Spike 1: Current Evidence Inventory
+- EQ-0012 Spike 2: Contract Structure & Versioning Policy
+- EQ-0012 Spike 3: Contract Invariants (10/10 MATCH)
+- EQ-0012 Spike 4: Consumer Access Patterns (16/16 MATCH, PO approved)
+- EQ-0012 Spike 5: Contract Documentation Standards (13/13 MATCH)
+- EQ-0012 Spike 6: Evidence Contract v1.0 Specification (63/63 MATCH)
+
+**No Implementation Changes:**
+- BOQ Intelligence implementation (`boq_intelligence.py`) unchanged
+- Evidence Contract documents existing production behavior
+- Contract is documentation, not new architecture
+- No ADR required
+
+### Architecture Compliance
+
+- **Evidence Admission Rule**: Contract includes only currently produced evidence, documented semantics, and observable data structures. No speculation.
+- **Verification-First**: Every spike included verification tooling confirming contract matches production (100% MATCH).
+- **Anti-Drift Tooling**: Automated verification tools detect contract violations as BOQ Intelligence evolves.
+- **Consumer Decoupling**: Contract provides stable API that decouples evidence production from consumption.
+- **Semantic Versioning**: MAJOR/MINOR/PATCH rules with explicit required-field and tuple-extension semantics.
+- **Governance**: Two-gate approval (Gate 1 investigation, Gate 2 frozen contract) with iterative stakeholder feedback.
+
+### Key Decisions
+
+1. **Direct Dataclass + Public Function Access Pattern**: Preserve current production pattern — no facade, protocol, wrapper, or adapter. Import directly from `jarvis.parsers.costx.boq_intelligence`.
+
+2. **Required Fields Alter Contract Shape**: Any change to required fields (add, remove, rename, change type) is MAJOR version change, optimizing for strict consumers.
+
+3. **Tuples Are Ordered, Frozen Structures**: Extending tuple contents is MAJOR. Future extensible evidence should prefer named structures (dataclasses, dictionaries).
+
+4. **Candidate → Frozen Upon Approval**: Contract transitioned from Candidate 1.0.0 to Frozen 1.0.0 upon Gate 2 approval. Frozen status signals consumers may depend on contract.
+
+### Authority
+
+- **Contract Document**: `docs/contracts/BOQ_Intelligence_Public_Evidence_Contract_v1.0.md`
+- **Engineering Question**: `docs/engineering/questions/EQ_0012_BOQ_Intelligence_Public_Evidence_Contract.md`
+- **Retrospective**: `docs/retrospectives/EQ_0012_BOQ_Intelligence_Public_Evidence_Contract.md`
+- **Governance**: Engineering_Governance.md v1.0
 
 ---
 

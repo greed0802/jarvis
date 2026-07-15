@@ -1,0 +1,595 @@
+{
+  "investigation": "EQ-0012 Spike 4: Consumer Access Patterns",
+  "date": "2026-07-15",
+  "source_of_truth": "src/jarvis/parsers/costx/",
+  "analysis": {
+    "modules_found": [
+      {
+        "module": "jarvis.parsers.costx.__init__",
+        "public_exports": [
+          "WorkbookParser"
+        ],
+        "internal_symbols": [],
+        "external_imports": [],
+        "internal_imports": [
+          "jarvis.parsers.costx.workbook_parser.WorkbookParser"
+        ],
+        "__all__": true
+      },
+      {
+        "module": "jarvis.parsers.costx.boq_extraction",
+        "public_exports": [],
+        "internal_symbols": [
+          "_classify_row"
+        ],
+        "external_imports": [
+          "__future__.annotations",
+          "dataclasses.dataclass",
+          "openpyxl.workbook.workbook.Workbook",
+          "typing.Literal"
+        ],
+        "internal_imports": [],
+        "__all__": false
+      },
+      {
+        "module": "jarvis.parsers.costx.boq_intelligence",
+        "public_exports": [],
+        "internal_symbols": [
+          "_compute_boq_stats",
+          "_compute_hierarchy_statistics",
+          "_compute_section_stats",
+          "_count_row_types",
+          "_detect_anomalies",
+          "_detect_basic_completeness",
+          "_detect_level_skips",
+          "_detect_structural_containment",
+          "_detect_zero_quantities",
+          "_extract_head_level",
+          "_freeze_node",
+          "_reconstruct_hierarchy"
+        ],
+        "external_imports": [
+          "__future__.annotations",
+          "dataclasses.dataclass"
+        ],
+        "internal_imports": [
+          "jarvis.parsers.costx.boq_extraction.BOQRow"
+        ],
+        "__all__": false
+      },
+      {
+        "module": "jarvis.parsers.costx.loader",
+        "public_exports": [],
+        "internal_symbols": [
+          "_apply_named_style_none_name_patch"
+        ],
+        "external_imports": [
+          "__future__.annotations",
+          "openpyxl.styles.named_styles._NamedCellStyle",
+          "openpyxl.workbook.workbook.Workbook",
+          "pathlib.Path",
+          "typing.Any"
+        ],
+        "internal_imports": [],
+        "__all__": false
+      },
+      {
+        "module": "jarvis.parsers.costx.workbook_parser",
+        "public_exports": [],
+        "internal_symbols": [
+          "__init__"
+        ],
+        "external_imports": [
+          "__future__.annotations",
+          "openpyxl.workbook.workbook.Workbook",
+          "pathlib.Path"
+        ],
+        "internal_imports": [
+          "jarvis.parsers.costx.loader.load_workbook"
+        ],
+        "__all__": false
+      }
+    ]
+  },
+  "engineering_questions": {
+    "Q1_minimal_public_surface": {
+      "question": "What is the smallest stable public surface consumers require?",
+      "evidence": {
+        "consumer_needs": [
+          {
+            "need": "Run BOQ intelligence analysis",
+            "symbol": "analyze_boq",
+            "module": "jarvis.parsers.costx.boq_intelligence",
+            "type": "function(rows: list[BOQRow], *, include_hierarchy: bool = False, include_detection: bool = False) -> BOQIntelligenceResult",
+            "evidence": "boq_intelligence.py line 67 - Only public function in module"
+          },
+          {
+            "need": "Access analysis results",
+            "symbol": "BOQIntelligenceResult",
+            "module": "jarvis.parsers.costx.boq_intelligence",
+            "type": "frozen dataclass with 10 evidence fields",
+            "evidence": "boq_intelligence.py lines 48-64 - Primary evidence container"
+          },
+          {
+            "need": "Access hierarchy nodes",
+            "symbol": "BOQHeaderNode",
+            "module": "jarvis.parsers.costx.boq_intelligence",
+            "type": "frozen dataclass with 9 fields",
+            "evidence": "boq_intelligence.py lines 27-45 - Public frozen dataclass"
+          },
+          {
+            "need": "Provide row input to analyze_boq",
+            "symbol": "BOQRow",
+            "module": "jarvis.parsers.costx.boq_extraction",
+            "type": "dataclass with 7 fields",
+            "evidence": "boq_extraction.py lines 39-48 - Input dependency for analyze_boq"
+          },
+          {
+            "need": "Extract rows from workbook",
+            "symbol": "extract_boq",
+            "module": "jarvis.parsers.costx.boq_extraction",
+            "type": "function(workbook: Workbook) -> list[BOQRow]",
+            "evidence": "boq_extraction.py line 51 - Standard upstream extraction"
+          }
+        ],
+        "not_needed": [
+          {
+            "symbol": "WorkbookParser",
+            "module": "jarvis.parsers.costx.workbook_parser",
+            "reason": "WorkbookParser is a validation/loading concern, not an evidence consumer concern. It's pre-extraction infrastructure.",
+            "evidence": "costx/__init__.py exports WorkbookParser as existing public surface"
+          },
+          {
+            "symbol": "_extract_head_level",
+            "reason": "Internal helper for hierarchy reconstruction",
+            "evidence": "boq_intelligence.py line 183"
+          },
+          {
+            "symbol": "_reconstruct_hierarchy",
+            "reason": "Internal implementation detail of analyze_boq",
+            "evidence": "boq_intelligence.py line 198"
+          },
+          {
+            "symbol": "_freeze_node",
+            "reason": "Internal mutable-to-immutable conversion",
+            "evidence": "boq_intelligence.py line 262"
+          },
+          {
+            "symbol": "_compute_hierarchy_statistics",
+            "reason": "Internal composition of analyze_boq",
+            "evidence": "boq_intelligence.py line 279"
+          },
+          {
+            "symbol": "_detect_level_skips, _detect_zero_quantities, _detect_structural_containment, _detect_basic_completeness",
+            "reason": "Internal detection evidence generators, internal to analyze_boq",
+            "evidence": "boq_intelligence.py lines 335-476"
+          },
+          {
+            "symbol": "_count_row_types, _compute_section_stats, _compute_boq_stats, _detect_anomalies",
+            "reason": "Internal evidence generators, private to analyze_boq",
+            "evidence": "boq_intelligence.py lines 120-178"
+          }
+        ],
+        "note": "No engineering evidence exists for any intermediate abstractions, facades, or protocols between extract_boq/analyze_boq and consumers."
+      },
+      "recommendation": "proposed_public_surface"
+    },
+    "Q2_public_vs_internal": {
+      "question": "Which types are public contract vs internal?",
+      "contract_candidates": [
+        {
+          "name": "BOQRow",
+          "kind": "dataclass",
+          "module": "jarvis.parsers.costx.boq_extraction",
+          "is_frozen": false
+        },
+        {
+          "name": "BOQHeaderNode",
+          "kind": "dataclass",
+          "module": "jarvis.parsers.costx.boq_intelligence",
+          "is_frozen": true
+        },
+        {
+          "name": "BOQIntelligenceResult",
+          "kind": "dataclass",
+          "module": "jarvis.parsers.costx.boq_intelligence",
+          "is_frozen": true
+        },
+        {
+          "name": "analyze_boq",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence",
+          "is_frozen": false
+        },
+        {
+          "name": "traverse",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence",
+          "is_frozen": false
+        },
+        {
+          "name": "traverse",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence",
+          "is_frozen": false
+        },
+        {
+          "name": "traverse",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence",
+          "is_frozen": false
+        },
+        {
+          "name": "collect_sections",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence",
+          "is_frozen": false
+        },
+        {
+          "name": "load_workbook",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.loader",
+          "is_frozen": false
+        },
+        {
+          "name": "patched_init",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.loader",
+          "is_frozen": false
+        },
+        {
+          "name": "WorkbookParser",
+          "kind": "dataclass",
+          "module": "jarvis.parsers.costx.workbook_parser",
+          "is_frozen": false
+        },
+        {
+          "name": "load",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.workbook_parser",
+          "is_frozen": false
+        },
+        {
+          "name": "workbook",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.workbook_parser",
+          "is_frozen": false
+        },
+        {
+          "name": "path",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.workbook_parser",
+          "is_frozen": false
+        },
+        {
+          "name": "is_loaded",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.workbook_parser",
+          "is_frozen": false
+        },
+        {
+          "name": "validate",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.workbook_parser",
+          "is_frozen": false
+        },
+        {
+          "name": "close",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.workbook_parser",
+          "is_frozen": false
+        }
+      ],
+      "internal_types": [
+        {
+          "name": "_classify_row",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_extraction"
+        },
+        {
+          "name": "_count_row_types",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence"
+        },
+        {
+          "name": "_compute_boq_stats",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence"
+        },
+        {
+          "name": "_compute_section_stats",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence"
+        },
+        {
+          "name": "_detect_anomalies",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence"
+        },
+        {
+          "name": "_extract_head_level",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence"
+        },
+        {
+          "name": "_reconstruct_hierarchy",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence"
+        },
+        {
+          "name": "_freeze_node",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence"
+        },
+        {
+          "name": "_compute_hierarchy_statistics",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence"
+        },
+        {
+          "name": "_detect_level_skips",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence"
+        },
+        {
+          "name": "_detect_zero_quantities",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence"
+        },
+        {
+          "name": "_detect_structural_containment",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence"
+        },
+        {
+          "name": "_detect_basic_completeness",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.boq_intelligence"
+        },
+        {
+          "name": "_apply_named_style_none_name_patch",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.loader"
+        },
+        {
+          "name": "__init__",
+          "kind": "function",
+          "module": "jarvis.parsers.costx.workbook_parser"
+        }
+      ],
+      "boqrow_status": "BOQRow is a production dataclass but is an extraction pre-requisite, not evidence. It is a dependency, not part of the evidence contract."
+    },
+    "Q3_import_stability": {
+      "question": "Which imports should consumers rely upon?",
+      "evidence": {
+        "stable_imports": [
+          {
+            "import": "from jarvis.parsers.costx.boq_intelligence import analyze_boq, BOQIntelligenceResult, BOQHeaderNode",
+            "rationale": "All three symbols are public (no underscore prefix), frozen dataclass or public function",
+            "stability": "HIGH - frozen by production frozen=True and engineering evidence",
+            "evidence": "boq_intelligence.py lines 27, 48, 67"
+          },
+          {
+            "import": "from jarvis.parsers.costx.boq_extraction import BOQRow, extract_boq",
+            "rationale": "Both symbols are public (no underscore prefix)",
+            "stability": "HIGH - stable extraction interface",
+            "evidence": "boq_extraction.py lines 39, 51"
+          }
+        ],
+        "unstable_imports_must_not_use": [
+          {
+            "import": "from jarvis.parsers.costx.boq_intelligence import _count_row_types",
+            "rationale": "Underscore-prefixed = internal implementation",
+            "evidence": "boq_intelligence.py line 120"
+          },
+          {
+            "import": "from jarvis.parsers.costx.boq_intelligence import _reconstruct_hierarchy",
+            "rationale": "Underscore-prefixed = internal implementation",
+            "evidence": "boq_intelligence.py line 198"
+          },
+          {
+            "import": "from jarvis.parsers.costx.boq_extraction import _classify_row",
+            "rationale": "Underscore-prefixed = internal implementation",
+            "evidence": "boq_extraction.py line 108"
+          }
+        ],
+        "current_vs_recommended": {
+          "current_pattern": "Consumers import directly from internal modules (boq_intelligence.py, boq_extraction.py)",
+          "recommended_pattern": "No evidence exists for a dedicated public package. Current direct imports are the production-proven pattern.",
+          "risk": "Direct imports from non-__init__ modules mean consumers depend on file layout. Changes to module structure could break imports even if contract semantics remain stable.",
+          "mitigation": "Document stable import paths explicitly. Monitor changes to module structure during development.",
+          "evidence": "costx/__init__.py only exports WorkbookParser - no BOQ intelligence symbols are re-exported"
+        }
+      }
+    },
+    "Q5_consumer_guarantees": {
+      "question": "What guarantees regarding stability?",
+      "evidence": "Based on frozen evidence from Spikes 1-3"
+    },
+    "Q6_breaking_changes": {
+      "question": "What constitutes a breaking consumer change?",
+      "evidence": {
+        "breaking_changes": [
+          {
+            "change": "Adding, removing, or renaming BOQIntelligenceResult fields",
+            "rationale": "Consumers access evidence fields directly on the dataclass",
+            "category": "MAJOR per Spike 2"
+          },
+          {
+            "change": "Changing signature of analyze_boq()",
+            "rationale": "Consumers call with specific named parameters",
+            "category": "MAJOR per Spike 2"
+          },
+          {
+            "change": "Changing return type of analyze_boq()",
+            "rationale": "Consumer destructuring depends on return type",
+            "category": "MAJOR per Spike 2"
+          },
+          {
+            "change": "Moving symbols across modules",
+            "rationale": "Consumers import from specific module paths; relocation breaks imports",
+            "category": "MAJOR per Spike 2"
+          },
+          {
+            "change": "Removing or renaming BOQHeaderNode fields",
+            "rationale": "Consumers access hierarchy nodes directly",
+            "category": "MAJOR per Spike 2"
+          },
+          {
+            "change": "Changing BOQRow dataclass structure",
+            "rationale": "BOQRow is input to analyze_boq; structural changes break consumer usage",
+            "category": "MAJOR per Spike 2"
+          }
+        ],
+        "non_breaking_changes": [
+          {
+            "change": "Adding new optional evidence fields",
+            "rationale": "Existing fields remain stable, consumers unaffected",
+            "category": "MINOR per Spike 2"
+          },
+          {
+            "change": "Adding new internal helper functions",
+            "rationale": "Internal details, not part of contract",
+            "category": "PATCH per Spike 2"
+          },
+          {
+            "change": "Documentation changes",
+            "rationale": "No consumer impact",
+            "category": "PATCH per Spike 2"
+          }
+        ]
+      }
+    }
+  },
+  "access_pattern_evaluation": {
+    "alternatives_evaluated": [
+      {
+        "pattern": "Direct dataclass access (current)",
+        "advantages": [
+          "Zero overhead - consumers access fields directly",
+          "Type-checker friendly - static type checking works naturally",
+          "No abstraction layer to maintain",
+          "All evidence fields naturally visible and discoverable",
+          "Current production pattern - proven working"
+        ],
+        "disadvantages": [
+          "No encapsulation - consumers can see all fields",
+          "Direct module import dependency",
+          "Cannot hide internal fields (not applicable - all fields are contract)"
+        ],
+        "compatibility": "100% - current pattern",
+        "evidence": "boq_intelligence.py lines 48-64 - Current production code",
+        "recommendation": "Supported"
+      },
+      {
+        "pattern": "Dedicated public package (jarvis.parsers.contracts)",
+        "advantages": [
+          "Clean separation between implementation and contract",
+          "Stable import path independent of implementation module structure",
+          "Can re-export only contract types"
+        ],
+        "disadvantages": [
+          "Requires creating and maintaining new package",
+          "Additional abstraction layer for no current consumer benefit",
+          "Package must stay in sync with implementation - new drift surface",
+          "No evidence this is needed - no consumer currently exists"
+        ],
+        "compatibility": "Could be added as MINOR - does not remove existing imports",
+        "evidence": "No engineering evidence available",
+        "recommendation": "Deferred until consumer exists"
+      },
+      {
+        "pattern": "Protocol interface",
+        "advantages": [
+          "Provides formal interface contract",
+          "Can be implemented differently"
+        ],
+        "disadvantages": [
+          "Significant overhead for single implementation",
+          "YAGNI violation - no alternative implementation",
+          "Protocol abstraction with no current use case",
+          "Hides concrete field types from consumers"
+        ],
+        "compatibility": "MAJOR - would change consumer import model",
+        "evidence": "No engineering evidence available",
+        "recommendation": "Rejected - YAGNI violation"
+      },
+      {
+        "pattern": "Facade object",
+        "advantages": [
+          "Single point of access"
+        ],
+        "disadvantages": [
+          "Indirection with no benefit for single-module API",
+          "Hides frozen dataclass nature",
+          "Adds runtime overhead"
+        ],
+        "compatibility": "Could be added as MINOR",
+        "evidence": "No engineering evidence available",
+        "recommendation": "Rejected - no benefit over direct dataclass"
+      },
+      {
+        "pattern": "Factory function",
+        "advantages": [
+          "Can control construction"
+        ],
+        "disadvantages": [
+          "Current frozen dataclass already ensures immutability",
+          "Factory is already analyze_boq() - no additional factory needed",
+          "Would add indirection with no consumer benefit"
+        ],
+        "compatibility": "MAJOR - changes consumer code pattern",
+        "evidence": "boq_intelligence.py line 67 - analyze_boq() IS the factory",
+        "recommendation": "Rejected - analyze_boq() already serves as factory"
+      },
+      {
+        "pattern": "Read-only interface/Immutable contract object",
+        "advantages": [
+          "Prevents mutation at interface level"
+        ],
+        "disadvantages": [
+          "Current frozen dataclass already provides immutability",
+          "Interface abstraction with no current benefit",
+          "Hides specific field types behind generic accessor"
+        ],
+        "compatibility": "MAJOR - changes consumer code pattern",
+        "evidence": "boq_intelligence.py line 48: frozen=True - immutability already enforced",
+        "recommendation": "Rejected - frozen dataclass provides equivalent guarantee"
+      }
+    ],
+    "recommended_pattern": {
+      "pattern": "Direct dataclass + public function (current production pattern)",
+      "consumer_imports": [
+        "from jarvis.parsers.costx.boq_intelligence import analyze_boq, BOQIntelligenceResult, BOQHeaderNode",
+        "from jarvis.parsers.costx.boq_extraction import BOQRow, extract_boq"
+      ],
+      "consumer_usage": "result = analyze_boq(rows, include_hierarchy=True, include_detection=True)",
+      "evidence": "boq_intelligence.py lines 48-64, 67 - Current production implementation"
+    }
+  },
+  "recommendation": {
+    "recommendation": "Maintain direct dataclass access pattern",
+    "rationale": "Current production implementation is the proven consumer pattern. No evidence supports any additional abstraction layer.",
+    "public_contract_imports": {
+      "stable": [
+        "from jarvis.parsers.costx.boq_intelligence import analyze_boq",
+        "from jarvis.parsers.costx.boq_intelligence import BOQIntelligenceResult",
+        "from jarvis.parsers.costx.boq_intelligence import BOQHeaderNode",
+        "from jarvis.parsers.costx.boq_extraction import BOQRow",
+        "from jarvis.parsers.costx.boq_extraction import extract_boq"
+      ],
+      "must_not_import": [
+        "from jarvis.parsers.costx.boq_intelligence import _count_row_types",
+        "from jarvis.parsers.costx.boq_intelligence import _reconstruct_hierarchy",
+        "from jarvis.parsers.costx.boq_intelligence import _freeze_node",
+        "from jarvis.parsers.costx.boq_intelligence import _compute_hierarchy_statistics",
+        "from jarvis.parsers.costx.boq_intelligence import _detect_level_skips",
+        "from jarvis.parsers.costx.boq_intelligence import _detect_zero_quantities",
+        "from jarvis.parsers.costx.boq_intelligence import _detect_structural_containment",
+        "from jarvis.parsers.costx.boq_intelligence import _detect_basic_completeness",
+        "from jarvis.parsers.costx.boq_extraction import _classify_row"
+      ]
+    },
+    "evidence": "src/jarvis/parsers/costx/boq_intelligence.py, src/jarvis/parsers/costx/boq_extraction.py"
+  }
+}

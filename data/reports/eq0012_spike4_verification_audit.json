@@ -1,0 +1,126 @@
+{
+  "audit_date": "2026-07-15",
+  "investigation": "EQ-0012 Spike 4 Verification Audit",
+  "verifications": [
+    {
+      "claim": "All production modules documented in report",
+      "category": "module_boundary",
+      "production_evidence": "['jarvis.parsers.costx.__init__', 'jarvis.parsers.costx.boq_extraction', 'jarvis.parsers.costx.boq_intelligence', 'jarvis.parsers.costx.loader', 'jarvis.parsers.costx.workbook_parser']",
+      "report_claim": "['jarvis.parsers.costx.__init__', 'jarvis.parsers.costx.boq_extraction', 'jarvis.parsers.costx.boq_intelligence', 'jarvis.parsers.costx.loader', 'jarvis.parsers.costx.workbook_parser']",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Stable import: from jarvis.parsers.costx.boq_intelligence import analyze_boq",
+      "category": "import_stability",
+      "production_evidence": "boq_intelligence.py exists in production",
+      "report_claim": "from jarvis.parsers.costx.boq_intelligence import analyze_boq",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Stable import: from jarvis.parsers.costx.boq_intelligence import BOQIntelligenceResult",
+      "category": "import_stability",
+      "production_evidence": "boq_intelligence.py exists in production",
+      "report_claim": "from jarvis.parsers.costx.boq_intelligence import BOQIntelligenceResult",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Stable import: from jarvis.parsers.costx.boq_intelligence import BOQHeaderNode",
+      "category": "import_stability",
+      "production_evidence": "boq_intelligence.py exists in production",
+      "report_claim": "from jarvis.parsers.costx.boq_intelligence import BOQHeaderNode",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Stable import: from jarvis.parsers.costx.boq_extraction import BOQRow",
+      "category": "import_stability",
+      "production_evidence": "boq_extraction.py exists in production",
+      "report_claim": "from jarvis.parsers.costx.boq_extraction import BOQRow",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Stable import: from jarvis.parsers.costx.boq_extraction import extract_boq",
+      "category": "import_stability",
+      "production_evidence": "boq_extraction.py exists in production",
+      "report_claim": "from jarvis.parsers.costx.boq_extraction import extract_boq",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Must not import: from jarvis.parsers.costx.boq_intelligence import _count_row_types",
+      "category": "import_stability",
+      "production_evidence": "_count_row_types is underscore-prefixed",
+      "report_claim": "from jarvis.parsers.costx.boq_intelligence import _count_row_types",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Must not import: from jarvis.parsers.costx.boq_intelligence import _reconstruct_hierarchy",
+      "category": "import_stability",
+      "production_evidence": "_reconstruct_hierarchy is underscore-prefixed",
+      "report_claim": "from jarvis.parsers.costx.boq_intelligence import _reconstruct_hierarchy",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Must not import: from jarvis.parsers.costx.boq_intelligence import _freeze_node",
+      "category": "import_stability",
+      "production_evidence": "_freeze_node is underscore-prefixed",
+      "report_claim": "from jarvis.parsers.costx.boq_intelligence import _freeze_node",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Must not import: from jarvis.parsers.costx.boq_intelligence import _compute_hierarchy_statistics",
+      "category": "import_stability",
+      "production_evidence": "_compute_hierarchy_statistics is underscore-prefixed",
+      "report_claim": "from jarvis.parsers.costx.boq_intelligence import _compute_hierarchy_statistics",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Must not import: from jarvis.parsers.costx.boq_intelligence import _detect_level_skips",
+      "category": "import_stability",
+      "production_evidence": "_detect_level_skips is underscore-prefixed",
+      "report_claim": "from jarvis.parsers.costx.boq_intelligence import _detect_level_skips",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Must not import: from jarvis.parsers.costx.boq_intelligence import _detect_zero_quantities",
+      "category": "import_stability",
+      "production_evidence": "_detect_zero_quantities is underscore-prefixed",
+      "report_claim": "from jarvis.parsers.costx.boq_intelligence import _detect_zero_quantities",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Must not import: from jarvis.parsers.costx.boq_intelligence import _detect_structural_containment",
+      "category": "import_stability",
+      "production_evidence": "_detect_structural_containment is underscore-prefixed",
+      "report_claim": "from jarvis.parsers.costx.boq_intelligence import _detect_structural_containment",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Must not import: from jarvis.parsers.costx.boq_intelligence import _detect_basic_completeness",
+      "category": "import_stability",
+      "production_evidence": "_detect_basic_completeness is underscore-prefixed",
+      "report_claim": "from jarvis.parsers.costx.boq_intelligence import _detect_basic_completeness",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Must not import: from jarvis.parsers.costx.boq_extraction import _classify_row",
+      "category": "import_stability",
+      "production_evidence": "_classify_row is underscore-prefixed",
+      "report_claim": "from jarvis.parsers.costx.boq_extraction import _classify_row",
+      "status": "MATCH"
+    },
+    {
+      "claim": "Recommended access pattern is current production pattern",
+      "category": "access_pattern",
+      "production_evidence": "Current production code uses direct dataclass import pattern",
+      "report_claim": "Direct dataclass + public function (current production pattern)",
+      "status": "MATCH"
+    }
+  ],
+  "summary": {
+    "total_verifications": 16,
+    "matches": 16,
+    "drifts": 0,
+    "errors": 0,
+    "ambiguous": 0
+  },
+  "recommendation": "Freeze Spike 4 - All claims verified against production"
+}
