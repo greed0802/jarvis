@@ -1,0 +1,491 @@
+{
+  "title": "EQ-0013 Spike 4: Validation Engine Verification Evidence",
+  "engine_version": "1.0.0",
+  "contract_version": "1.0.0",
+  "evidence_contract": "BOQ Intelligence Public Evidence Contract v1.0.0",
+  "output_contract": "Validation Findings Contract v1.0.0",
+  "results": {
+    "base_evidence": {
+      "engine_version": "1.0.0",
+      "contract_version": "1.0.0",
+      "execution_timestamp": "2026-07-15T05:36:20.543848+00:00",
+      "total_findings": 18,
+      "findings": [
+        {
+          "rule_id": "V-001",
+          "rule_version": "1.0.0",
+          "category": "Structural",
+          "finding_type": "list",
+          "finding_value": [],
+          "evidence_fields": [
+            "row_classification",
+            "section_statistics",
+            "boq_statistics",
+            "known_anomalies"
+          ]
+        },
+        {
+          "rule_id": "V-002",
+          "rule_version": "1.0.0",
+          "category": "Structural",
+          "finding_type": "value",
+          "finding_value": {
+            "missing_keys": [],
+            "unexpected_keys": []
+          },
+          "evidence_fields": [
+            "row_classification"
+          ]
+        },
+        {
+          "rule_id": "V-003",
+          "rule_version": "1.0.0",
+          "category": "Structural",
+          "finding_type": "count",
+          "finding_value": {},
+          "evidence_fields": [
+            "row_classification"
+          ]
+        },
+        {
+          "rule_id": "V-004",
+          "rule_version": "1.0.0",
+          "category": "Consistency",
+          "finding_type": "difference",
+          "finding_value": {
+            "actual_sum": 16,
+            "total_rows": 16,
+            "difference": 0
+          },
+          "evidence_fields": [
+            "row_classification",
+            "boq_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-005",
+          "rule_version": "1.0.0",
+          "category": "Consistency",
+          "finding_type": "count",
+          "finding_value": {},
+          "evidence_fields": [
+            "section_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-006",
+          "rule_version": "1.0.0",
+          "category": "Consistency",
+          "finding_type": "count",
+          "finding_value": [],
+          "evidence_fields": [
+            "known_anomalies",
+            "boq_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-007",
+          "rule_version": "1.0.0",
+          "category": "Completeness",
+          "finding_type": "ratio",
+          "finding_value": 0.75,
+          "evidence_fields": [
+            "boq_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-008",
+          "rule_version": "1.0.0",
+          "category": "Completeness",
+          "finding_type": "ratio",
+          "finding_value": 0.4375,
+          "evidence_fields": [
+            "boq_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-009",
+          "rule_version": "1.0.0",
+          "category": "Completeness",
+          "finding_type": "ratio",
+          "finding_value": 0.375,
+          "evidence_fields": [
+            "boq_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-010",
+          "rule_version": "1.0.0",
+          "category": "Structural",
+          "finding_type": "presence",
+          "finding_value": false,
+          "evidence_fields": [
+            "hierarchy"
+          ]
+        },
+        {
+          "rule_id": "V-011",
+          "rule_version": "1.0.0",
+          "category": "Structural",
+          "finding_type": "count",
+          "finding_value": null,
+          "evidence_fields": [
+            "hierarchy_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-012",
+          "rule_version": "1.0.0",
+          "category": "Structural",
+          "finding_type": "presence",
+          "finding_value": null,
+          "evidence_fields": [
+            "hierarchy_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-013",
+          "rule_version": "1.0.0",
+          "category": "Detection",
+          "finding_type": "list",
+          "finding_value": false,
+          "evidence_fields": [
+            "detected_level_skips"
+          ]
+        },
+        {
+          "rule_id": "V-014",
+          "rule_version": "1.0.0",
+          "category": "Detection",
+          "finding_type": "count",
+          "finding_value": null,
+          "evidence_fields": [
+            "detected_level_skips"
+          ]
+        },
+        {
+          "rule_id": "V-015",
+          "rule_version": "1.0.0",
+          "category": "Detection",
+          "finding_type": "list",
+          "finding_value": null,
+          "evidence_fields": [
+            "detected_level_skips"
+          ]
+        },
+        {
+          "rule_id": "V-016",
+          "rule_version": "1.0.0",
+          "category": "Detection",
+          "finding_type": "count",
+          "finding_value": null,
+          "evidence_fields": [
+            "zero_quantity_items"
+          ]
+        },
+        {
+          "rule_id": "V-017",
+          "rule_version": "1.0.0",
+          "category": "Detection",
+          "finding_type": "count",
+          "finding_value": null,
+          "evidence_fields": [
+            "structural_containment_findings"
+          ]
+        },
+        {
+          "rule_id": "V-018",
+          "rule_version": "1.0.0",
+          "category": "Detection",
+          "finding_type": "count",
+          "finding_value": null,
+          "evidence_fields": [
+            "completeness_findings"
+          ]
+        }
+      ]
+    },
+    "full_evidence": {
+      "engine_version": "1.0.0",
+      "contract_version": "1.0.0",
+      "execution_timestamp": "2026-07-15T05:36:20.543848+00:00",
+      "total_findings": 18,
+      "findings": [
+        {
+          "rule_id": "V-001",
+          "rule_version": "1.0.0",
+          "category": "Structural",
+          "finding_type": "list",
+          "finding_value": [],
+          "evidence_fields": [
+            "row_classification",
+            "section_statistics",
+            "boq_statistics",
+            "known_anomalies"
+          ]
+        },
+        {
+          "rule_id": "V-002",
+          "rule_version": "1.0.0",
+          "category": "Structural",
+          "finding_type": "value",
+          "finding_value": {
+            "missing_keys": [],
+            "unexpected_keys": []
+          },
+          "evidence_fields": [
+            "row_classification"
+          ]
+        },
+        {
+          "rule_id": "V-003",
+          "rule_version": "1.0.0",
+          "category": "Structural",
+          "finding_type": "count",
+          "finding_value": {},
+          "evidence_fields": [
+            "row_classification"
+          ]
+        },
+        {
+          "rule_id": "V-004",
+          "rule_version": "1.0.0",
+          "category": "Consistency",
+          "finding_type": "difference",
+          "finding_value": {
+            "actual_sum": 16,
+            "total_rows": 16,
+            "difference": 0
+          },
+          "evidence_fields": [
+            "row_classification",
+            "boq_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-005",
+          "rule_version": "1.0.0",
+          "category": "Consistency",
+          "finding_type": "count",
+          "finding_value": {},
+          "evidence_fields": [
+            "section_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-006",
+          "rule_version": "1.0.0",
+          "category": "Consistency",
+          "finding_type": "count",
+          "finding_value": [],
+          "evidence_fields": [
+            "known_anomalies",
+            "boq_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-007",
+          "rule_version": "1.0.0",
+          "category": "Completeness",
+          "finding_type": "ratio",
+          "finding_value": 0.75,
+          "evidence_fields": [
+            "boq_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-008",
+          "rule_version": "1.0.0",
+          "category": "Completeness",
+          "finding_type": "ratio",
+          "finding_value": 0.4375,
+          "evidence_fields": [
+            "boq_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-009",
+          "rule_version": "1.0.0",
+          "category": "Completeness",
+          "finding_type": "ratio",
+          "finding_value": 0.375,
+          "evidence_fields": [
+            "boq_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-010",
+          "rule_version": "1.0.0",
+          "category": "Structural",
+          "finding_type": "presence",
+          "finding_value": true,
+          "evidence_fields": [
+            "hierarchy"
+          ]
+        },
+        {
+          "rule_id": "V-011",
+          "rule_version": "1.0.0",
+          "category": "Structural",
+          "finding_type": "count",
+          "finding_value": 1,
+          "evidence_fields": [
+            "hierarchy_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-012",
+          "rule_version": "1.0.0",
+          "category": "Structural",
+          "finding_type": "presence",
+          "finding_value": {
+            "min_depth": 1,
+            "max_depth": 3
+          },
+          "evidence_fields": [
+            "hierarchy_statistics"
+          ]
+        },
+        {
+          "rule_id": "V-013",
+          "rule_version": "1.0.0",
+          "category": "Detection",
+          "finding_type": "list",
+          "finding_value": true,
+          "evidence_fields": [
+            "detected_level_skips"
+          ]
+        },
+        {
+          "rule_id": "V-014",
+          "rule_version": "1.0.0",
+          "category": "Detection",
+          "finding_type": "count",
+          "finding_value": 2,
+          "evidence_fields": [
+            "detected_level_skips"
+          ]
+        },
+        {
+          "rule_id": "V-015",
+          "rule_version": "1.0.0",
+          "category": "Detection",
+          "finding_type": "list",
+          "finding_value": {
+            "min_magnitude": 2,
+            "max_magnitude": 2
+          },
+          "evidence_fields": [
+            "detected_level_skips"
+          ]
+        },
+        {
+          "rule_id": "V-016",
+          "rule_version": "1.0.0",
+          "category": "Detection",
+          "finding_type": "count",
+          "finding_value": 1,
+          "evidence_fields": [
+            "zero_quantity_items"
+          ]
+        },
+        {
+          "rule_id": "V-017",
+          "rule_version": "1.0.0",
+          "category": "Detection",
+          "finding_type": "count",
+          "finding_value": 1,
+          "evidence_fields": [
+            "structural_containment_findings"
+          ]
+        },
+        {
+          "rule_id": "V-018",
+          "rule_version": "1.0.0",
+          "category": "Detection",
+          "finding_type": "count",
+          "finding_value": 2,
+          "evidence_fields": [
+            "completeness_findings"
+          ]
+        }
+      ]
+    },
+    "determinism": {
+      "total_runs": 3,
+      "unique_results": 1,
+      "deterministic": true
+    },
+    "value_checks": {
+      "checks": [
+        {
+          "rule": "V-001",
+          "expected": [],
+          "actual": [],
+          "pass": true
+        },
+        {
+          "rule": "V-004",
+          "expected": {
+            "difference": 0
+          },
+          "actual": {
+            "actual_sum": 16,
+            "total_rows": 16,
+            "difference": 0
+          },
+          "pass": true
+        },
+        {
+          "rule": "V-007",
+          "expected": 0.75,
+          "actual": 0.75,
+          "pass": true
+        },
+        {
+          "rule": "V-010",
+          "expected": true,
+          "actual": true,
+          "pass": true
+        },
+        {
+          "rule": "V-013",
+          "expected": true,
+          "actual": true,
+          "pass": true
+        },
+        {
+          "rule": "V-014",
+          "expected": 2,
+          "actual": 2,
+          "pass": true
+        },
+        {
+          "rule": "V-016",
+          "expected": 1,
+          "actual": 1,
+          "pass": true
+        },
+        {
+          "rule": "V-017",
+          "expected": 1,
+          "actual": 1,
+          "pass": true
+        },
+        {
+          "rule": "V-018",
+          "expected": 2,
+          "actual": 2,
+          "pass": true
+        }
+      ],
+      "all_pass": true
+    }
+  },
+  "summary": {
+    "base_findings_count": 18,
+    "full_findings_count": 18,
+    "deterministic": true,
+    "value_checks_all_pass": true
+  }
+}

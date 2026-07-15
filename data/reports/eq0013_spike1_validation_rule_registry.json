@@ -1,0 +1,383 @@
+{
+  "registry_version": "1.0.0",
+  "contract_version": "1.0.0",
+  "generated_by": "EQ-0013 Spike 1 + Spike 4 (engine implementation)",
+  "total_rules": 22,
+  "rules": [
+    {
+      "rule_id": "V-001",
+      "category": "Structural",
+      "description": "Verify all required evidence fields are present",
+      "evidence_fields": [
+        "row_classification",
+        "section_statistics",
+        "boq_statistics",
+        "known_anomalies"
+      ],
+      "boundary_class": "Observation",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Lists missing required fields (empty if all present)",
+      "rationale": "Contract guarantees required fields always present (G-01, G-02)",
+      "eq_source": "EQ-0012"
+    },
+    {
+      "rule_id": "V-002",
+      "category": "Structural",
+      "description": "Verify row_classification contains exactly 5 expected keys",
+      "evidence_fields": [
+        "row_classification"
+      ],
+      "boundary_class": "Observation",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports missing or unexpected keys",
+      "rationale": "Contract invariant SI-RC-04 guarantees 5 keys",
+      "eq_source": "EQ-0012"
+    },
+    {
+      "rule_id": "V-003",
+      "category": "Structural",
+      "description": "Verify row_classification values are non-negative integers",
+      "evidence_fields": [
+        "row_classification"
+      ],
+      "boundary_class": "Observation",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports negative count values",
+      "rationale": "Counts represent observed row frequencies, cannot be negative",
+      "eq_source": "EQ-0010"
+    },
+    {
+      "rule_id": "V-004",
+      "category": "Consistency",
+      "description": "Verify sum of row_classification equals boq_statistics['total_rows']",
+      "evidence_fields": [
+        "row_classification",
+        "boq_statistics"
+      ],
+      "boundary_class": "Relationship",
+      "classification": "Multiple Fields",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports discrepancy magnitude if sums don't match",
+      "rationale": "Classification counts must sum to total (cross-field dependency documented)",
+      "eq_source": "EQ-0010"
+    },
+    {
+      "rule_id": "V-005",
+      "category": "Consistency",
+      "description": "Verify all sections in section_statistics have non-negative quantity counts",
+      "evidence_fields": [
+        "section_statistics"
+      ],
+      "boundary_class": "Observation",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports sections with invalid (negative) counts",
+      "rationale": "Quantity counts represent observed frequencies",
+      "eq_source": "EQ-0010"
+    },
+    {
+      "rule_id": "V-006",
+      "category": "Consistency",
+      "description": "Verify known_anomalies row_numbers are within [1, total_rows]",
+      "evidence_fields": [
+        "known_anomalies",
+        "boq_statistics"
+      ],
+      "boundary_class": "Relationship",
+      "classification": "Multiple Fields",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports anomalies with out-of-range row numbers",
+      "rationale": "Row numbers reference BOQ rows, must be within observed range",
+      "eq_source": "EQ-0010"
+    },
+    {
+      "rule_id": "V-007",
+      "category": "Completeness",
+      "description": "Calculate ratio of code_rows to total_rows",
+      "evidence_fields": [
+        "boq_statistics"
+      ],
+      "boundary_class": "Observation",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports completeness ratio (0.0 to 1.0)",
+      "rationale": "Observes code column population density",
+      "eq_source": "EQ-0010"
+    },
+    {
+      "rule_id": "V-008",
+      "category": "Completeness",
+      "description": "Calculate ratio of description_rows to total_rows",
+      "evidence_fields": [
+        "boq_statistics"
+      ],
+      "boundary_class": "Observation",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports completeness ratio (0.0 to 1.0)",
+      "rationale": "Observes description column population density",
+      "eq_source": "EQ-0010"
+    },
+    {
+      "rule_id": "V-009",
+      "category": "Completeness",
+      "description": "Calculate ratio of quantity_rows to total_rows",
+      "evidence_fields": [
+        "boq_statistics"
+      ],
+      "boundary_class": "Observation",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports completeness ratio (0.0 to 1.0)",
+      "rationale": "Observes quantity column population density",
+      "eq_source": "EQ-0010"
+    },
+    {
+      "rule_id": "V-010",
+      "category": "Structural",
+      "description": "Check if hierarchy evidence is available (not None)",
+      "evidence_fields": [
+        "hierarchy"
+      ],
+      "boundary_class": "Observation",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports whether hierarchy was reconstructed",
+      "rationale": "Hierarchy is optional evidence (include_hierarchy parameter)",
+      "eq_source": "EQ-0010"
+    },
+    {
+      "rule_id": "V-011",
+      "category": "Structural",
+      "description": "Report number of root headers in hierarchy",
+      "evidence_fields": [
+        "hierarchy_statistics"
+      ],
+      "boundary_class": "Observation",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports root_headers count or None if unavailable",
+      "rationale": "Observes hierarchy structure",
+      "eq_source": "EQ-0010"
+    },
+    {
+      "rule_id": "V-012",
+      "category": "Structural",
+      "description": "Report min/max depth in hierarchy",
+      "evidence_fields": [
+        "hierarchy_statistics"
+      ],
+      "boundary_class": "Observation",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports (min_depth, max_depth) or None if unavailable",
+      "rationale": "Observes hierarchy depth distribution",
+      "eq_source": "EQ-0010"
+    },
+    {
+      "rule_id": "V-013",
+      "category": "Detection",
+      "description": "Check if level skip detection is available",
+      "evidence_fields": [
+        "detected_level_skips"
+      ],
+      "boundary_class": "Detection",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports whether level skips were detected",
+      "rationale": "Detection is optional evidence (include_detection parameter)",
+      "eq_source": "EQ-0011"
+    },
+    {
+      "rule_id": "V-014",
+      "category": "Detection",
+      "description": "Count number of detected level skips",
+      "evidence_fields": [
+        "detected_level_skips"
+      ],
+      "boundary_class": "Detection",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports skip count or None if unavailable",
+      "rationale": "Observes level skip pattern frequency",
+      "eq_source": "EQ-0011"
+    },
+    {
+      "rule_id": "V-015",
+      "category": "Detection",
+      "description": "Report min/max skip magnitude",
+      "evidence_fields": [
+        "detected_level_skips"
+      ],
+      "boundary_class": "Detection",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports (min_magnitude, max_magnitude) or None",
+      "rationale": "Observes skip magnitude distribution",
+      "eq_source": "EQ-0011"
+    },
+    {
+      "rule_id": "V-016",
+      "category": "Detection",
+      "description": "Count number of zero quantity items",
+      "evidence_fields": [
+        "zero_quantity_items"
+      ],
+      "boundary_class": "Detection",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports count or None if unavailable",
+      "rationale": "Observes zero quantity pattern frequency",
+      "eq_source": "EQ-0011"
+    },
+    {
+      "rule_id": "V-017",
+      "category": "Detection",
+      "description": "Count structural containment findings",
+      "evidence_fields": [
+        "structural_containment_findings"
+      ],
+      "boundary_class": "Detection",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports finding count or None if unavailable",
+      "rationale": "Observes structural inversion frequency",
+      "eq_source": "EQ-0011"
+    },
+    {
+      "rule_id": "V-018",
+      "category": "Detection",
+      "description": "Count sections with zero items (completeness findings)",
+      "evidence_fields": [
+        "completeness_findings"
+      ],
+      "boundary_class": "Detection",
+      "classification": "Supported",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Approved",
+      "rule_version": "1.0.0",
+      "deterministic_finding": "Reports empty section count or None if unavailable",
+      "rationale": "Observes section-level item completeness",
+      "eq_source": "EQ-0011"
+    },
+    {
+      "rule_id": "V-901",
+      "category": "Assessment",
+      "description": "Assess overall BOQ quality based on completeness ratios",
+      "evidence_fields": [
+        "boq_statistics"
+      ],
+      "boundary_class": "Violation",
+      "classification": "Boundary Violation",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Deprecated",
+      "rule_version": null,
+      "deterministic_finding": "N/A - crosses boundary",
+      "rationale": "REJECTED: Crosses EQ-0011 boundary (Assess/Judge)",
+      "eq_source": "EQ-0011"
+    },
+    {
+      "rule_id": "V-902",
+      "category": "Recommendation",
+      "description": "Recommend whether level skips should be corrected",
+      "evidence_fields": [
+        "detected_level_skips"
+      ],
+      "boundary_class": "Violation",
+      "classification": "Boundary Violation",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Deprecated",
+      "rule_version": null,
+      "deterministic_finding": "N/A - crosses boundary",
+      "rationale": "REJECTED: Crosses EQ-0011 boundary (Recommend)",
+      "eq_source": "EQ-0011"
+    },
+    {
+      "rule_id": "V-801",
+      "category": "Financial",
+      "description": "Verify item costs are reasonable",
+      "evidence_fields": [],
+      "boundary_class": "Observation",
+      "classification": "Insufficient Evidence",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Deprecated",
+      "rule_version": null,
+      "deterministic_finding": "N/A - no cost evidence",
+      "rationale": "REJECTED: No cost/price evidence in Contract v1.0",
+      "eq_source": "EQ-0012"
+    },
+    {
+      "rule_id": "V-802",
+      "category": "Reference",
+      "description": "Verify items reference valid drawings",
+      "evidence_fields": [],
+      "boundary_class": "Relationship",
+      "classification": "Insufficient Evidence",
+      "introduced_by": "EQ-0013 Spike 1",
+      "contract_version": "1.0.0",
+      "status": "Deprecated",
+      "rule_version": null,
+      "deterministic_finding": "N/A - no drawing evidence",
+      "rationale": "REJECTED: No drawing reference evidence in Contract v1.0",
+      "eq_source": "EQ-0012"
+    }
+  ]
+}

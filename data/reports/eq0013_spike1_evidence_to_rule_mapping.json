@@ -1,0 +1,172 @@
+{
+  "row_classification": [
+    {
+      "rule_id": "V-001",
+      "category": "Structural",
+      "boundary_class": "Observation",
+      "classification": "Supported"
+    },
+    {
+      "rule_id": "V-002",
+      "category": "Structural",
+      "boundary_class": "Observation",
+      "classification": "Supported"
+    },
+    {
+      "rule_id": "V-003",
+      "category": "Structural",
+      "boundary_class": "Observation",
+      "classification": "Supported"
+    },
+    {
+      "rule_id": "V-004",
+      "category": "Consistency",
+      "boundary_class": "Relationship",
+      "classification": "Multiple Fields"
+    }
+  ],
+  "section_statistics": [
+    {
+      "rule_id": "V-001",
+      "category": "Structural",
+      "boundary_class": "Observation",
+      "classification": "Supported"
+    },
+    {
+      "rule_id": "V-005",
+      "category": "Consistency",
+      "boundary_class": "Observation",
+      "classification": "Supported"
+    }
+  ],
+  "boq_statistics": [
+    {
+      "rule_id": "V-001",
+      "category": "Structural",
+      "boundary_class": "Observation",
+      "classification": "Supported"
+    },
+    {
+      "rule_id": "V-004",
+      "category": "Consistency",
+      "boundary_class": "Relationship",
+      "classification": "Multiple Fields"
+    },
+    {
+      "rule_id": "V-006",
+      "category": "Consistency",
+      "boundary_class": "Relationship",
+      "classification": "Multiple Fields"
+    },
+    {
+      "rule_id": "V-007",
+      "category": "Completeness",
+      "boundary_class": "Observation",
+      "classification": "Supported"
+    },
+    {
+      "rule_id": "V-008",
+      "category": "Completeness",
+      "boundary_class": "Observation",
+      "classification": "Supported"
+    },
+    {
+      "rule_id": "V-009",
+      "category": "Completeness",
+      "boundary_class": "Observation",
+      "classification": "Supported"
+    },
+    {
+      "rule_id": "V-901",
+      "category": "Assessment",
+      "boundary_class": "Violation",
+      "classification": "Boundary Violation"
+    }
+  ],
+  "known_anomalies": [
+    {
+      "rule_id": "V-001",
+      "category": "Structural",
+      "boundary_class": "Observation",
+      "classification": "Supported"
+    },
+    {
+      "rule_id": "V-006",
+      "category": "Consistency",
+      "boundary_class": "Relationship",
+      "classification": "Multiple Fields"
+    }
+  ],
+  "hierarchy": [
+    {
+      "rule_id": "V-010",
+      "category": "Structural",
+      "boundary_class": "Observation",
+      "classification": "Supported"
+    }
+  ],
+  "hierarchy_statistics": [
+    {
+      "rule_id": "V-011",
+      "category": "Structural",
+      "boundary_class": "Observation",
+      "classification": "Supported"
+    },
+    {
+      "rule_id": "V-012",
+      "category": "Structural",
+      "boundary_class": "Observation",
+      "classification": "Supported"
+    }
+  ],
+  "detected_level_skips": [
+    {
+      "rule_id": "V-013",
+      "category": "Detection",
+      "boundary_class": "Detection",
+      "classification": "Supported"
+    },
+    {
+      "rule_id": "V-014",
+      "category": "Detection",
+      "boundary_class": "Detection",
+      "classification": "Supported"
+    },
+    {
+      "rule_id": "V-015",
+      "category": "Detection",
+      "boundary_class": "Detection",
+      "classification": "Supported"
+    },
+    {
+      "rule_id": "V-902",
+      "category": "Recommendation",
+      "boundary_class": "Violation",
+      "classification": "Boundary Violation"
+    }
+  ],
+  "zero_quantity_items": [
+    {
+      "rule_id": "V-016",
+      "category": "Detection",
+      "boundary_class": "Detection",
+      "classification": "Supported"
+    }
+  ],
+  "structural_containment_findings": [
+    {
+      "rule_id": "V-017",
+      "category": "Detection",
+      "boundary_class": "Detection",
+      "classification": "Supported"
+    }
+  ],
+  "completeness_findings": [
+    {
+      "rule_id": "V-018",
+      "category": "Detection",
+      "boundary_class": "Detection",
+      "classification": "Supported"
+    }
+  ]
+}

@@ -44,6 +44,7 @@ Historical artifacts preserve what was known or decided at a point in time. Oper
 | Capability | Lifecycle State | Evidence Ready | Implementation Ready | Dependency | Notes |
 |------------|:---------------:|:--------------:|:--------------------:|------------|-------|
 | **BOQ Intelligence** | Implemented | Yes | Yes | None | Increment 1 complete — 2026-07-14 |
+| **Validation Engine** | Implemented | Yes | Yes (Consumer Ready) | BOQ Intelligence (evidence dependency) | EQ-0013 Frozen — Gate 3 Approved — 2026-07-15 |
 | **Formatter** | Deferred | Partial | No | BOQ Intelligence (prerequisite) | Distinct product capability |
 | **CheckMate** | Deferred | Partial | No | BOQ Intelligence (baseline) | Distinct product capability |
 | **Cubit Parser** | Deferred | No | No | Fixtures + Engineering Question | Awaiting fixtures |
@@ -56,6 +57,8 @@ Historical artifacts preserve what was known or decided at a point in time. Oper
 
 ```
 BOQ Intelligence (Implemented)
+        │
+        ├── evidence for ──▶ Validation Engine (Implemented)
         │
         ├── prerequisite for ──▶ Formatter (Deferred)
         │
@@ -95,6 +98,7 @@ BOQ Intelligence (Implemented)
 | 2026-07-13 | PDF Parser | Proposed | Deferred | Capability Evaluation 001 — insufficient evidence |
 | 2026-07-13 | AI-Assisted Estimation | Proposed | Deferred | Capability Evaluation 001 — long-term strategic |
 | 2026-07-14 | BOQ Intelligence | Approved | Implemented | Increment 1 complete — 73 tests passed, 0 failures |
+| 2026-07-15 | Validation Engine | Proposed | Implemented | EQ-0013 Frozen — 4 spikes complete, Gate 3 Approved |
 
 ---
 

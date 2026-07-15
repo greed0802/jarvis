@@ -1,0 +1,74 @@
+{
+  "verification_version": "1.0.0",
+  "spike": "EQ-0013 Spike 2",
+  "contract_version": "1.0.0",
+  "total_checks": 15,
+  "passed_checks": 14,
+  "failed_checks": 1,
+  "checks": {
+    "No New Rules Invented": {
+      "passed": true,
+      "issues": []
+    },
+    "Rule ID Uniqueness": {
+      "passed": true,
+      "issues": []
+    },
+    "Rule ID Format": {
+      "passed": true,
+      "issues": []
+    },
+    "Rule ID Reservation Policy": {
+      "passed": false,
+      "issues": [
+        "ID POLICY VIOLATION: V-801 \u2014 rejected rule in implementable range (001-899)",
+        "ID POLICY VIOLATION: V-802 \u2014 rejected rule in implementable range (001-899)"
+      ]
+    },
+    "Provenance Complete": {
+      "passed": true,
+      "issues": []
+    },
+    "Categories Valid": {
+      "passed": true,
+      "issues": []
+    },
+    "Boundary Classification": {
+      "passed": true,
+      "issues": []
+    },
+    "Lifecycle Valid": {
+      "passed": true,
+      "issues": []
+    },
+    "Dependency Graph Complete": {
+      "passed": true,
+      "issues": []
+    },
+    "Dependency Fields Match": {
+      "passed": true,
+      "issues": []
+    },
+    "No Speculative Rules": {
+      "passed": true,
+      "issues": []
+    },
+    "Rejected Rules Documented": {
+      "passed": true,
+      "issues": []
+    },
+    "Boundary Preservation": {
+      "passed": true,
+      "issues": []
+    },
+    "Finding Types Valid": {
+      "passed": true,
+      "issues": []
+    },
+    "Contract Version Consistent": {
+      "passed": true,
+      "issues": []
+    }
+  },
+  "conclusion": "FAIL"
+}

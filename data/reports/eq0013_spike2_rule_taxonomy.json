@@ -1,0 +1,377 @@
+{
+  "taxonomy_version": "1.0.0",
+  "contract_version": "1.0.0",
+  "generated_by": "EQ-0013 Spike 2",
+  "categories": {
+    "Structural": {
+      "definition": "Validations that verify presence, type, shape, or range of evidence fields.",
+      "scope": "Single-field checks against Contract invariants.",
+      "example_rules": [
+        "V-001: Required field presence",
+        "V-002: Row classification key shape (5 keys)",
+        "V-003: Non-negative classification counts",
+        "V-010: Hierarchy availability",
+        "V-011: Root header count",
+        "V-012: Hierarchy depth range"
+      ],
+      "eq_source": "EQ-0010 (Increment 1-2 observation), EQ-0012 (Contract invariants)",
+      "boundary": "Always BoundaryClass.Observation \u2014 no assessment, no recommendation.",
+      "prohibited_verbs": [],
+      "implementable": true
+    },
+    "Consistency": {
+      "definition": "Validations that verify arithmetic or logical relationships between evidence fields.",
+      "scope": "Multi-field checks that detect internal contradictions.",
+      "example_rules": [
+        "V-004: Row classification sum equals total_rows",
+        "V-005: Non-negative section quantity counts",
+        "V-006: Anomaly row numbers within range"
+      ],
+      "eq_source": "EQ-0010 (Increment 1 cross-field dependencies)",
+      "boundary": "BoundaryClass.Observation or BoundaryClass.Relationship \u2014 no assessment.",
+      "prohibited_verbs": [],
+      "implementable": true
+    },
+    "Completeness": {
+      "definition": "Validations that calculate data population ratios from aggregate statistics.",
+      "scope": "Single-field ratios describing column completeness.",
+      "example_rules": [
+        "V-007: Code column completeness (code_rows/total_rows)",
+        "V-008: Description column completeness",
+        "V-009: Quantity column completeness"
+      ],
+      "eq_source": "EQ-0010 (boq_statistics completeness indicators)",
+      "boundary": "Always BoundaryClass.Observation \u2014 ratios describe, not assess.",
+      "prohibited_verbs": [],
+      "implementable": true
+    },
+    "Detection": {
+      "definition": "Validations that observe patterns in EQ-0011 detection evidence.",
+      "scope": "Checks on optional Increment 3 detection evidence fields.",
+      "example_rules": [
+        "V-013: Level skip detection availability",
+        "V-014: Level skip count",
+        "V-015: Level skip magnitude range",
+        "V-016: Zero quantity item count",
+        "V-017: Structural containment finding count",
+        "V-018: Empty section count"
+      ],
+      "eq_source": "EQ-0011 (Increment 3 detection evidence)",
+      "boundary": "Always BoundaryClass.Detection \u2014 findings, not recommendations.",
+      "prohibited_verbs": [],
+      "implementable": true
+    },
+    "Assessment": {
+      "definition": "Validations that assess professional quality or correctness.",
+      "scope": "N/A",
+      "example_rules": [
+        "V-901: BOQ quality assessment"
+      ],
+      "eq_source": "",
+      "boundary": "",
+      "prohibited_verbs": [
+        "assess",
+        "judge",
+        "evaluate",
+        "rate",
+        "rank",
+        "score"
+      ],
+      "implementable": false
+    },
+    "Recommendation": {
+      "definition": "Validations that recommend corrective actions.",
+      "scope": "N/A",
+      "example_rules": [
+        "V-902: Level skip recommendation"
+      ],
+      "eq_source": "",
+      "boundary": "",
+      "prohibited_verbs": [
+        "recommend",
+        "suggest",
+        "advise",
+        "propose",
+        "should"
+      ],
+      "implementable": false
+    },
+    "Financial": {
+      "definition": "Validations that check financial values.",
+      "scope": "N/A",
+      "example_rules": [
+        "V-801: Item cost validation"
+      ],
+      "eq_source": "",
+      "boundary": "",
+      "prohibited_verbs": [],
+      "implementable": false
+    },
+    "Reference": {
+      "definition": "Validations that check external references.",
+      "scope": "N/A",
+      "example_rules": [
+        "V-802: Drawing reference validation"
+      ],
+      "eq_source": "",
+      "boundary": "",
+      "prohibited_verbs": [],
+      "implementable": false
+    }
+  },
+  "lifecycle": {
+    "states": [
+      "Candidate",
+      "Approved",
+      "Implemented",
+      "Verified",
+      "Deprecated",
+      "Retired"
+    ],
+    "transitions": {
+      "Candidate": {
+        "entry_criteria": [
+          "Rule ID assigned",
+          "Provenance documented (evidence fields, EQ source, spike)",
+          "Boundary classification present",
+          "Category assigned"
+        ],
+        "exit_criteria": [
+          "Evidence report frozen",
+          "Category validated by EQ author",
+          "Boundary compliance verified",
+          "Project Owner approval"
+        ],
+        "next": "Approved",
+        "governance": "Spike discovery + Evidence Report"
+      },
+      "Approved": {
+        "entry_criteria": [
+          "Project Owner Gate 2 approval",
+          "Category confirmed",
+          "Boundary classification confirmed",
+          "Provenance complete"
+        ],
+        "exit_criteria": [
+          "Implementation complete",
+          "Passes verification audit",
+          "Deterministic behavior confirmed"
+        ],
+        "next": "Implemented",
+        "governance": "Gate 2 approval"
+      },
+      "Implemented": {
+        "entry_criteria": [
+          "Production code exists",
+          "Consumes only Evidence Contract v1.0",
+          "Follows EQ-0011 boundary",
+          "Deterministic (same input \u2192 same output)"
+        ],
+        "exit_criteria": [
+          "Verification tooling confirms implementation matches spec",
+          "All structural invariants pass",
+          "Boundary compliance confirmed",
+          "Consumer-independent test passes"
+        ],
+        "next": "Verified",
+        "governance": "Implementation + Verification audit"
+      },
+      "Verified": {
+        "entry_criteria": [
+          "Implementation verified against spec",
+          "Verification status: VERIFIED",
+          "Anti-drift tooling passes",
+          "Consumer compliance test passes"
+        ],
+        "exit_criteria": [
+          "Rule no longer needed (Contract version deprecates evidence)",
+          "Replaced by successor rule (new Rule ID)",
+          "Evidence field removed from Contract"
+        ],
+        "next": "Deprecated",
+        "governance": "ADR or Contract version evolution"
+      },
+      "Deprecated": {
+        "entry_criteria": [
+          "Deprecation notice issued",
+          "Successor rule identified (if applicable)",
+          "Removal timeline established",
+          "Consumer migration guidance provided"
+        ],
+        "exit_criteria": [
+          "Deprecation period complete",
+          "No active consumers",
+          "Successor rule verified"
+        ],
+        "next": "Retired",
+        "governance": "MINOR Contract version (adds deprecation notice)"
+      },
+      "Retired": {
+        "entry_criteria": [
+          "Deprecation period expired",
+          "Rule removed from active registry",
+          "Historical record preserved"
+        ],
+        "exit_criteria": [
+          "(terminal state)"
+        ],
+        "next": null,
+        "governance": "Historical preservation \u2014 Rule ID never reused"
+      }
+    },
+    "forbidden_transitions": [
+      "Candidate \u2192 Retired",
+      "Candidate \u2192 Deprecated",
+      "Approved \u2192 Retired",
+      "Implemented \u2192 Candidate",
+      "Verified \u2192 Candidate",
+      "Deprecated \u2192 Approved",
+      "Retired \u2192 Approved"
+    ]
+  },
+  "identity_policy": {
+    "permanence": "Rule IDs are forever. Once assigned, never reassigned.",
+    "format": "V-NNN where NNN is sequential from 001-999 (900-999 reserved for rejected rules).",
+    "reservation": {
+      "001-899": "Implementable rules (Supported + Multiple Fields)",
+      "900-999": "Rejected rules (Boundary Violation, Insufficient Evidence)"
+    },
+    "retirement": "Retired rules retain their ID permanently in historical index.",
+    "replacement": "A successor rule receives a NEW Rule ID. Never reuse the retired ID.",
+    "historical_preservation": "All rules (including rejected/retired) remain in registry history."
+  },
+  "provenance_schema": {
+    "required_fields": [
+      "rule_id",
+      "rule_version",
+      "category",
+      "description",
+      "evidence_fields",
+      "boundary_class",
+      "contract_version",
+      "eq_source",
+      "introduced_by",
+      "deterministic_finding",
+      "rationale",
+      "status",
+      "verification_status"
+    ],
+    "optional_fields": [
+      "validation_engine_version",
+      "dependency_rules",
+      "deprecation_date",
+      "retirement_date",
+      "successor_rule_id",
+      "consumers"
+    ],
+    "governance": "Every field in ProvenanceSchema.required_fields must be present before a rule may transition from Candidate \u2192 Approved. Missing provenance = incomplete rule."
+  },
+  "version_compatibility": {
+    "contract_vs_rule": {
+      "description": "How Contract version changes affect rule versions.",
+      "rules": {
+        "PATCH": {
+          "trigger": "Contract documentation fix, invariant clarification, non-functional change.",
+          "impact": "NONE \u2014 Rule unchanged. No version increment.",
+          "verification": "Rule verification still passes (no behavior change)."
+        },
+        "MINOR": {
+          "trigger": "Contract adds new optional evidence field, deprecates existing field.",
+          "impact": {
+            "new_field": "PATCH \u2014 Optional rule may be added to consume new field. Existing rules unaffected.",
+            "deprecation": "MINOR \u2014 Rule using deprecated field enters DEPRECATED lifecycle."
+          },
+          "verification": "Existing rules verify against non-deprecated fields only."
+        },
+        "MAJOR": {
+          "trigger": "Contract removes required field, changes type, renames field, changes invariants.",
+          "impact": {
+            "rule_effected": "MAJOR \u2014 Rule referencing changed field must be retired or replaced.",
+            "unaffected_rule": "NONE \u2014 Rule not referencing changed field unaffected."
+          },
+          "verification": "All rules verified against new Contract version."
+        }
+      }
+    },
+    "rule_vs_engine": {
+      "description": "How rule changes affect Validation Engine version.",
+      "rules": {
+        "rule_added": "MINOR \u2014 Engine adds new rule capability.",
+        "rule_deprecated": "MINOR \u2014 Engine marks rule as deprecated.",
+        "rule_retired": "MAJOR \u2014 Engine removes rule functionality.",
+        "rule_finding_changed": "MAJOR \u2014 Breaking change for consumers.",
+        "rule_category_changed": "MAJOR \u2014 Breaking structural change.",
+        "rule_verification_status_changed": "PATCH \u2014 Non-functional status update."
+      }
+    },
+    "independent_versions": "Contract Version, Validation Rule Version, and Validation Engine Version are independent engineering concepts. A MAJOR Contract change may not require a MAJOR Engine change if all affected rules are already deprecated."
+  },
+  "registry_governance": {
+    "adding_rules": {
+      "process": [
+        "Rule discovered via Spike investigation",
+        "Evidence Report documents candidate rule",
+        "Category validated (Spike 2 taxonomy)",
+        "Boundary classification confirmed",
+        "Provenance complete (all required fields)",
+        "Project Owner approval (Gate 2)",
+        "Added to registry as APPROVED"
+      ],
+      "authority": "Engineering Question + Spike + Project Owner Approval",
+      "traceability": "Every addition traces to EQ number + Spike number."
+    },
+    "modifying_rules": {
+      "process": [
+        "Change proposal via Engineering Question",
+        "Impact analysis (Contract, Engine, Consumers)",
+        "Version increment determined",
+        "Project Owner approval",
+        "Registry updated with new rule_version"
+      ],
+      "authority": "Engineering Question + Impact Analysis + Project Owner",
+      "traceability": "Every modification traces to EQ number + version change.",
+      "forbidden_modifications": [
+        "Changing Rule ID (permanent identity)",
+        "Changing boundary_class from valid to Violation",
+        "Changing category to rejected category",
+        "Removing required provenance fields"
+      ]
+    },
+    "deprecating_rules": {
+      "process": [
+        "Deprecation notice issued (MINOR Contract change or Engine update)",
+        "Rule status: VERIFIED \u2192 DEPRECATED",
+        "Deprecation reason documented",
+        "Migration guidance provided to consumers",
+        "Timeline established (consumer migration deadline)"
+      ],
+      "authority": "ADR or Contract version evolution"
+    },
+    "retiring_rules": {
+      "process": [
+        "Deprecation period expired",
+        "No active consumers confirmed",
+        "Successor rule verified (if applicable)",
+        "Rule removed from active registry",
+        "Historical index preserved",
+        "Rule ID permanently retired"
+      ],
+      "authority": "Project Owner after deprecation period"
+    }
+  },
+  "consumer_compatibility": {
+    "verification_chain": [
+      "Consumer identifies required rules",
+      "Consumer verifies Rule IDs present in Engine",
+      "Consumer verifies Contract Version compatibility",
+      "Consumer verifies Finding Types match expectations",
+      "Consumer passes Compliance Suite (EQ-0013) for contract compliance"
+    ],
+    "compatibility_assertions": [
+      "Rule IDs stable (permanent identity)",
+      "Finding types deterministic (same input \u2192 same output)",
+      "Contract version documented (consumer checks compatibility)",
+      "Boundary class preserved (no assessment/recommendation drift)"
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "total_rules": 22,
+  "classifications": {
+    "Supported": 16,
+    "Multiple Fields": 2,
+    "Insufficient Evidence": 2,
+    "Boundary Violation": 2,
+    "Speculative": 0
+  },
+  "boundary_classes": {
+    "Observation": 11,
+    "Relationship": 3,
+    "Detection": 6,
+    "Violation": 2
+  },
+  "evidence_coverage": {
+    "row_classification": 4,
+    "section_statistics": 2,
+    "boq_statistics": 6,
+    "known_anomalies": 2,
+    "hierarchy": 1,
+    "hierarchy_statistics": 2,
+    "detected_level_skips": 3,
+    "zero_quantity_items": 1,
+    "structural_containment_findings": 1,
+    "completeness_findings": 1
+  }
+}

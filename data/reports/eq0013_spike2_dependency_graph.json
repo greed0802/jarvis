@@ -1,0 +1,298 @@
+{
+  "dependency_model": {
+    "levels": {
+      "evidence_field": "Evidence Contract field consumed",
+      "rule": "Validation rule using evidence",
+      "category": "Rule category (Structural, Consistency, etc.)",
+      "finding_type": "Type of deterministic finding produced",
+      "eligible_consumers": "Consumers that can use this finding"
+    },
+    "purpose": [
+      "Impact analysis when Contract evolves",
+      "Regression planning when rule changes",
+      "Dependency visibility for consumers"
+    ],
+    "finding_types": {
+      "presence": "Boolean: field exists / None",
+      "shape": "List: missing/unexpected keys",
+      "count": "Integer: occurrence frequency",
+      "ratio": "Float: 0.0-1.0 completeness",
+      "range": "Tuple: (min, max) distribution",
+      "discrepancy": "Integer: deviation from expected",
+      "flag": "List: invalid elements found"
+    }
+  },
+  "rule_dependencies": {
+    "V-001": {
+      "evidence_fields": [
+        "row_classification",
+        "section_statistics",
+        "boq_statistics",
+        "known_anomalies"
+      ],
+      "category": "Structural",
+      "finding_type": "presence",
+      "eligible_consumers": [
+        "CheckMate",
+        "Formatter",
+        "Builder",
+        "O&A",
+        "Reporting"
+      ]
+    },
+    "V-002": {
+      "evidence_fields": [
+        "row_classification"
+      ],
+      "category": "Structural",
+      "finding_type": "shape",
+      "eligible_consumers": [
+        "CheckMate",
+        "Formatter",
+        "Builder",
+        "O&A",
+        "Reporting"
+      ]
+    },
+    "V-003": {
+      "evidence_fields": [
+        "row_classification"
+      ],
+      "category": "Structural",
+      "finding_type": "flag",
+      "eligible_consumers": [
+        "CheckMate"
+      ]
+    },
+    "V-004": {
+      "evidence_fields": [
+        "row_classification",
+        "boq_statistics"
+      ],
+      "category": "Consistency",
+      "finding_type": "discrepancy",
+      "eligible_consumers": [
+        "CheckMate"
+      ]
+    },
+    "V-005": {
+      "evidence_fields": [
+        "section_statistics"
+      ],
+      "category": "Consistency",
+      "finding_type": "flag",
+      "eligible_consumers": [
+        "CheckMate"
+      ]
+    },
+    "V-006": {
+      "evidence_fields": [
+        "known_anomalies",
+        "boq_statistics"
+      ],
+      "category": "Consistency",
+      "finding_type": "flag",
+      "eligible_consumers": [
+        "CheckMate"
+      ]
+    },
+    "V-007": {
+      "evidence_fields": [
+        "boq_statistics"
+      ],
+      "category": "Completeness",
+      "finding_type": "ratio",
+      "eligible_consumers": [
+        "CheckMate",
+        "Formatter",
+        "Reporting"
+      ]
+    },
+    "V-008": {
+      "evidence_fields": [
+        "boq_statistics"
+      ],
+      "category": "Completeness",
+      "finding_type": "ratio",
+      "eligible_consumers": [
+        "CheckMate",
+        "Formatter",
+        "Reporting"
+      ]
+    },
+    "V-009": {
+      "evidence_fields": [
+        "boq_statistics"
+      ],
+      "category": "Completeness",
+      "finding_type": "ratio",
+      "eligible_consumers": [
+        "CheckMate",
+        "Formatter",
+        "Reporting"
+      ]
+    },
+    "V-010": {
+      "evidence_fields": [
+        "hierarchy"
+      ],
+      "category": "Structural",
+      "finding_type": "presence",
+      "eligible_consumers": [
+        "CheckMate",
+        "Formatter",
+        "Builder",
+        "O&A",
+        "Reporting"
+      ]
+    },
+    "V-011": {
+      "evidence_fields": [
+        "hierarchy_statistics"
+      ],
+      "category": "Structural",
+      "finding_type": "count",
+      "eligible_consumers": [
+        "CheckMate",
+        "Reporting"
+      ]
+    },
+    "V-012": {
+      "evidence_fields": [
+        "hierarchy_statistics"
+      ],
+      "category": "Structural",
+      "finding_type": "range",
+      "eligible_consumers": [
+        "CheckMate",
+        "Reporting"
+      ]
+    },
+    "V-013": {
+      "evidence_fields": [
+        "detected_level_skips"
+      ],
+      "category": "Detection",
+      "finding_type": "presence",
+      "eligible_consumers": [
+        "CheckMate",
+        "Formatter",
+        "Builder",
+        "O&A",
+        "Reporting"
+      ]
+    },
+    "V-014": {
+      "evidence_fields": [
+        "detected_level_skips"
+      ],
+      "category": "Detection",
+      "finding_type": "count",
+      "eligible_consumers": [
+        "CheckMate",
+        "Reporting"
+      ]
+    },
+    "V-015": {
+      "evidence_fields": [
+        "detected_level_skips"
+      ],
+      "category": "Detection",
+      "finding_type": "range",
+      "eligible_consumers": [
+        "CheckMate",
+        "Reporting"
+      ]
+    },
+    "V-016": {
+      "evidence_fields": [
+        "zero_quantity_items"
+      ],
+      "category": "Detection",
+      "finding_type": "count",
+      "eligible_consumers": [
+        "CheckMate",
+        "Reporting"
+      ]
+    },
+    "V-017": {
+      "evidence_fields": [
+        "structural_containment_findings"
+      ],
+      "category": "Detection",
+      "finding_type": "count",
+      "eligible_consumers": [
+        "CheckMate",
+        "Reporting"
+      ]
+    },
+    "V-018": {
+      "evidence_fields": [
+        "completeness_findings"
+      ],
+      "category": "Detection",
+      "finding_type": "count",
+      "eligible_consumers": [
+        "CheckMate",
+        "Reporting"
+      ]
+    },
+    "V-901": {
+      "evidence_fields": [
+        "boq_statistics"
+      ],
+      "category": "Assessment",
+      "finding_type": "N/A",
+      "eligible_consumers": [
+        "REJECTED \u2014 crosses EQ-0011 boundary"
+      ]
+    },
+    "V-902": {
+      "evidence_fields": [
+        "detected_level_skips"
+      ],
+      "category": "Recommendation",
+      "finding_type": "N/A",
+      "eligible_consumers": [
+        "REJECTED \u2014 crosses EQ-0011 boundary"
+      ]
+    },
+    "V-801": {
+      "evidence_fields": [],
+      "category": "Financial",
+      "finding_type": "N/A",
+      "eligible_consumers": [
+        "REJECTED \u2014 insufficient evidence"
+      ]
+    },
+    "V-802": {
+      "evidence_fields": [],
+      "category": "Reference",
+      "finding_type": "N/A",
+      "eligible_consumers": [
+        "REJECTED \u2014 insufficient evidence"
+      ]
+    }
+  },
+  "summary": {
+    "total_rules_in_graph": 22,
+    "implementable_rules": 18,
+    "rejected_rules": 4,
+    "finding_types": [
+      "count",
+      "discrepancy",
+      "flag",
+      "presence",
+      "range",
+      "ratio",
+      "shape"
+    ],
+    "eligible_consumers": [
+      "Builder",
+      "CheckMate",
+      "Formatter",
+      "O&A",
+      "Reporting"
+    ]
+  }
+}

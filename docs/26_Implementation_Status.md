@@ -24,7 +24,7 @@ The architecture is defined by:
 | Property | Value |
 |----------|-------|
 | Architecture Version | v0.1.0 |
-| Software Version | 0.0.1-alpha.10 |
+| Software Version | 0.0.1-alpha.11 |
 | Current Phase | Phase 2 — Capability Era |
 | Current Active Capability | BOQ Intelligence |
 | Capability Status | Increment 3 Complete, Evidence Contract v1.0 Frozen |
@@ -359,6 +359,57 @@ Historical Note: During M6 the Observation Runtime was implemented prior to form
 - **Engineering Question**: `docs/engineering/questions/EQ_0012_BOQ_Intelligence_Public_Evidence_Contract.md`
 - **Retrospective**: `docs/retrospectives/EQ_0012_BOQ_Intelligence_Public_Evidence_Contract.md`
 - **Governance**: Engineering_Governance.md v1.0
+
+---
+
+## Validation Engine — EQ-0013
+
+| Property | Value |
+|----------|-------|
+| Goal | Implement the first Validation Engine consumer for BOQ Intelligence evidence, producing deterministic, immutable `ValidationFindings` respecting EQ-0011 boundary. |
+| Engineering Question | EQ-0013: Can we build a deterministic validation engine that consumes BOQ Intelligence evidence and produces immutable validation findings without crossing the Observe/Detect boundary? |
+| Status | **Complete — Frozen — Gate 3 Approved** |
+| Date | 2026-07-15 |
+| Investigation Duration | 4 days (4 spikes) |
+| Production Files Created | `src/jarvis/engines/validation/__init__.py`, `src/jarvis/engines/validation/engine.py` (18 rule implementations, frozen output model) |
+| Spike Tools Created | 8 tools in `tools/` (eq0013_spike1 through spike4) |
+| Contracts Created | `docs/contracts/Validation_Findings_Contract_v1.0.md` |
+| Registry Updated | `data/reports/eq0013_spike1_validation_rule_registry.json` (18 Approved, 4 Deprecated) |
+| Evidence Reports | 4 reports in `docs/engineering/evidence/` (Spikes 1-4) |
+
+### Evidence Package
+
+**Spike 1 — Capability Discovery:** 22 validation rules discovered. 18 implementable, 4 rejected. Rule Registry generated.
+
+**Spike 2 — Rule Taxonomy:** 4 production categories, 4 rejected. Lifecycle: Candidate→Approved→Implemented→Verified→Deprecated→Retired. Audit: 18/18 rules pass.
+
+**Spike 3 — Engine Scope:** 22 scope criteria. Pure function, deterministic, immutable output, EQ-0011 boundary.
+
+**Spike 4 — Engine Implementation:** `validate()` pure function with 18 rule executors. Frozen output model. Smoke test 8/8 pass. Verification evidence: determinism confirmed (3 runs=1 unique), 9 value checks pass.
+
+### Architecture Compliance
+
+- **Pure Function**: Stateless, deterministic, immutable output, side-effect free
+- **EQ-0011 Boundary**: Observe (V-001 to V-012), Detect (V-013 to V-018). No Assess/Judge/Recommend
+- **Kernel-Free**: No kernel imports, no lifecycle management
+- **Application-Free**: No consumer-specific logic
+- **Engine Ownership**: Consumes `BOQIntelligenceResult`, produces `ValidationFindings`
+- **Lifecycle Enforcement**: Deprecated/Retired rules skipped. Boundary Violation/Insufficient Evidence rejected
+- **Deterministic Engineering**: Frozen dataclass output, UTC timestamp
+
+### Key Decisions
+
+1. **18 Rules Implemented, 4 Rejected**: Only Supported/Multiple Fields classifications. V-801/V-802: Insufficient Evidence. V-901/V-902: Boundary Violation.
+2. **Registry-Driven Execution**: Rule metadata from JSON. Adding rule = registry entry + executor function.
+3. **Optional Evidence Handling**: Hierarchy/detection rules return `None` when evidence unavailable.
+4. **Finding Types Inferred**: `_classify_finding_type()` from `deterministic_finding` text. Future registry may add explicit field.
+
+### Authority
+
+- **Engineering Question**: `docs/engineering/questions/EQ_0013_Validation_Engine.md`
+- **Output Contract**: `docs/contracts/Validation_Findings_Contract_v1.0.md`
+- **Evidence Reports**: `docs/engineering/evidence/EQ_0013_Spike1-4_Evidence_Report_*.md`
+- **Production Code**: `src/jarvis/engines/validation/engine.py`
 
 ---
 
