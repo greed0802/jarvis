@@ -29,7 +29,7 @@ The repository has completed the Producer Era:
 - Evidence Contract provides stable API for consumers
 - EQ-0011 engineering boundary established (Observe/Reconstruct/Detect vs. Judge/Recommend/Assess)
 
-**Software Version:** v0.0.1-alpha.10
+**Software Version:** v0.0.1-alpha.9
 **Architecture Version:** v0.1.0
 
 ### Current State

@@ -1,0 +1,48 @@
+{
+  "eq": "EQ-0014",
+  "spike": 2,
+  "title": "Production Verification — UOM to row_type mapping",
+  "verification_a": {
+    "input_uom": "m",
+    "output_row_type": "Item",
+    "production_function": "_classify_row",
+    "evidence_line": 123,
+    "passed": true
+  },
+  "verification_b": {
+    "input_uom": "Head1",
+    "output_row_type": "Head",
+    "production_function": "_classify_row",
+    "evidence_line": 127,
+    "passed": true
+  },
+  "additional_head_verifications": [
+    {
+      "uom": "Head1",
+      "result": "Head",
+      "passed": true
+    },
+    {
+      "uom": "Head2",
+      "result": "Head",
+      "passed": true
+    },
+    {
+      "uom": "Head3",
+      "result": "Head",
+      "passed": true
+    },
+    {
+      "uom": "Head4",
+      "result": "Head",
+      "passed": true
+    },
+    {
+      "uom": "Head5",
+      "result": "Head",
+      "passed": true
+    }
+  ],
+  "production_code_unchanged": true,
+  "root_cause": "tests use positional BOQRow with swapped field order"
+}

@@ -1,0 +1,346 @@
+{
+  "eq": "EQ-0014",
+  "spike": 1,
+  "title": "Parser Regression Investigation — Failure Classification",
+  "total_failures": 20,
+  "total_passing": 75,
+  "total_skipped": 8,
+  "unique_trigger_values": [
+    "Head1",
+    "m"
+  ],
+  "classification_summary": {
+    "Outdated Test": 20
+  },
+  "root_cause": "All 20 failures share a single root cause: test file test_boq_intelligence_increment3.py constructs BOQRow objects with incorrect positional argument ordering.\n\nBOQRow fields are: (row_number, code, description, quantity, uom, row_type, section=None)\nTests pass arguments as: (row_number, row_type, code, description, quantity, uom, section)\n\nThis swaps 'row_type' and 'uom' positions. The UOM string ('m', 'Head1') ends up in the row_type field. Production _count_row_types() correctly rejects these as unknown row types because:\n- _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} (classification set)\n- 'm' is a UOM value, not a classification → _classify_row('m') → 'Item'\n- 'Head1' is a UOM string, not a classification → _classify_row('Head1') → 'Head'\n\nThe production code is CORRECT. The tests have a field-ordering bug.\n\nThe non-failing test file (test_boq_intelligence.py) uses production fixture rows from extract_boq() which always produce correct row_type values.",
+  "recommendation": "FIX TESTS ONLY. Production code is correct.\n\nDisposition: Outdated Test — fix all 20 tests to use correct BOQRow field ordering.\nApproach: Convert all BOQRow positional constructions in test_boq_intelligence_increment3.py to keyword arguments to prevent field-ordering bugs.\n\nExample correction:\n  Before: BOQRow(1, 'Item', 'A001', 'Test item', 10.0, 'm', 'SECTION_A')\n  After:  BOQRow(row_number=1, code='A001', description='Test item', quantity=10.0, uom='m', row_type='Item', section='SECTION_A')\n\nExpected fix produces 103/103 tests passing.",
+  "failures": [
+    {
+      "test_class": "TestBackwardCompatibility",
+      "test_name": "test_increment1_unchanged_with_increment3_disabled",
+      "error": "ValueError: Unknown row type: 'm'",
+      "error_line": 124,
+      "row_type_used": "m",
+      "root_cause": "Backward compat test uses raw UOM 'm' as row_type instead of 'Item'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, code_as_desc, desc_as_qty, qty_as_uom, uom_as_row_type, section) — 6th positional arg is UOM string 'm' mapped to row_type field. Correct: BOQRow(..., uom='m', row_type='Item', ...). \n\nProduction _classify_row() maps UOM='m' → row_type='Item' (via _ITEM_UOMS frozenset). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'm' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:36 (_ITEM_UOMS = frozenset({'m', 'm2', ...}))",
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:122-123 (uom in _ITEM_UOMS → row_type='Item')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (if row.row_type not in _VALID_ROW_TYPES: raise ValueError)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code='A001', description='...', quantity=10.0, uom='m', row_type='Item', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestZeroQuantityDetection",
+      "test_name": "test_detect_single_zero_quantity",
+      "error": "ValueError: Unknown row type: 'm'",
+      "error_line": 124,
+      "row_type_used": "m",
+      "root_cause": "Zero-quantity detection test uses raw UOM 'm' as row_type instead of 'Item'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, code_as_desc, desc_as_qty, qty_as_uom, uom_as_row_type, section) — 6th positional arg is UOM string 'm' mapped to row_type field. Correct: BOQRow(..., uom='m', row_type='Item', ...). \n\nProduction _classify_row() maps UOM='m' → row_type='Item' (via _ITEM_UOMS frozenset). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'm' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:36 (_ITEM_UOMS = frozenset({'m', 'm2', ...}))",
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:122-123 (uom in _ITEM_UOMS → row_type='Item')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (if row.row_type not in _VALID_ROW_TYPES: raise ValueError)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code='A001', description='...', quantity=10.0, uom='m', row_type='Item', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestZeroQuantityDetection",
+      "test_name": "test_detect_multiple_zero_quantities",
+      "error": "ValueError: Unknown row type: 'm'",
+      "error_line": 124,
+      "row_type_used": "m",
+      "root_cause": "Zero-quantity detection test uses raw UOM 'm' as row_type instead of 'Item'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, code_as_desc, desc_as_qty, qty_as_uom, uom_as_row_type, section) — 6th positional arg is UOM string 'm' mapped to row_type field. Correct: BOQRow(..., uom='m', row_type='Item', ...). \n\nProduction _classify_row() maps UOM='m' → row_type='Item' (via _ITEM_UOMS frozenset). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'm' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:36 (_ITEM_UOMS = frozenset({'m', 'm2', ...}))",
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:122-123 (uom in _ITEM_UOMS → row_type='Item')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (if row.row_type not in _VALID_ROW_TYPES: raise ValueError)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code='A001', description='...', quantity=10.0, uom='m', row_type='Item', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestZeroQuantityDetection",
+      "test_name": "test_no_zero_quantities",
+      "error": "ValueError: Unknown row type: 'm'",
+      "error_line": 124,
+      "row_type_used": "m",
+      "root_cause": "Zero-quantity detection test uses raw UOM 'm' as row_type instead of 'Item'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, code_as_desc, desc_as_qty, qty_as_uom, uom_as_row_type, section) — 6th positional arg is UOM string 'm' mapped to row_type field. Correct: BOQRow(..., uom='m', row_type='Item', ...). \n\nProduction _classify_row() maps UOM='m' → row_type='Item' (via _ITEM_UOMS frozenset). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'm' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:36 (_ITEM_UOMS = frozenset({'m', 'm2', ...}))",
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:122-123 (uom in _ITEM_UOMS → row_type='Item')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (if row.row_type not in _VALID_ROW_TYPES: raise ValueError)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code='A001', description='...', quantity=10.0, uom='m', row_type='Item', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestZeroQuantityDetection",
+      "test_name": "test_zero_quantity_determinism",
+      "error": "ValueError: Unknown row type: 'm'",
+      "error_line": 124,
+      "row_type_used": "m",
+      "root_cause": "Zero-quantity detection test uses raw UOM 'm' as row_type instead of 'Item'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, code_as_desc, desc_as_qty, qty_as_uom, uom_as_row_type, section) — 6th positional arg is UOM string 'm' mapped to row_type field. Correct: BOQRow(..., uom='m', row_type='Item', ...). \n\nProduction _classify_row() maps UOM='m' → row_type='Item' (via _ITEM_UOMS frozenset). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'm' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:36 (_ITEM_UOMS = frozenset({'m', 'm2', ...}))",
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:122-123 (uom in _ITEM_UOMS → row_type='Item')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (if row.row_type not in _VALID_ROW_TYPES: raise ValueError)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code='A001', description='...', quantity=10.0, uom='m', row_type='Item', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestForbiddenLanguage",
+      "test_name": "test_zero_quantity_no_forbidden_language",
+      "error": "ValueError: Unknown row type: 'm'",
+      "error_line": 124,
+      "row_type_used": "m",
+      "root_cause": "Forbidden language test uses raw UOM 'm' as row_type instead of 'Item'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, code_as_desc, desc_as_qty, qty_as_uom, uom_as_row_type, section) — 6th positional arg is UOM string 'm' mapped to row_type field. Correct: BOQRow(..., uom='m', row_type='Item', ...). \n\nProduction _classify_row() maps UOM='m' → row_type='Item' (via _ITEM_UOMS frozenset). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'm' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:36 (_ITEM_UOMS = frozenset({'m', 'm2', ...}))",
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:122-123 (uom in _ITEM_UOMS → row_type='Item')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (if row.row_type not in _VALID_ROW_TYPES: raise ValueError)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code='A001', description='...', quantity=10.0, uom='m', row_type='Item', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestRequiresHierarchy",
+      "test_name": "test_detection_requires_hierarchy",
+      "error": "ValueError: Unknown row type: 'm'",
+      "error_line": 124,
+      "row_type_used": "m",
+      "root_cause": "Requires hierarchy test uses raw UOM 'm' as row_type instead of 'Item'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, code_as_desc, desc_as_qty, qty_as_uom, uom_as_row_type, section) — 6th positional arg is UOM string 'm' mapped to row_type field. Correct: BOQRow(..., uom='m', row_type='Item', ...). \n\nProduction _classify_row() maps UOM='m' → row_type='Item' (via _ITEM_UOMS frozenset). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'm' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:36 (_ITEM_UOMS = frozenset({'m', 'm2', ...}))",
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:122-123 (uom in _ITEM_UOMS → row_type='Item')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (if row.row_type not in _VALID_ROW_TYPES: raise ValueError)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code='A001', description='...', quantity=10.0, uom='m', row_type='Item', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestBackwardCompatibility",
+      "test_name": "test_increment2_unchanged_with_increment3_disabled",
+      "error": "ValueError: Unknown row type: 'Head1'",
+      "error_line": 124,
+      "row_type_used": "Head1",
+      "root_cause": "Backward compat test uses raw UOM 'Head1' as row_type instead of 'Head'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, desc_or_None, desc_as_qty, uom_or_None, uom_as_row_type, section) — 6th positional arg is UOM string 'Head1' mapped to row_type field. Correct: BOQRow(..., uom='Head1', row_type='Head', ...). \n\nProduction _classify_row() maps UOM='Head1' → row_type='Head' (via re.fullmatch(r'Head\\d+', uom)). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'Head1' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:126-127 (re.fullmatch(r'Head\\d+', uom) → row_type='Head')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (unknown row_type rejection)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code=None, description='Level 1', quantity=None, uom='Head1', row_type='Head', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestLevelSkipDetection",
+      "test_name": "test_detect_simple_level_skip",
+      "error": "ValueError: Unknown row type: 'Head1'",
+      "error_line": 124,
+      "row_type_used": "Head1",
+      "root_cause": "Level skip detection test uses raw UOM 'Head1' as row_type instead of 'Head'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, desc_or_None, desc_as_qty, uom_or_None, uom_as_row_type, section) — 6th positional arg is UOM string 'Head1' mapped to row_type field. Correct: BOQRow(..., uom='Head1', row_type='Head', ...). \n\nProduction _classify_row() maps UOM='Head1' → row_type='Head' (via re.fullmatch(r'Head\\d+', uom)). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'Head1' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:126-127 (re.fullmatch(r'Head\\d+', uom) → row_type='Head')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (unknown row_type rejection)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code=None, description='Level 1', quantity=None, uom='Head1', row_type='Head', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestLevelSkipDetection",
+      "test_name": "test_detect_large_level_skip",
+      "error": "ValueError: Unknown row type: 'Head1'",
+      "error_line": 124,
+      "row_type_used": "Head1",
+      "root_cause": "Level skip detection test uses raw UOM 'Head1' as row_type instead of 'Head'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, desc_or_None, desc_as_qty, uom_or_None, uom_as_row_type, section) — 6th positional arg is UOM string 'Head1' mapped to row_type field. Correct: BOQRow(..., uom='Head1', row_type='Head', ...). \n\nProduction _classify_row() maps UOM='Head1' → row_type='Head' (via re.fullmatch(r'Head\\d+', uom)). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'Head1' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:126-127 (re.fullmatch(r'Head\\d+', uom) → row_type='Head')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (unknown row_type rejection)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code=None, description='Level 1', quantity=None, uom='Head1', row_type='Head', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestLevelSkipDetection",
+      "test_name": "test_no_level_skip_sequential",
+      "error": "ValueError: Unknown row type: 'Head1'",
+      "error_line": 124,
+      "row_type_used": "Head1",
+      "root_cause": "Level skip detection test uses raw UOM 'Head1' as row_type instead of 'Head'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, desc_or_None, desc_as_qty, uom_or_None, uom_as_row_type, section) — 6th positional arg is UOM string 'Head1' mapped to row_type field. Correct: BOQRow(..., uom='Head1', row_type='Head', ...). \n\nProduction _classify_row() maps UOM='Head1' → row_type='Head' (via re.fullmatch(r'Head\\d+', uom)). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'Head1' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:126-127 (re.fullmatch(r'Head\\d+', uom) → row_type='Head')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (unknown row_type rejection)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code=None, description='Level 1', quantity=None, uom='Head1', row_type='Head', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestLevelSkipDetection",
+      "test_name": "test_level_skip_determinism",
+      "error": "ValueError: Unknown row type: 'Head1'",
+      "error_line": 124,
+      "row_type_used": "Head1",
+      "root_cause": "Level skip detection test uses raw UOM 'Head1' as row_type instead of 'Head'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, desc_or_None, desc_as_qty, uom_or_None, uom_as_row_type, section) — 6th positional arg is UOM string 'Head1' mapped to row_type field. Correct: BOQRow(..., uom='Head1', row_type='Head', ...). \n\nProduction _classify_row() maps UOM='Head1' → row_type='Head' (via re.fullmatch(r'Head\\d+', uom)). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'Head1' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:126-127 (re.fullmatch(r'Head\\d+', uom) → row_type='Head')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (unknown row_type rejection)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code=None, description='Level 1', quantity=None, uom='Head1', row_type='Head', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestStructuralContainment",
+      "test_name": "test_no_structural_inversions_valid_hierarchy",
+      "error": "ValueError: Unknown row type: 'Head1'",
+      "error_line": 124,
+      "row_type_used": "Head1",
+      "root_cause": "Structural containment test uses raw UOM 'Head1' as row_type instead of 'Head'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, desc_or_None, desc_as_qty, uom_or_None, uom_as_row_type, section) — 6th positional arg is UOM string 'Head1' mapped to row_type field. Correct: BOQRow(..., uom='Head1', row_type='Head', ...). \n\nProduction _classify_row() maps UOM='Head1' → row_type='Head' (via re.fullmatch(r'Head\\d+', uom)). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'Head1' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:126-127 (re.fullmatch(r'Head\\d+', uom) → row_type='Head')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (unknown row_type rejection)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code=None, description='Level 1', quantity=None, uom='Head1', row_type='Head', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestStructuralContainment",
+      "test_name": "test_structural_containment_determinism",
+      "error": "ValueError: Unknown row type: 'Head1'",
+      "error_line": 124,
+      "row_type_used": "Head1",
+      "root_cause": "Structural containment test uses raw UOM 'Head1' as row_type instead of 'Head'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, desc_or_None, desc_as_qty, uom_or_None, uom_as_row_type, section) — 6th positional arg is UOM string 'Head1' mapped to row_type field. Correct: BOQRow(..., uom='Head1', row_type='Head', ...). \n\nProduction _classify_row() maps UOM='Head1' → row_type='Head' (via re.fullmatch(r'Head\\d+', uom)). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'Head1' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:126-127 (re.fullmatch(r'Head\\d+', uom) → row_type='Head')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (unknown row_type rejection)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code=None, description='Level 1', quantity=None, uom='Head1', row_type='Head', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestBasicCompleteness",
+      "test_name": "test_detect_section_with_no_items",
+      "error": "ValueError: Unknown row type: 'Head1'",
+      "error_line": 124,
+      "row_type_used": "Head1",
+      "root_cause": "Basic completeness test uses raw UOM 'Head1' as row_type instead of 'Head'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, desc_or_None, desc_as_qty, uom_or_None, uom_as_row_type, section) — 6th positional arg is UOM string 'Head1' mapped to row_type field. Correct: BOQRow(..., uom='Head1', row_type='Head', ...). \n\nProduction _classify_row() maps UOM='Head1' → row_type='Head' (via re.fullmatch(r'Head\\d+', uom)). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'Head1' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:126-127 (re.fullmatch(r'Head\\d+', uom) → row_type='Head')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (unknown row_type rejection)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code=None, description='Level 1', quantity=None, uom='Head1', row_type='Head', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestBasicCompleteness",
+      "test_name": "test_all_sections_have_items",
+      "error": "ValueError: Unknown row type: 'Head1'",
+      "error_line": 124,
+      "row_type_used": "Head1",
+      "root_cause": "Basic completeness test uses raw UOM 'Head1' as row_type instead of 'Head'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, desc_or_None, desc_as_qty, uom_or_None, uom_as_row_type, section) — 6th positional arg is UOM string 'Head1' mapped to row_type field. Correct: BOQRow(..., uom='Head1', row_type='Head', ...). \n\nProduction _classify_row() maps UOM='Head1' → row_type='Head' (via re.fullmatch(r'Head\\d+', uom)). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'Head1' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:126-127 (re.fullmatch(r'Head\\d+', uom) → row_type='Head')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (unknown row_type rejection)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code=None, description='Level 1', quantity=None, uom='Head1', row_type='Head', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestBasicCompleteness",
+      "test_name": "test_basic_completeness_determinism",
+      "error": "ValueError: Unknown row type: 'Head1'",
+      "error_line": 124,
+      "row_type_used": "Head1",
+      "root_cause": "Basic completeness test uses raw UOM 'Head1' as row_type instead of 'Head'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, desc_or_None, desc_as_qty, uom_or_None, uom_as_row_type, section) — 6th positional arg is UOM string 'Head1' mapped to row_type field. Correct: BOQRow(..., uom='Head1', row_type='Head', ...). \n\nProduction _classify_row() maps UOM='Head1' → row_type='Head' (via re.fullmatch(r'Head\\d+', uom)). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'Head1' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:126-127 (re.fullmatch(r'Head\\d+', uom) → row_type='Head')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (unknown row_type rejection)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code=None, description='Level 1', quantity=None, uom='Head1', row_type='Head', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestForbiddenLanguage",
+      "test_name": "test_level_skip_no_forbidden_language",
+      "error": "ValueError: Unknown row type: 'Head1'",
+      "error_line": 124,
+      "row_type_used": "Head1",
+      "root_cause": "Forbidden language test uses raw UOM 'Head1' as row_type instead of 'Head'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, desc_or_None, desc_as_qty, uom_or_None, uom_as_row_type, section) — 6th positional arg is UOM string 'Head1' mapped to row_type field. Correct: BOQRow(..., uom='Head1', row_type='Head', ...). \n\nProduction _classify_row() maps UOM='Head1' → row_type='Head' (via re.fullmatch(r'Head\\d+', uom)). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'Head1' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:126-127 (re.fullmatch(r'Head\\d+', uom) → row_type='Head')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (unknown row_type rejection)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code=None, description='Level 1', quantity=None, uom='Head1', row_type='Head', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestForbiddenLanguage",
+      "test_name": "test_structural_containment_no_forbidden_language",
+      "error": "ValueError: Unknown row type: 'Head1'",
+      "error_line": 124,
+      "row_type_used": "Head1",
+      "root_cause": "Forbidden language test uses raw UOM 'Head1' as row_type instead of 'Head'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, desc_or_None, desc_as_qty, uom_or_None, uom_as_row_type, section) — 6th positional arg is UOM string 'Head1' mapped to row_type field. Correct: BOQRow(..., uom='Head1', row_type='Head', ...). \n\nProduction _classify_row() maps UOM='Head1' → row_type='Head' (via re.fullmatch(r'Head\\d+', uom)). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'Head1' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:126-127 (re.fullmatch(r'Head\\d+', uom) → row_type='Head')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (unknown row_type rejection)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code=None, description='Level 1', quantity=None, uom='Head1', row_type='Head', section='SECTION_A')"
+    },
+    {
+      "test_class": "TestForbiddenLanguage",
+      "test_name": "test_completeness_no_forbidden_language",
+      "error": "ValueError: Unknown row type: 'Head1'",
+      "error_line": 124,
+      "row_type_used": "Head1",
+      "root_cause": "Forbidden language test uses raw UOM 'Head1' as row_type instead of 'Head'\n\nBOQRow fields order: (row_number, code, description, quantity, uom, row_type, section=None). Test uses BOQRow(row_number, row_type_as_code, desc_or_None, desc_as_qty, uom_or_None, uom_as_row_type, section) — 6th positional arg is UOM string 'Head1' mapped to row_type field. Correct: BOQRow(..., uom='Head1', row_type='Head', ...). \n\nProduction _classify_row() maps UOM='Head1' → row_type='Head' (via re.fullmatch(r'Head\\d+', uom)). Production _VALID_ROW_TYPES = {'Head','Note','Section','Item','Other'} — 'Head1' not in set.",
+      "classification": "Outdated Test",
+      "evidence_refs": [
+        "boq_extraction.py:39-48 (BOQRow @dataclass field order)",
+        "boq_extraction.py:126-127 (re.fullmatch(r'Head\\d+', uom) → row_type='Head')",
+        "boq_intelligence.py:24 (_VALID_ROW_TYPES = frozenset({'Head','Note','Section','Item','Other'}))",
+        "boq_intelligence.py:123-124 (unknown row_type rejection)"
+      ],
+      "recommended_disposition": "Fix test: Use keyword args or correct positional order: BOQRow(row_number=N, code=None, description='Level 1', quantity=None, uom='Head1', row_type='Head', section='SECTION_A')"
+    }
+  ]
+}

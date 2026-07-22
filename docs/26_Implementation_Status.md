@@ -24,7 +24,7 @@ The architecture is defined by:
 | Property | Value |
 |----------|-------|
 | Architecture Version | v0.1.0 |
-| Software Version | 0.0.1-alpha.11 |
+| Software Version | 0.0.1-alpha |
 | Current Phase | Phase 2 — Capability Era |
 | Current Active Capability | BOQ Intelligence |
 | Capability Status | Increment 3 Complete, Evidence Contract v1.0 Frozen |

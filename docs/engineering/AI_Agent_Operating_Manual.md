@@ -404,3 +404,216 @@ An AI contribution is successful when it:
 The goal is not simply to generate code.
 
 The goal is to help build a professional engineering platform that remains understandable, maintainable, and trustworthy for many years.
+
+
+# Mandatory Self-Review Before Completion
+
+Before declaring any task complete, every AI agent SHALL perform the following review.
+
+This review is mandatory regardless of the AI model used.
+
+# Implementation Verification
+
+Confirm:
+
+✓ Production code executes successfully.
+
+✓ Tests execute successfully.
+
+✓ Deterministic behavior verified.
+
+✓ Public contracts verified.
+
+✓ Documentation synchronized.
+
+✓ Version references synchronized.
+
+✓ No hidden filesystem coupling introduced.
+
+✓ No mutable state introduced into immutable contracts.
+
+✓ No undocumented assumptions remain.
+
+# Architecture Verification
+
+## Review:
+
+responsibility ownership
+layer boundaries
+dependency direction
+unnecessary abstraction
+hidden coupling
+consumer independence
+
+## If uncertainty exists:
+
+Stop.
+
+Request Project Owner guidance.
+
+Evidence Verification
+
+Every engineering claim shall be classified as:
+
+Evidence
+
+Observation
+
+Assumption
+
+Recommendation
+
+Only evidence may justify production implementation.
+
+# Completion Checklist
+
+Every completion report SHALL include:
+
+Implementation
+
+Files created
+
+Files modified
+
+Tests added
+
+Test count before
+
+Test count after
+
+Coverage impact
+
+Verification
+
+Commands executed
+
+Verification results
+
+Determinism verified
+
+Contract verification
+
+Documentation review
+
+Architecture review
+
+Engineering Debt
+
+List any remaining issues.
+
+If none:
+
+State:
+
+No known engineering debt identified during this implementation.
+
+If debt exists:
+
+Document it explicitly.
+
+Freeze Recommendation
+
+An AI agent SHALL recommend one of:
+
+PASS
+
+PASS WITH ENGINEERING DEBT
+
+FAIL
+
+The Project Owner determines final Freeze status.
+
+# Multi-Model Engineering Workflow
+
+When multiple AI systems participate:
+
+Planning
+
+↓
+
+Implementation
+
+↓
+
+Mechanical Verification
+
+↓
+
+Architecture Review
+
+↓
+
+Consumer Review
+
+↓
+
+Freeze
+
+# Suggested responsibilities:
+
+Cline
+
+Implementation
+
+Automation
+
+Testing
+
+Documentation
+
+ChatGPT
+
+# Engineering planning
+
+Methodology
+
+Architecture
+
+Claude
+
+Architecture
+
+Boundary review
+
+# Engineering governance
+
+Copilot
+
+Repository implementation audit
+
+Code quality
+
+API consistency
+
+Documentation drift
+
+Grok
+
+Independent adversarial review
+
+Consistency validation
+
+Boundary verification
+
+No AI model is considered authoritative.
+
+Repository evidence remains authoritative.
+
+# Engineering Confidence Principle
+
+The objective is not to produce more code.
+
+The objective is to increase engineering confidence.
+
+Whenever an objective property can be verified automatically, automation SHALL be preferred over AI review.
+
+AI review should focus on:
+
+architecture
+engineering judgment
+domain reasoning
+trade-offs
+
+Mechanical correctness belongs to automated verification.
+
+Every new verification tool must first be written as a one-off engineering spike. Only after it has been used successfully in at least three independent investigations may its logic be promoted into tools/quality/. Historical spike tools remain immutable as engineering evidence.

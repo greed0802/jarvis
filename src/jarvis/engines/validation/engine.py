@@ -4,7 +4,7 @@ Pure function: Findings = f(Evidence, Rules)
 
 Consumes:
   - BOQIntelligenceResult (Evidence Contract v1.0.0)
-  - Validation Rule Registry (EQ-0013 Spike 1)
+  - Validation Rule Registry (packaged with engine)
 
 Produces:
   - ValidationFindings (frozen, immutable, deterministic)
@@ -17,6 +17,8 @@ Does NOT implement:
 
 Authority:
   EQ-0013 Spike 4 — Engine Implementation
+  HD-003 — Filesystem coupling eliminated (registry embedded in package)
+  HD-004 — finding_type read from registry (heuristic removed)
 """
 
 from __future__ import annotations
@@ -76,41 +78,23 @@ _REQUIRED_EVIDENCE_FIELDS = frozenset({
 # Expected row_classification keys (Contract SI-RC-04)
 _EXPECTED_RC_KEYS = frozenset({"Head", "Note", "Section", "Item", "Other"})
 
+# Path to embedded rule registry (relative to this module)
+_REGISTRY_PATH = Path(__file__).parent / "data" / "rule_registry.json"
+
 
 def _load_rule_registry() -> dict[str, dict]:
-    """Load the Validation Rule Registry from disk.
+    """Load the Validation Rule Registry from the embedded package resource.
 
-    Reads the Spike 1 registry JSON. Each rule must include:
-      rule_id, category, evidence_fields, status, deterministic_finding.
+    Registry is bundled with the engine (HD-003: no filesystem coupling
+    to data/reports/). Each rule must include:
+      rule_id, category, evidence_fields, status, finding_type.
 
     Returns a dictionary keyed by rule_id for O(1) lookup.
     """
-    registry_path = Path("data/reports/eq0013_spike1_validation_rule_registry.json")
-    with open(registry_path, encoding="utf-8") as f:
+    with open(_REGISTRY_PATH, encoding="utf-8") as f:
         registry_data = json.load(f)
     rules = registry_data["rules"]
     return {r["rule_id"]: r for r in rules}
-
-
-def _classify_finding_type(rule: dict) -> str:
-    """Infer finding_type from rule's deterministic_finding and category."""
-    df = rule.get("deterministic_finding", "")
-    category = rule.get("category", "")
-    df_lower = df.lower()
-
-    if "ratio" in df_lower:
-        return "ratio"
-    if "count" in df_lower or "number" in df_lower:
-        return "count"
-    if "list" in df_lower or "reports" in df_lower and category == "Detection":
-        return "list"
-    if "difference" in df_lower or "discrepancy" in df_lower:
-        return "difference"
-    if "present" in df_lower or "whether" in df_lower or "available" in df_lower:
-        return "presence"
-    if "null" in df_lower or "none" in df_lower:
-        return "value"
-    return "value"
 
 
 # ============================================================
@@ -314,12 +298,11 @@ def validate(
         ValidationFindings: Frozen collection of findings, ordered by rule_id.
 
     Engine guarantees:
-        - Same evidence + same rules → same output (deterministic)
+        - Same evidence + same rules → same finding fields (deterministic)
         - No filesystem writes, network calls, or database access
         - No mutation of evidence or rules
         - No assessment, recommendation, or judgment
-        - Deprecated/Retired rules are skipped
-        - Candidate rules are skipped (lifecycle enforcement)
+        - Deprecated/Retired/Candidate rules are skipped
         - Consumer-independent (no Application logic)
 
     Authority: EQ-0013 Spike 4
@@ -362,11 +345,12 @@ def validate(
         finding_value = executor(evidence)
 
         # --- Finding Assembly ---
+        # finding_type read directly from registry (HD-004: no heuristic)
         finding = ValidationFinding(
             rule_id=rule_id,
             rule_version=rule.get("rule_version", "1.0.0"),
             category=rule.get("category", ""),
-            finding_type=_classify_finding_type(rule),
+            finding_type=rule.get("finding_type", "value"),
             finding_value=finding_value,
             evidence_fields=tuple(rule.get("evidence_fields", [])),
         )

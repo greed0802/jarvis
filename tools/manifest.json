@@ -1,0 +1,38 @@
+{
+  "verify_versions": {
+    "authority": "Quality Gate 5",
+    "inputs": ["README.md", "src/jarvis/version.py", "docs/contracts/", "RELEASE_*.md"],
+    "outputs": ["report.json", "report.md"],
+    "description": "Version consistency across README, module, contracts, and release notes"
+  },
+  "verify_registry": {
+    "authority": "Quality Gate 3",
+    "inputs": ["docs/planning/Capability_Register.md", "tools/quality/Tool_Registry.md", "tools/manifest.json"],
+    "outputs": ["report.json", "report.md"],
+    "description": "Registry integrity checks for Capability Register, Tool Registry, and Tool Manifest"
+  },
+  "verify_contracts": {
+    "authority": "Quality Gate 2",
+    "inputs": ["docs/contracts/", "src/"],
+    "outputs": ["report.json", "report.md"],
+    "description": "Contract presence verification and source file mapping"
+  },
+  "verify_imports": {
+    "authority": "Quality Gate 1",
+    "inputs": ["src/"],
+    "outputs": ["report.json", "report.md"],
+    "description": "Import boundary enforcement for production code"
+  },
+  "verify_tests": {
+    "authority": "Quality Gate 1",
+    "inputs": ["tests/", "pytest.ini"],
+    "outputs": ["report.json", "report.md"],
+    "description": "Test suite structural audit (file count, function count, skipped tests)"
+  },
+  "verify_documentation": {
+    "authority": "Quality Gate 5",
+    "inputs": ["README.md", "docs/knowledge/00_Knowledge_Index.md", "docs/26_Implementation_Status.md", "AGENTS.md"],
+    "outputs": ["report.json", "report.md"],
+    "description": "Documentation synchronization audit for key engineering documents"
+  }
+}

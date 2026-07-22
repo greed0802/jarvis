@@ -1,0 +1,40 @@
+{
+  "eq": "EQ-0015",
+  "spike": 2,
+  "title": "Historical Engineering Intent Trace \u2014 _detect_structural_containment()",
+  "sources_analyzed": [
+    "docs/engineering/questions/EQ_0010_Deterministic_BOQ_Structural_Intelligence.md",
+    "docs/engineering/questions/EQ_0011_BOQ_Semantic_Intelligence_Boundary.md",
+    "docs/engineering/questions/EQ_0012_BOQ_Intelligence_Public_Evidence_Contract.md",
+    "docs/contracts/BOQ_Intelligence_Public_Evidence_Contract_v1.0.md",
+    "src/jarvis/parsers/costx/boq_intelligence.py (docstring + implementation)"
+  ],
+  "evidence_items": [
+    {
+      "id": "E1",
+      "source": "EQ-0010 + Spike 4",
+      "finding": "EQ-0010 defined hierarchy reconstruction (stack algorithm) and level progression patterns. It did NOT define structural inversion or containment detection. The docstring reference to EQ-0010 Spike 4 traces to hierarchy reconstruction, not to the <= condition."
+    },
+    {
+      "id": "E2",
+      "source": "EQ-0011 + Spike 3",
+      "finding": "EQ-0011 established the Detection vs. Decision boundary. Spike 3 validated what constitutes a structural fact vs. professional judgment. Neither specified the child_level <= parent_level condition for containment detection."
+    },
+    {
+      "id": "E3",
+      "source": "EQ-0012 + BOQ Intelligence Contract v1.0",
+      "finding": "Contract defines finding type 'structural_containment' with fields (parent_row_number, parent_level, child_row_number, child_level). Does NOT specify child_level <= parent_level as the detection condition. Implementation produces correct output shape per contract."
+    },
+    {
+      "id": "E4",
+      "source": "Internal naming analysis",
+      "finding": "Three different names for same concept: function='structural_containment', docstring='structural inversions', variable='inversions'. Suggests evolution of intent: original inversion detection (<=) became containment recording (>) during implementation, but docstring and variable were never updated to match."
+    },
+    {
+      "id": "E5",
+      "source": "boq_intelligence.py lines 398-430",
+      "finding": "Docstring (line 402): child_level <= parent_level (inversions). Implementation (line 417): child.level > node.level (all containment). Stack algorithm guarantees child.level > parent.level always. These describe opposite conditions."
+    }
+  ],
+  "conclusion": "Documentation Inconsistency. No EQ specified child_level <= parent_level. Contract defines output shape only, not detection condition. Docstring's inversion detection intent has no supporting evidence in EQ-0010 or EQ-0011. Implementation correctly records parent-child level facts per contract. Docstring should describe containment recording (> ), not inversion detection (<=)."
+}

@@ -1,0 +1,111 @@
+{
+  "eq": "EQ-0015",
+  "spike": 4,
+  "title": "Evidence Classification \u2014 _detect_structural_containment() Discrepancy",
+  "classification_options": [
+    {
+      "id": 1,
+      "name": "Documentation inconsistency",
+      "description": "Docstring is wrong, implementation is correct"
+    },
+    {
+      "id": 2,
+      "name": "Implementation inconsistency",
+      "description": "Implementation is wrong, docstring is correct"
+    },
+    {
+      "id": 3,
+      "name": "Contract inconsistency",
+      "description": "Contract conflicts with implementation and/or docstring"
+    },
+    {
+      "id": 4,
+      "name": "Historical intent inconsistent",
+      "description": "Design records don't match current behavior"
+    },
+    {
+      "id": 5,
+      "name": "Insufficient evidence",
+      "description": "Cannot determine from available evidence"
+    }
+  ],
+  "evidence_summary": [
+    {
+      "source": "Spike 1",
+      "finding": "Implementation condition (child.level > node.level) fires for all parent-child pairs. Normal hierarchy: 2 findings. Inverted hierarchy: 1 finding. Cannot distinguish normal from inverted."
+    },
+    {
+      "source": "Spike 2",
+      "finding": "No EQ (0010, 0011, 0012) specified child_level <= parent_level. Contract defines output shape only. Internal naming (containment/inversion/inversions) suggests docstring written for intent never implemented."
+    },
+    {
+      "source": "Spike 3",
+      "finding": "Stack algorithm (line 245: while row.level <= stack[-1].level: stack.pop()) guarantees child.level > parent.level always. Docstring condition (<=) would produce zero findings for any stack-built hierarchy. Docstring condition is structurally impossible."
+    }
+  ],
+  "classification_matrix": [
+    {
+      "option": 1,
+      "name": "Documentation inconsistency",
+      "verdict": "CONSISTENT with all evidence",
+      "matches_evidence": {
+        "S1_production_behavior": true,
+        "S2_historical_intent": true,
+        "S3_algorithm_walkthrough": true
+      },
+      "reasoning": "Implementation correctly records parent-child level facts matching the contract output shape. Docstring describes inversion detection (<=) which: (a) contradicts the implementation (>), (b) has no supporting historical design specification, (c) is structurally impossible for stack-built hierarchies. Docstring is the outlier."
+    },
+    {
+      "option": 2,
+      "name": "Implementation inconsistency",
+      "verdict": "INCONSISTENT with evidence",
+      "matches_evidence": {
+        "S1_production_behavior": false,
+        "S2_historical_intent": false,
+        "S3_algorithm_walkthrough": false
+      },
+      "reasoning": "Would require accepting docstring (<=) as correct and implementation (>) as wrong. But docstring has no historical design specification. Stack algorithm makes <= impossible for any hierarchy it produces. 'Fixing' implementation to <= would break it \u2014 zero findings for all hierarchies."
+    },
+    {
+      "option": 3,
+      "name": "Contract inconsistency",
+      "verdict": "INCONSISTENT with evidence",
+      "matches_evidence": {
+        "S1_production_behavior": false,
+        "S2_historical_intent": false,
+        "S3_algorithm_walkthrough": false
+      },
+      "reasoning": "Contract defines output shape (parent_row_number, parent_level, child_row_number, child_level) and the finding type name 'structural_containment.' Implementation produces exactly this shape. Contract does NOT specify the detection condition. No contract conflict exists."
+    },
+    {
+      "option": 4,
+      "name": "Historical intent inconsistent",
+      "verdict": "PARTIALLY CONSISTENT",
+      "matches_evidence": {
+        "S1_production_behavior": false,
+        "S2_historical_intent": true,
+        "S3_algorithm_walkthrough": false
+      },
+      "reasoning": "There IS evidence of naming inconsistency (containment vs. inversion vs. inversions) suggesting the original intent may have been inversion detection. But the implementation and contract evolved to containment recording. The historical record is incomplete \u2014 no specification for the <= condition exists. This is a contributing factor, not the root cause."
+    },
+    {
+      "option": 5,
+      "name": "Insufficient evidence",
+      "verdict": "INCONSISTENT with evidence",
+      "matches_evidence": {
+        "S1_production_behavior": false,
+        "S2_historical_intent": false,
+        "S3_algorithm_walkthrough": false
+      },
+      "reasoning": "Three independent spikes provide convergent evidence. Production behavior is documented. Historical design records are traced. Algorithm mechanics are proven. Evidence is sufficient to classify this as a documentation inconsistency."
+    }
+  ],
+  "conclusion": {
+    "selected_option": 1,
+    "name": "Documentation inconsistency",
+    "summary": "Docstring is the single inconsistent artifact. Implementation, contract, stack algorithm, and historical design records are all consistent. Docstring describes inversion detection (<=) \u2014 condition is structurally impossible for stack-built hierarchies and has no supporting design specification.",
+    "recommendation": "Docstring correction only. No production code change.",
+    "requires_project_owner": true,
+    "gate": "Gate 2 (Architecture Verification)"
+  }
+}

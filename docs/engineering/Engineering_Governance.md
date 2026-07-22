@@ -1,5 +1,7 @@
 # Engineering Governance
 
+**Authoritative Source:** AGENTS.md (repository root) — the authoritative engineering rules document. See § Capability Lifecycle, § Engineering Workflow, § Code Reviews.
+
 **Status:** Accepted  
 **Version:** 1.0  
 **Date:** 2026-07-14  

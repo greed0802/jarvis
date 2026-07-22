@@ -1,0 +1,50 @@
+{
+  "eq": "EQ-0015",
+  "spike": 3,
+  "title": "Algorithm Walkthrough \u2014 _detect_structural_containment()",
+  "function": "_detect_structural_containment",
+  "stack_algorithm_line": 245,
+  "stack_algorithm_property": "while stack and row.level <= stack[-1].level: stack.pop()",
+  "containment_condition_line": 417,
+  "containment_condition": "if child.level > node.level:",
+  "docstring_condition_line": 402,
+  "docstring_condition": "child_level <= parent_level",
+  "walkthrough_steps": [
+    {
+      "step": 1,
+      "node": "Head1 (L1)",
+      "child": "Head2 (L2)",
+      "comparison": "2 > 1",
+      "result": true,
+      "finding": {
+        "parent_row_number": 1,
+        "parent_level": 1,
+        "child_row_number": 3,
+        "child_level": 2
+      }
+    },
+    {
+      "step": 2,
+      "node": "Head2 (L2)",
+      "child": "Head3 (L3)",
+      "comparison": "3 > 2",
+      "result": true,
+      "finding": {
+        "parent_row_number": 3,
+        "parent_level": 2,
+        "child_row_number": 5,
+        "child_level": 3
+      }
+    },
+    {
+      "step": 3,
+      "node": "Head3 (L3)",
+      "children": [],
+      "result": "no comparison, leaf node"
+    }
+  ],
+  "stack_guarantee": "child.level > parent.level ALWAYS true for stack-built hierarchies",
+  "docstring_condition_possible": false,
+  "docstring_condition_reason": "Stack algorithm guarantees child.level > parent.level. child_level <= parent_level is never true.",
+  "conclusion": "Docstring condition (<=) describes inversion detection that is structurally impossible for hierarchies produced by _reconstruct_hierarchy(). Implementation condition (>) correctly records parent-child containment facts matching the contract output shape."
+}

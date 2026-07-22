@@ -95,6 +95,7 @@ Engineering
 Operational Guidance
 
 - docs/engineering/AI_Agent_Operating_Manual.md
+- docs/engineering/Quality_Assurance_Constitution.md
 
 Do not ask the Project Owner for information that already exists in repository documentation.
 
@@ -374,6 +375,22 @@ Remaining risks.
 
 ---
 
+## Python Environment
+
+Do not activate the virtual environment.
+
+Always invoke the interpreter directly:
+
+    ./.venv/bin/python
+
+Examples:
+
+    ./.venv/bin/python -m pytest
+    ./.venv/bin/python tools/quality/verify_all.py --json
+    ./.venv/bin/python -m pip install <package>
+
+This avoids shell-specific activation issues (Fish/Bash/Zsh) and ensures deterministic execution.
+
 # Repository Workflow
 
 Every milestone should follow:
@@ -452,3 +469,138 @@ Optimize every contribution for long-term maintainability.
 Jarvis is intended to evolve for many years.
 
 Every change should leave the repository clearer, more consistent, and easier to maintain than before.
+
+
+# Engineering Quality Assurance Constitution
+
+This repository follows a Verification Before Freeze philosophy.
+
+No implementation, capability, Engineering Question, or milestone may be declared Complete, Frozen, or Production Ready without passing the mandatory Quality Gates.
+
+These gates exist to ensure objective defects are detected by automation before architectural review.
+
+AI agents shall never substitute narrative summaries for executable verification.
+
+# Quality Gate 1 — Mechanical Verification (Mandatory)
+
+The following SHALL be completed before requesting Freeze.
+
+## Testing
+A committed production test suite SHALL exist under tests/.
+Verification tools under tools/ do not replace regression tests.
+Test count increase SHALL be reported.
+Determinism
+
+## If deterministic behavior is claimed:
+
+identical inputs SHALL produce identical outputs.
+full object equality SHALL be verified where the contract claims deterministic outputs.
+metadata (timestamps, identifiers, runtime state) SHALL not invalidate deterministic contracts unless explicitly excluded from the contract.
+Contract Verification
+
+All public contracts SHALL be verified against production implementation.
+
+Documentation shall never be considered proof of behavior.
+
+Documentation Synchronization
+
+Implementation
+
+↓
+
+Tests
+
+↓
+
+Contracts
+
+↓
+
+Documentation
+
+shall remain synchronized.
+
+Documentation drift shall block Freeze.
+
+Version Consistency
+
+Repository version SHALL be consistent across:
+
+README
+version module
+implementation status
+release documentation
+contracts
+Architecture Integrity
+
+Production code SHALL NOT depend on:
+
+docs/
+tools/
+data/reports/
+
+unless explicitly approved.
+
+Spike artifacts shall never become hidden production dependencies.
+
+# Quality Gate 2 — Architecture Verification
+
+Architecture review SHALL verify:
+
+responsibility boundaries
+hidden coupling
+contract integrity
+consumer independence
+determinism
+YAGNI compliance
+ADR compliance
+Engineering Boundary preservation
+
+This review focuses on engineering judgment rather than mechanical correctness.
+
+# Quality Gate 3 — Consumer Readiness
+
+Before introducing a new consumer:
+
+Verify:
+
+stable public API
+import stability
+package boundaries
+contract maturity
+consumer documentation
+backward compatibility
+Engineering Debt Register
+
+Every Engineering Question SHALL conclude with an Engineering Debt Register.
+
+Each item shall include:
+
+ID
+Finding
+Severity
+Blocks Freeze (Yes/No)
+Planned Resolution
+Status
+
+Known engineering debt shall never be silently ignored.
+
+If debt remains, Freeze approval shall explicitly acknowledge it.
+
+Production Verification Rule
+
+AI agents shall never claim production behavior without executable evidence.
+
+Claims regarding:
+
+determinism
+immutability
+performance
+API behavior
+contract compliance
+
+require executable verification or committed automated tests.
+
+Repository summaries are not evidence.
+
+Execution is evidence.

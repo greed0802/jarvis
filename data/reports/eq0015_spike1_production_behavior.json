@@ -1,0 +1,22 @@
+{
+  "eq": "EQ-0015",
+  "spike": 1,
+  "title": "Production Behavior Evidence \u2014 _detect_structural_containment()",
+  "function": "_detect_structural_containment",
+  "file": "src/jarvis/parsers/costx/boq_intelligence.py",
+  "docstring_claim": "child_level <= parent_level (inversions)",
+  "implementation": "child.level > node.level",
+  "stack_algorithm_guarantee": "child.level ALWAYS > parent.level in normal stack-built hierarchies",
+  "normal_hierarchy_findings": 2,
+  "normal_hierarchy_expected_from_docstring": 0,
+  "inverted_hierarchy_findings": 1,
+  "inverted_hierarchy_expected_from_docstring": 1,
+  "conclusion": "Implementation condition (> )is structurally inverted relative to docstring (<=). Implementation detects ALL parent-child pairs, not inversions.",
+  "classification_options": [
+    "Documentation inconsistency",
+    "Implementation inconsistency",
+    "Contract inconsistency",
+    "Historical intent inconsistent",
+    "Insufficient evidence"
+  ]
+}

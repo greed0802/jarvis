@@ -26,7 +26,7 @@ Next Phase:
 
 Version
 
-v0.0.1-alpha.9
+0.0.1-alpha
 
 Current Architecture
 

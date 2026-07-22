@@ -105,13 +105,13 @@ ValidationFindings(
 
 ## 4. Structural Invariants
 
-### SI-FR-01: Findings Immutability
+### SI-FR-01: Findings Field Immutability
 
-**Invariant:** All finding fields are immutable after construction.
+**Invariant:** All finding fields are immutable at the dataclass level after construction (field reassignment blocked by `frozen=True`). Mutable objects stored within `finding_value` (dicts, lists) are the engine's deterministic output; consumers that mutate them violate this contract.
 
-**Guarantee:** Consumers cannot modify findings. Engine does not modify findings after creation.
+**Guarantee:** Consumers cannot reassign finding fields. The finding structure (which fields exist, which findings exist) is immutable. Consumers must not mutate values reachable through finding fields.
 
-**Rationale:** Preserves determinism and consumer trust.
+**Rationale:** Preserves determinism and consumer trust. Deep immutability of nested containers would require copying engine outputs, adding overhead without benefit given that consumers read findings once.
 
 ---
 
@@ -137,11 +137,11 @@ ValidationFindings(
 
 ### SI-FR-04: Frozen Data Structures
 
-**Invariant:** `ValidationFinding` and `ValidationFindings` are frozen dataclasses.
+**Invariant:** `ValidationFinding` and `ValidationFindings` are frozen dataclasses (field-level immutability). Field reassignment is blocked. Values stored within fields retain their native Python mutability; consumer mutation of nested containers constitutes a contract violation.
 
-**Guarantee:** Hashable, immutable, thread-safe.
+**Guarantee:** Hashable, field-assignment-immutable, thread-safe for structural access.
 
-**Rationale:** Supports caching, comparison, and concurrent access.
+**Rationale:** Supports caching, comparison, and concurrent access. Full deep immutability is not required for the engine's contract guarantees.
 
 ---
 
@@ -209,11 +209,11 @@ ValidationFindings(
 
 ### SE-FR-01: Deterministic Output
 
-**Invariant:** Same evidence + same rules → same `ValidationFindings` (fields identical, order identical, values identical).
+**Invariant:** Same evidence + same rules → same `ValidationFindings` (all finding fields identical, order identical, finding values identical). The `execution_timestamp` field is excluded from this guarantee per SI-FR-07 (informational only, never used in engine logic).
 
-**Guarantee:** Determinism. Repeatable. Reproducible.
+**Guarantee:** Determinism. Repeatable. Reproducible. Engine findings are deterministic; audit metadata varies per invocation.
 
-**Rationale:** Core engineering requirement.
+**Rationale:** Core engineering requirement. The timestamp serves audit purposes only and does not compromise the determinism contract.
 
 ---
 
