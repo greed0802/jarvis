@@ -24,10 +24,10 @@ The architecture is defined by:
 | Property | Value |
 |----------|-------|
 | Architecture Version | v0.1.0 |
-| Software Version | 0.0.1-alpha |
+| Software Version | 0.0.1-alpha.13 |
 | Current Phase | Phase 2 — Capability Era |
 | Current Active Capability | BOQ Intelligence |
-| Capability Status | Increment 3 Complete, Evidence Contract v1.0 Frozen |
+| Capability Status | Increment 4 Complete — IP-0001 Permanently Frozen |
 
 ---
 
@@ -37,9 +37,14 @@ The architecture is defined by:
 |----------|-------|
 | Parser Foundation | Complete |
 | Repository Stabilization | Complete |
-| Current Active Capability | BOQ Intelligence (Increment 3 Complete, Evidence Contract v1.0 Frozen) |
-| Capability Planning Authority | `docs/planning/Capability_Register.md`, `docs/planning/Capability_Roadmap.md` |
-| Evidence Contract Authority | `docs/contracts/BOQ_Intelligence_Public_Evidence_Contract_v1.0.md` |
+| Repository Governance Automation | v1.0 Frozen |
+| Current Active Capability | BOQ Intelligence (Increment 4 Complete — IP-0001 Permanently Frozen) |
+| Capability Governance | `docs/planning/Capability_Register.md`, `docs/planning/Capability_Roadmap.md` |
+| Implementation Governance | `docs/engineering/Implementation_Governance.md` v1.0 |
+| Evidence Contract Authority | `docs/contracts/BOQ_Intelligence_Public_Evidence_Contract_v1.1.md` |
+| Governance Automation Authority | `docs/engineering/Repository_Governance_Automation.md` |
+| Governance Freeze Review | `docs/engineering/Repository_Governance_Automation_v1.0_Freeze_Review.md` |
+| Latest Implementation Package | `docs/implementation/IP_0001/` — Permanently Frozen |
 
 ---
 
@@ -410,6 +415,105 @@ Historical Note: During M6 the Observation Runtime was implemented prior to form
 - **Output Contract**: `docs/contracts/Validation_Findings_Contract_v1.0.md`
 - **Evidence Reports**: `docs/engineering/evidence/EQ_0013_Spike1-4_Evidence_Report_*.md`
 - **Production Code**: `src/jarvis/engines/validation/engine.py`
+
+---
+
+## BOQ Intelligence Increment 4 — IP-0001 (PERMANENTLY FROZEN)
+
+| Property | Value |
+|----------|-------|
+| Goal | Implement 8 Production Ready semantic capabilities authorized by EQ-0019 |
+| Source EQ | EQ-0019 — BOQ Semantic Intelligence Increment 1 (PERMANENTLY FROZEN) |
+| Implementation Package | IP-0001 — Permanently Frozen |
+| Status | **Complete — PERMANENTLY FROZEN** |
+| Date | 2026-07-25 |
+| Files Created | `docs/engineering/Implementation_Governance.md`, `docs/implementation/IP_0001/` (6 verification documents) |
+| Files Modified | `src/jarvis/parsers/costx/boq_intelligence.py` (extended), `tests/parser/test_boq_intelligence.py` (+53 tests) |
+| Tests | 98 BOQ Intelligence tests (53 Increment 4 + 45 existing), 372 total repository tests |
+
+### Capabilities (Frozen)
+
+| ID | Capability | Function |
+|----|-----------|----------|
+| SEM-PROD-01 | Vocabulary Extraction | `_extract_vocabulary()` |
+| SEM-PROD-02 | Head1 Text Categorization | `_categorize_head1()` |
+| SEM-PROD-04 | Administrative Pattern Detection | `_detect_administrative_patterns()` |
+| SEM-PROD-05 | Section Code Enumeration | `_enumerate_sections()` |
+| SEM-PROD-06 | UOM Distribution Reporting | `_compute_uom_distribution()` |
+| SEM-PROD-07 | Header Level Count Distribution | `_compute_header_distribution()` |
+| SEM-PROD-09 | "Items Always Quantify" Enforcement | `_detect_header_quantity_violations()` |
+| SEM-PROD-12 | Admin Sub-Template Recognition | `_detect_admin_template_matches()` |
+
+### Architecture
+
+- Pure functions, deterministic, side-effect free
+- `include_semantic` flag preserves backward compatibility
+- Evidence/Assessment boundary preserved
+- No parser changes, no architectural drift
+
+### Deferred
+
+SEM-PROD-03, SEM-PROD-08, SEM-PROD-10, SEM-PROD-11 remain deferred per EQ-0019.
+
+### Evidence Package
+
+- `docs/implementation/IP_0001/` — Verification Report, Architecture Audit, Contract Verification, Regression Report, Freeze Recommendation
+
+---
+
+## Governance Automation v1.0 — EQ-0017
+
+| Property | Value |
+|----------|-------|
+| Goal | Migrate all governance validators to a shared governance library with a unified verification pipeline, ensuring deterministic, maintainable, and architecturally consistent repository governance. |
+| Engineering Question | EQ-0017: Can all governance validation logic be consolidated into a shared library with a unified verification pipeline while preserving deterministic behavior and architectural consistency? |
+| Status | **Complete — Frozen v1.0** |
+| Date | 2026-07-25 |
+| Investigation Duration | 3 phases (Foundations, Validator Migration, Production Readiness) |
+| Production Files Created | `tools/quality/shared_governance.py`, `tools/quality/verify_register.py`, `tools/quality/verify_links.py`, `tools/quality/verify_evidence.py`, `tools/quality/verify_governance.py`, `tools/quality/verify_tools.py` |
+| Contract Updated | `tools/quality/Tool_Registry.md` (v1.0, Active) |
+| Manifest | `tools/manifest.json` (11 active tools) |
+| Orchestrator | `tools/quality/verify_all.py` (manifest-driven discovery) |
+| Evidence Reports | `docs/engineering/evidence/EQ_0017/Governance_Audit_Report.md` |
+| Freeze Review | `docs/engineering/Repository_Governance_Automation_v1.0_Freeze_Review.md` |
+
+### Shared Governance Library
+
+The `shared_governance.py` library provides:
+- `EngineeringRegisterParser` — single source of truth for Engineering Register parsing
+- `EngineeringQuestion` — data model with authority document and evidence package path resolution
+- `RepositoryModel` — canonical repository structure
+- `FileValidator` — filesystem operations (existence, content validation)
+- `MarkdownParser` — markdown link extraction
+- `ValidationResult` — standard validation result type
+- `generate_validation_report` / `write_markdown_report` — report generation
+
+### Validator Summary
+
+| Validator | Authority | Purpose | Checks | Status |
+|-----------|-----------|---------|--------|--------|
+| `verify_register.py` | Quality Gate 3 | Engineering Register validation | 8/8 PASS | Reliable |
+| `verify_governance.py` | Quality Gate 2 | Comprehensive governance validation | 5/8 PASS (non-blocking gaps) | Reliable |
+| `verify_evidence.py` | Quality Gate 2 | Evidence package validation | 3/8 PASS (non-blocking gaps) | Reliable |
+| `verify_links.py` | Quality Gate 1 | Markdown link validation | 0/5 PASS (known false positives) | Operational |
+| `verify_tools.py` | Quality Gate 3 | Tool classification & placement | 3/7 PASS (known limitations) | Operational |
+
+### Architecture Compliance
+
+- **Shared Governance Library**: All validators import from `shared_governance`. No unauthorized duplication.
+- **Deterministic Engineering**: All validators produce identical outputs for identical inputs.
+- **Quality Gate Assignment**: Each validator documents its Quality Gate authority.
+- **Manifest-Driven Discovery**: `verify_all.py` discovers tools via `manifest.json`.
+- **Tool Contract**: All validators support `--json`, `--output`, standard exit codes.
+- **Documentation Synchronization**: Tool Registry, manifest, implementation status all synchronized.
+
+### Key Decisions
+
+1. **Shared Governance Library**: Single file `shared_governance.py` provides all common abstractions. Not split into multiple modules — YAGNI.
+2. **Subprocess Orchestration**: `verify_all.py` runs validators as subprocesses for isolation. Suitable for current scale.
+3. **Tool Contract Compliance**: All validators support `--json` and exit codes. `--help` supported via argparse.
+4. **Known Limitations Accepted**: 7 documented non-blocking limitations (see Freeze Review Appendix A).
+5. **Evidence Package READMEs**: All 8 evidence packages verified. 3 missing `## Governance Compliance` section — cosmetic gap.
 
 ---
 

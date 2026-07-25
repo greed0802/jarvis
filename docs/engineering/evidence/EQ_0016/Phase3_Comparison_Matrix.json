@@ -1,0 +1,735 @@
+[
+  {
+    "filename": "Base_Ceiling_BOQ_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Base_Demolition_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Base_Doors_and_Windows_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Base_External Wall Finishes_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Base_FFE_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Base_Floor_Finishes_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Base_Interior_Wall_Finishes_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Base_Joinery_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Base_Landscape_CostX.xlsX",
+    "matched_platform": "Unknown",
+    "confidence": 0.1,
+    "supporting_evidence": [
+      "No distinctive platform signatures found"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [],
+    "sheets": [
+      "Summary",
+      "4-Landscape"
+    ],
+    "distinctive_features": []
+  },
+  {
+    "filename": "Base_Metal Works_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Base_Roofing_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Base_Signage_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Base_Site Preparation_Civil_Earthworks_and_Demolition_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Base_Structural_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Base_Structural_Steel_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Base_Wall_Types_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Preambles_CostX.xlsX",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "Structural Reinforcement Only.xlsx",
+    "matched_platform": "Unknown",
+    "confidence": 0.1,
+    "supporting_evidence": [
+      "No distinctive platform signatures found"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [],
+    "sheets": [
+      "Structural Reinforcement"
+    ],
+    "distinctive_features": []
+  },
+  {
+    "filename": "dimensions_export.xlsx",
+    "matched_platform": "Unknown",
+    "confidence": 0.1,
+    "supporting_evidence": [
+      "No distinctive platform signatures found"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [],
+    "sheets": [
+      "Ceiling Finishes  3015 A1007 LE",
+      "Ceiling Finishes  3015 A1008 LE",
+      "Ceiling Finishes  3015 A1401 LE",
+      "Ceiling Finishes  3015 A1402 LE",
+      "Ceiling Finishes  3015 A1403 LE",
+      "Ceiling Finishes  3015 A1404 LE",
+      "Ceiling Finishes  3015 A1405 LE",
+      "Ceiling Finishes  3015 A1406 LE",
+      "Ceiling Finishes  3015 A1407 LE",
+      "Ceiling Finishes  3015 A1408 LE",
+      "Ceiling Finishes  3015 A5010 J1",
+      "Ceiling Finishes  8932_SG.01",
+      "Ceiling Finishes  8932_SI.01",
+      "Ceiling Finishes  8932_SI.02",
+      "Ceiling Finishes  HDR M100 _T1_",
+      "Ceiling Finishes  HDR M101 _T1_",
+      "Ceiling Finishes  HDR M102 _T1_",
+      "Ceiling Finishes  HDR M103 _T1_",
+      "Ceiling Finishes  HDR M104 _T1_",
+      "Ceiling Finishes  HDR M105 _T1_",
+      "Ceiling Finishes  HDR M106 _T1_",
+      "Doors  3015 A1001 LEVEL 1 GA PL",
+      "Doors  3015 A1002 LEVEL 1 GA PL",
+      "Doors  3015 A1003 LEVEL 2 GA PL",
+      "Doors  3015 A1004 LEVEL 2 GA PL",
+      "Doors  3015 A1005 LEVEL 3 GA PL",
+      "Doors  3015 A1006 LEVEL 3 GA PL",
+      "Doors  3015 A1007 LEVEL 4 GA PL",
+      "Doors  3015 A1008 LEVEL 4 GA PL",
+      "Exterior Wall Finish  3015 A013",
+      "Exterior Wall Finish  3015 A0 2",
+      "Exterior Wall Finish  3015 A0 3",
+      "Exterior Wall Finish  3015 A0 4",
+      "3015 A1001 LEVEL 1 GA PLAN   N",
+      "FF&E  3015 A1401 LEVEL 1 RCP",
+      "FF&E  3015 A1501 FURNITURE PLAN",
+      "FF&E  3015 A1502 FURNITURE PLAN",
+      "FF&E  3015 A1503 FURNITURE PLAN",
+      "FF&E  3015 A1504 FURNITURE PLAN",
+      "FF&E  3015 A1505 FURNITURE PLAN",
+      "FF&E  3015 A1506 FURNITURE PLAN",
+      "FF&E  3015 A1507 FURNITURE PLAN",
+      "FF&E  3015 A1508 FURNITURE PLAN",
+      "Floor Finish  3015 A0130 LEVEL",
+      "Floor Finish  3015 A0131 LEVEL",
+      "Floor Finish  3015 A0132 LEVEL",
+      "Floor Finish  3015 A0133 LEVEL",
+      "Internal Finishes  3015 A1001 L",
+      "Internal Finishes  3015 A1002 L",
+      "Internal Finishes  3015 A1003 L",
+      "Internal Finishes  3015 A1004 L",
+      "Internal Finishes  3015 A1005 L",
+      "Internal Finishes  3015 A1006 L",
+      "Internal Finishes  3015 A1007 L",
+      "Internal Finishes  3015 A1008 L",
+      "Internal Finishes  3015 A4402 I",
+      "Internal Finishes  3015 A4404 I",
+      "Internal Finishes  3015 A5005 I",
+      "Joinery  3015 A1001 A Level 1 N",
+      "Joinery  3015 A1002 A Level 1 S",
+      "Joinery  3015 A1003 A Level 2 N",
+      "Joinery  3015 A1004 A Level 2 S",
+      "Joinery  3015 A1005 A Level 3 N",
+      "Joinery  3015 A1006 A Level 3 S",
+      "Joinery  3015 A1007 A Level 4 N",
+      "3015 A1001 LEVEL 1 GA PLAN 2",
+      "3015 A1002 LEVEL 1 GA PLAN   S",
+      "3015 A1003 LEVEL 2 GA PLAN   N",
+      "3015 A1004 LEVEL 2 GA PLAN   S",
+      "3015 A1005 LEVEL 3 GA PLAN   N",
+      "3015 A1006 LEVEL 3 GA PLAN   S",
+      "3015 A1007 LEVEL 4 GA PLAN   N",
+      "3015 A1008 LEVEL 4 GA PLAN   S",
+      "Roof  3015 A1005 LEVEL 3 GA PLA",
+      "Roof  3015 A1006 LEVEL 3 GA PLA",
+      "Roof  3015 A1009 LEVEL ROOF GA",
+      "Roof  3015 A1010 LEVEL ROOF GA",
+      "3015 A1001 LEVEL 1 GA PLAN 3",
+      "3015 A1002 LEVEL 1 GA PLAN 2",
+      "3015 A1003 LEVEL 2 GA PLAN 2",
+      "3015 A1004 LEVEL 2 GA PLAN 2",
+      "3015 A1005 LEVEL 3 GA PLAN 2",
+      "3015 A1006 LEVEL 3 GA PLAN 2",
+      "3015 A1007 LEVEL 4 GA PLAN 2",
+      "3015 A1008 LEVEL 4 GA PLAN 2",
+      "Wall Types  3015 A1201 LEVEL 1",
+      "Wall Types  3015 A1202 LEVEL 1",
+      "Wall Types  3015 A1203 LEVEL 2",
+      "Wall Types  3015 A1204 LEVEL 2",
+      "Wall Types  3015 A1205 LEVEL 3",
+      "Wall Types  3015 A1206 LEVEL 3",
+      "Wall Types  3015 A1207 LEVEL 4",
+      "Wall Types  3015 A1208 LEVEL 4",
+      "Wall Types  3015 A4402 INTERNAL",
+      "Wall Types  3015 A4404 INTERNAL",
+      "Wall Types  3015 A5005 J04 & J0",
+      "Civil works  8932_C.10   Soil E",
+      "Civil works  8932_C.30   Civil",
+      "Civil works  8932_C.31   Civil",
+      "Civil works  CDC0110_P2   Site",
+      "Demolition  3015 A0102 DEMOLITI",
+      "Landscape  3015 A1007 LEVEL 4 G",
+      "Landscape  L CD 103.A Tree Prot",
+      "Landscape  L CD 104.A General A",
+      "Landscape  L CD 105.A General A",
+      "Landscape  L CD 106.A General A",
+      "Landscape  L CD 107.A General A",
+      "Landscape  L CD 108.A Irrigatio",
+      "Landscape  L CD 109.A Planting",
+      "Landscape  L CD 110.A Planting",
+      "Landscape  L CD 402 Sections",
+      "Structural  8932_SB.01   FOUNDA",
+      "Structural  8932_SB.02   FOUNDA",
+      "Structural  8932_SC.01   LEVEL",
+      "Structural  8932_SC.02   LEVEL",
+      "Structural  8932_SE.01   R.C. W",
+      "Structural  8932_SG.01   LEVEL",
+      "Structural  8932_SG.02   LEVEL",
+      "Structural  8932_SH.01   LEVEL",
+      "Structural  8932_SH.02   LEVEL",
+      "Structural  8932_SI.01   LEVEL",
+      "Structural  8932_SI.02   LEVEL",
+      "Structural  8932_SJ.01   ROOF L",
+      "Structural  8932_SJ.02   ROOF L",
+      "SS  8932_SG.01   LEVEL 2 PLAN",
+      "SS  8932_SG.02   LEVEL 2 PLAN",
+      "SS  8932_SH.01   LEVEL 3 PLAN",
+      "SS  8932_SH.02   LEVEL 3 PLAN",
+      "SS  8932_SI.01   LEVEL 4 PLAN",
+      "SS  8932_SI.02   LEVEL 4 PLAN",
+      "SS  8932_SJ.01   ROOF LEVEL PLA",
+      "SS  8932_SJ.02   ROOF LEVEL PLA",
+      "Summary By Drawing",
+      "Summary"
+    ],
+    "distinctive_features": []
+  },
+  {
+    "filename": "formula_workbook.xlsx",
+    "matched_platform": "Unknown",
+    "confidence": 0.1,
+    "supporting_evidence": [
+      "No distinctive platform signatures found"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [],
+    "sheets": [
+      "Sheet1"
+    ],
+    "distinctive_features": []
+  },
+  {
+    "filename": "full_boq.xlsx",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "full_boq_2.xlsx",
+    "matched_platform": "Trade_Breakup",
+    "confidence": 0.6,
+    "supporting_evidence": [
+      "Sheet names match trade breakdown pattern",
+      "Content contains trade breakdown terms"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "Trade Breakup",
+      "Trade Breakup Showing Markup",
+      "Trade Summary"
+    ],
+    "distinctive_features": [
+      "Trade_breakup_sheets"
+    ]
+  },
+  {
+    "filename": "full_boq_3.xlsx",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "full_boq_4.xlsx",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "full_boq_5.xlsx",
+    "matched_platform": "Trade_Breakup",
+    "confidence": 0.6,
+    "supporting_evidence": [
+      "Sheet names match trade breakdown pattern",
+      "Content contains trade breakdown terms"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "Trade Breakup",
+      "Trade Breakup Showing Markup",
+      "Trade Summary"
+    ],
+    "distinctive_features": [
+      "Trade_breakup_sheets"
+    ]
+  },
+  {
+    "filename": "full_boq_6.xlsx",
+    "matched_platform": "Trade_Breakup",
+    "confidence": 0.6,
+    "supporting_evidence": [
+      "Sheet names match trade breakdown pattern",
+      "Content contains trade breakdown terms"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "Trade Breakup",
+      "Trade Breakup Showing Markup",
+      "Trade Summary"
+    ],
+    "distinctive_features": [
+      "Trade_breakup_sheets"
+    ]
+  },
+  {
+    "filename": "full_boq_corrected.xlsx",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "CostX"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name"
+    ]
+  },
+  {
+    "filename": "reinforcement_only_2.xlsX",
+    "matched_platform": "Unknown",
+    "confidence": 0.1,
+    "supporting_evidence": [
+      "No distinctive platform signatures found"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [],
+    "sheets": [
+      "Summary",
+      "4-Reinforcement"
+    ],
+    "distinctive_features": []
+  },
+  {
+    "filename": "Structural Steel Program 09012024.xlsx",
+    "matched_platform": "CostX",
+    "confidence": 0.9,
+    "supporting_evidence": [
+      "Sheet name contains \"CostX\"",
+      "Content contains CostX references"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "READ FIRST!!",
+      "<PROJECT>",
+      "DATA SHEET",
+      "FOR IMPORT TO COSTX",
+      "COLOR CODE"
+    ],
+    "distinctive_features": [
+      "CostX_sheet_name",
+      "CostX_in_content"
+    ]
+  },
+  {
+    "filename": "client_trade_breadown_1.xlsx",
+    "matched_platform": "Trade_Breakup",
+    "confidence": 0.6,
+    "supporting_evidence": [
+      "Sheet names match trade breakdown pattern",
+      "Content contains trade breakdown terms"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      "Summary ",
+      "Preliminaries ",
+      "VE",
+      "Trade ",
+      "Trade - Elec",
+      "Trade - Hydr",
+      "Trade - Mech",
+      "Trade - Fire",
+      "Design ",
+      "Prov Sums ",
+      "PA Variations",
+      "Labour",
+      "Schedule of Rates"
+    ],
+    "distinctive_features": [
+      "Trade_breakup_content"
+    ]
+  },
+  {
+    "filename": "client_trade_breakdown_2.xlsx",
+    "matched_platform": "Generic_Client",
+    "confidence": 0.4,
+    "supporting_evidence": [
+      "Filename suggests client-specific format"
+    ],
+    "contradictory_evidence": [],
+    "missing_evidence": [
+      "Explicit platform metadata"
+    ],
+    "sheets": [
+      " Summary",
+      "Main Works",
+      "Preliminaries",
+      "Consultants",
+      "Sched 4 PPO",
+      "Sched 7 Mand Alt",
+      "VE",
+      "Elect Breakdown",
+      "Mech Breakdown",
+      "Hydraulic Breakdown",
+      "Dry Fire Breakdown",
+      "SOR",
+      "SoR Labour",
+      "SoR Equipmt",
+      "Sheet3"
+    ],
+    "distinctive_features": []
+  }
+]

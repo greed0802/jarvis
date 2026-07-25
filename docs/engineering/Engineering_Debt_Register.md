@@ -11,6 +11,7 @@
 | Debt ID | Source Review | Description | Root Cause | Severity | Blocks Release | Planned Resolution | Status |
 |---|---|---|---|---|---|---|---|
 | HD-011 | Internal | Repository Drift Audit — root cause of all documentation, version, implementation, contract, knowledge, and test drift | No systematic drift detection exists; each drift item found independently by reviewers | High | **Yes** (Gate 4 mandatory) | Produce `Repository_Drift_Report.md` after all other debt resolved | Open |
+| DEBT-IP0001-01 | IP-0001 | SEM-PROD-05 section enumeration spec vs production data discrepancy | EQ-0019 Spike 3 specifies `row_type == "Section"` for section enumeration. Production fixture identifies sections as `row_type == "Other"` with single-letter codes. Implementation correctly follows production data. | Low | **No** | Noted. Implementation matches production data. No code change required. | Resolved |
 
 ---
 

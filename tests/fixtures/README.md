@@ -82,26 +82,78 @@ Each fixture entry in `fixtures.json` contains:
 - `description`: Human-readable purpose
 - `acquired`: Date fixture was registered (ISO 8601)
 
-## Current Fixtures
+## Current Fixture Categories
 
 ### CostX (`costx/`)
 
-| Fixture | Description | Evidence |
-|---------|-------------|----------|
-| `full_boq.xlsx` | Primary CostX BOQ export | EQ-0007, EQ-0009 |
-| `formula_workbook.xlsx` | CostX export with formulas | M5 analysis |
-| `dimensions_export.xlsx` | CostX dimension export | M5 analysis |
+Primary CostX estimating software exports used for regression testing and validation.
 
-## Future Fixture Categories
+**Fixtures**: 28 files including full BOQs, trade breakdowns, and specialized exports
+**Documentation**: See `costx/README.md` for detailed descriptions
+**Evidence**: EQ-0007, EQ-0009, M5 analysis
 
-When adding new fixture categories:
+### Generic (`generic/`)
 
-1. Create subdirectory (e.g., `cubit/`, `pdf/`)
-2. Place fixture file in subdirectory
-3. Register via `tools/register_fixture.py`
-4. Update this README with category description
+Unknown or mixed platform exports for format compatibility analysis.
 
-**Note:** Registry keys currently use filenames. If multiple categories introduce filename collisions (e.g., `costx/full_boq.xlsx` and `cubit/full_boq.xlsx`), the registry key should be promoted to the relative path. See TODO in `tools/register_fixture.py`.
+**Fixtures**: 3 files from client-specific or unknown formats
+**Documentation**: See `generic/README.md` for analysis guidelines
+**Status**: Requires platform identification and characterization
+
+### Cubit (`cubit/`)
+
+Reserved for future Cubit estimating platform exports.
+
+**Fixtures**: 0 (placeholder directory)
+**Status**: Will be populated when Cubit fixtures with confirmed provenance become available
+
+### Archives (`archives/`)
+
+Original fixture archives preserved for provenance.
+
+**Contents**: 1 archive (new_fixture.zip) containing original CostX batch
+**Documentation**: See `archives/README.md` for archive policy
+
+## Adding New Fixtures
+
+### Registration Process
+1. **Place fixture** in appropriate platform subdirectory
+2. **Run registration tool**:
+   ```bash
+   python tools/register_fixture.py <path_to_fixture> --description "Purpose"
+   ```
+3. **Update manifest** (`FIXTURE_MANIFEST.md`) with metadata
+4. **Verify integrity** with existing tests
+
+### Category Expansion Rules
+When adding new platform categories:
+
+1. **Evidence-based**: Create directory only when fixtures exist
+2. **Documentation**: Add platform README.md with purpose and guidelines
+3. **Manifest update**: Add category to `FIXTURE_MANIFEST.md`
+4. **README update**: Update this file with category description
+
+**Example**:
+```bash
+mkdir -p tests/fixtures/cubit
+echo "# Cubit Fixtures" > tests/fixtures/cubit/README.md
+# Add fixtures and update manifest
+```
+
+### Naming Conventions
+- **CostX**: `Base_<Trade>_CostX.xlsx` or `full_boq_<N>.xlsx`
+- **Cubit**: `cubit_<project>_<type>.xlsx` (when available)
+- **Generic**: `client_<description>.xlsx` or `<project>_<date>.xlsx`
+- **Archives**: Original filenames preserved with dates
+
+## Repository Organization
+
+**Authoritative Catalogue**: `FIXTURE_MANIFEST.md`
+**Integrity Verification**: `fixtures.json` (SHA-256 hashes)
+**Platform Documentation**: Each category has README.md
+**Addition Process**: Explicit registration required
+
+See `FIXTURE_MANIFEST.md` for complete inventory and metadata fields.
 
 ## Engineering Principles
 

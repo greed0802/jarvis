@@ -307,14 +307,60 @@ The current state of all capabilities is maintained in `docs/planning/Capability
 
 The Capability Register is the single source of truth for lifecycle states. This section provides a summary for reference.
 
-| Capability | Lifecycle State | Evidence Ready | Implementation Ready | Dependency |
-|------------|:---------------:|:--------------:|:--------------------:|------------|
-| **BOQ Intelligence** | Approved for Implementation | Yes | Yes | None |
-| **Formatter** | Deferred | Partial | No | BOQ Intelligence (prerequisite) |
-| **CheckMate** | Deferred | Partial | No | BOQ Intelligence (baseline) |
-| **Cubit Parser** | Deferred | No | No | Fixtures + Engineering Question |
-| **PDF Parser** | Deferred | No | No | None |
-| **AI-Assisted Estimation** | Deferred | No | No | BOQ Intelligence + Context Engine + training data |
+| Capability | Lifecycle State | Classification | Evidence Ready | Implementation Ready | Dependency |
+|------------|:---------------:|:-------------:|:--------------:|:--------------------:|------------|
+| **BOQ Intelligence** | Active | Strategic | Yes | Yes (next increments pending) | None |
+| **Validation Engine** | Frozen Sub-capability | Supporting | Yes | Yes (Consumer Ready) | BOQ Intelligence (evidence) |
+| **Formatter** | Deferred | Deferred | Partial | No | BOQ Intelligence (prerequisite) |
+| **CheckMate** | Deferred | Deferred | Partial | No | BOQ Intelligence (baseline), domain rule catalog |
+| **Cubit Parser** | Deferred | Deferred | No | No | Fixtures + Engineering Question |
+| **PDF Parser** | Deferred | Deferred | No | No | None |
+| **AI-Assisted Estimation** | Deferred | Deferred | No | No | BOQ Intelligence + Context Engine + training data |
+| **Observation Runtime (M6)** | Historical | Historical | N/A | N/A | None |
+
+### Capability Sequencing Priority
+
+The current prioritization, approved by Project Owner in Capability Evaluation 001:
+
+1. **BOQ Intelligence** — continue active development. Evidence Contract v1.0 is frozen. Next increments pending scoping.
+2. **CheckMate** — activate once BOQ Intelligence has matured sufficiently and a domain rule catalog exists.
+3. **Formatter** — activate once BOQ Intelligence validation baseline is trusted.
+
+Deferred:
+- **Cubit Parser** — requires fixtures from Project Owner
+- **PDF Parser** — insufficient evidence; fundamentally different extraction problem
+- **AI-Assisted Estimation** — long-term strategic; multiple prerequisite foundations needed
+
+### Completion Criteria Per Priority
+
+#### BOQ Intelligence (Current Active Capability)
+
+| Criterion | Status |
+|-----------|:------:|
+| Increments 1-3 delivered | Complete |
+| Evidence Contract v1.0 Frozen | Complete |
+| Regression tests pass (73 tests) | Complete |
+| At least one consumer (Validation Engine) | Complete |
+| Further increments scoped and approved | Pending |
+| All feature items from Discovery 001 delivered | In progress |
+| Capability marked Completed | Pending |
+
+#### CheckMate
+
+| Criterion | Status |
+|-----------|:------:|
+| BOQ Intelligence sufficiently mature | In progress |
+| Domain rule catalog formally documented | Not started |
+| Capability Evaluation (Eval 002) | Not started |
+| Project Owner approval to activate | Pending |
+
+#### Formatter
+
+| Criterion | Status |
+|-----------|:------:|
+| BOQ Intelligence validation output trusted | In progress |
+| Capability Evaluation (Eval 002) | Not started |
+| Project Owner approval to activate | Pending |
 
 ---
 
@@ -446,4 +492,5 @@ Historical artifacts preserve what was known or decided at a point in time. They
 | Version | Date | Change |
 |---------|------|--------|
 | 1.0 | 2026-07-13 | Initial creation. Establishes Capability Era governance and roadmap. |
-| 1.1 | 2026-07-13 | Lifecycle state corrected: "Approved for Production" → "Approved for Implementation". Current Capability Candidates replaced with reference to Capability Register. Document classification (immutable vs operational) added. Related Documents updated with mutability column. |
+| 1.1 | 2026-07-13 | Lifecycle state corrected: "Approved for Production" → "Approved for Implementation". Current Capability Candidates replaced with reference to Capability Register. Document classification (immutable system vs operational) added. Related Documents updated with mutability column. |
+| 1.2 | 2026-07-22 | CB-0001 baseline alignment. Updated Current Capability States to match Register classification. Added completion criteria per priority. Added Historical classification. |

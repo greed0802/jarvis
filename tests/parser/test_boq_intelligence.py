@@ -382,3 +382,584 @@ class TestHierarchyEdgeCases:
         result = analyze_boq(rows, include_hierarchy=True)
         assert result.hierarchy == ()
         assert result.hierarchy_statistics["total_headers"] == 0
+
+# --- Increment 4: Semantic Evidence Tests ---
+# Authority: EQ-0019 (Permanently Frozen), IP-0001
+# Evidence: EQ-0019 Spike 3 (Deterministic Rule Definition)
+
+
+class TestIncrement4BackwardCompatibility:
+    """Verify backward compatibility: Increment 1-3 unchanged when include_semantic=False."""
+
+    def test_default_include_semantic_returns_none(self, fixture_path):
+        """Default call (include_semantic=False) returns None for all new fields."""
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            result = analyze_boq(rows)  # Default: include_semantic=False
+        finally:
+            parser.close()
+
+        # All new fields should be None
+        assert result.vocabulary is None
+        assert result.head1_categorization is None
+        assert result.administrative_patterns is None
+        assert result.section_enumeration is None
+        assert result.uom_distribution is None
+        assert result.uom_percentages is None
+        assert result.header_distribution is None
+        assert result.header_quantity_violations is None
+        assert result.admin_template_matches is None
+
+    def test_explicit_false_returns_none(self, fixture_path):
+        """Explicit include_semantic=False returns None for all new fields."""
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            result = analyze_boq(rows, include_semantic=False)
+        finally:
+            parser.close()
+
+        assert result.vocabulary is None
+
+
+class TestSemanticVocabularyExtraction:
+    """SEM-PROD-01: Vocabulary extraction deterministic tests."""
+
+    @pytest.fixture(scope="module")
+    def semantic(self, fixture_path):
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            return analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+    def test_vocabulary_is_populated(self, semantic):
+        """Vocabulary should be a non-empty dict."""
+        assert isinstance(semantic.vocabulary, dict)
+        assert len(semantic.vocabulary) > 0
+
+    def test_vocabulary_top_term(self, semantic):
+        """Top term should be common engineering word."""
+        # In full_boq, expect 'AND' or similar high-frequency term
+        top_term = list(semantic.vocabulary.keys())[0]
+        assert isinstance(top_term, str)
+        assert semantic.vocabulary[top_term] > 0
+
+    def test_vocabulary_values_are_int(self, semantic):
+        """All vocabulary values should be int counts."""
+        for term, count in semantic.vocabulary.items():
+            assert isinstance(count, int), f"Term {term!r} has non-int count: {count}"
+
+    def test_vocabulary_sorted_descending(self, semantic):
+        """Vocabulary should be sorted by count descending."""
+        counts = list(semantic.vocabulary.values())
+        for i in range(len(counts) - 1):
+            assert counts[i] >= counts[i + 1], f"Not sorted at index {i}"
+
+    def test_vocabulary_max_terms_respected(self, semantic):
+        """Default max_terms=50 should produce at most 50 terms."""
+        assert len(semantic.vocabulary) <= 50
+
+    def test_vocabulary_determinism(self, fixture_path):
+        """Same input produces identical vocabulary."""
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            result1 = analyze_boq(rows, include_semantic=True)
+            result2 = analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+        assert result1.vocabulary == result2.vocabulary
+
+    def test_vocabulary_empty_input(self):
+        """Empty rows produce empty vocabulary."""
+        result = analyze_boq([], include_semantic=True)
+        assert result.vocabulary == {}
+
+    def test_vocabulary_no_items(self):
+        """Rows without Items produce empty vocabulary."""
+        rows = [BOQRow(1, "A", "Some header", None, "Head1", "Head", "A")]
+        result = analyze_boq(rows, include_semantic=True)
+        assert result.vocabulary == {}
+
+    def test_vocabulary_custom_max_terms(self, fixture_path):
+        """Custom max_terms limits vocabulary size."""
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            from jarvis.parsers.costx.boq_intelligence import _extract_vocabulary
+            vocab = _extract_vocabulary(rows, max_terms=10)
+        finally:
+            parser.close()
+
+        assert len(vocab) <= 10
+
+
+class TestSemanticHead1Categorization:
+    """SEM-PROD-02: Head1 text categorization deterministic tests."""
+
+    @pytest.fixture(scope="module")
+    def semantic(self, fixture_path):
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            return analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+    def test_categorization_has_both_keys(self, semantic):
+        """Result should have both Administrative and Trade-Specific keys."""
+        assert "Administrative" in semantic.head1_categorization
+        assert "Trade-Specific" in semantic.head1_categorization
+
+    def test_administrative_entries_present(self, semantic):
+        """Should find GENERALLY, REFERENCES, PRICES administrative entries."""
+        admin = semantic.head1_categorization["Administrative"]
+        assert len(admin) > 0
+
+    def test_trade_specific_entries_present(self, semantic):
+        """Should find trade-specific entries."""
+        trade = semantic.head1_categorization["Trade-Specific"]
+        assert len(trade) > 0
+
+    def test_categorization_determinism(self, fixture_path):
+        """Same input produces identical categorization."""
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            result1 = analyze_boq(rows, include_semantic=True)
+            result2 = analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+        assert result1.head1_categorization == result2.head1_categorization
+
+    def test_each_entry_has_required_fields(self, semantic):
+        """Each entry should have row_number and description."""
+        for category in ("Administrative", "Trade-Specific"):
+            for entry in semantic.head1_categorization[category]:
+                assert "row_number" in entry
+                assert "description" in entry
+
+    def test_empty_input(self):
+        """Empty rows produce empty categorization."""
+        result = analyze_boq([], include_semantic=True)
+        assert result.head1_categorization["Administrative"] == []
+        assert result.head1_categorization["Trade-Specific"] == []
+
+
+class TestSemanticSectionEnumeration:
+    """SEM-PROD-05: Section enumeration deterministic tests."""
+
+    @pytest.fixture(scope="module")
+    def semantic(self, fixture_path):
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            return analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+    def test_enumeration_is_tuple(self, semantic):
+        """Section enumeration should be a tuple."""
+        assert isinstance(semantic.section_enumeration, tuple)
+
+    def test_enumeration_not_empty(self, semantic):
+        """Full BOQ should have sections."""
+        assert len(semantic.section_enumeration) > 0
+
+    def test_enumeration_section_A_first(self, semantic):
+        """First section should be A."""
+        assert semantic.section_enumeration[0]["code"] == "A"
+
+    def test_enumeration_has_code_name_row(self, semantic):
+        """Each entry should have code, name, row_number."""
+        for entry in semantic.section_enumeration:
+            assert "code" in entry
+            assert "name" in entry
+            assert "row_number" in entry
+
+    def test_enumeration_ordering_preserved(self, semantic):
+        """Sections should be in ordinal order by row_number."""
+        row_numbers = [entry["row_number"] for entry in semantic.section_enumeration]
+        for i in range(len(row_numbers) - 1):
+            assert row_numbers[i] < row_numbers[i + 1]
+
+    def test_enumeration_determinism(self, fixture_path):
+        """Same input produces identical enumeration."""
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            result1 = analyze_boq(rows, include_semantic=True)
+            result2 = analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+        assert result1.section_enumeration == result2.section_enumeration
+
+    def test_empty_input(self):
+        """Empty rows produce empty enumeration."""
+        result = analyze_boq([], include_semantic=True)
+        assert result.section_enumeration == ()
+
+class TestSemanticUOMDistribution:
+    """SEM-PROD-06: UOM distribution deterministic tests."""
+
+    @pytest.fixture(scope="module")
+    def semantic(self, fixture_path):
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            return analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+    def test_uom_distribution_is_dict(self, semantic):
+        """UOM distribution should be a dict."""
+        assert isinstance(semantic.uom_distribution, dict)
+
+    def test_uom_percentages_is_dict(self, semantic):
+        """UOM percentages should be a dict."""
+        assert isinstance(semantic.uom_percentages, dict)
+
+    def test_uom_distribution_not_empty(self, semantic):
+        """Full BOQ should have UOM entries."""
+        assert len(semantic.uom_distribution) > 0
+
+    def test_uom_m2_dominates(self, semantic):
+        """m2 should be the dominant UOM in full_boq (~33.7%)."""
+        assert semantic.uom_distribution.get("m2", 0) > 0
+        pct = semantic.uom_percentages.get("m2", 0)
+        assert 30.0 < pct < 40.0  # Known: ~33.7%
+
+    def test_uom_values_are_int(self, semantic):
+        """All UOM distribution values should be int."""
+        for uom, count in semantic.uom_distribution.items():
+            assert isinstance(count, int), f"UOM {uom!r} has non-int count: {count}"
+
+    def test_uom_percentages_sum(self, semantic):
+        """Percentages should sum to ~100.0."""
+        total = sum(semantic.uom_percentages.values())
+        assert 99.0 <= total <= 101.0
+
+    def test_uom_distribution_sorted_descending(self, semantic):
+        """UOM distribution should be sorted by count descending."""
+        counts = list(semantic.uom_distribution.values())
+        for i in range(len(counts) - 1):
+            assert counts[i] >= counts[i + 1]
+
+    def test_uom_determinism(self, fixture_path):
+        """Same input produces identical UOM distribution."""
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            result1 = analyze_boq(rows, include_semantic=True)
+            result2 = analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+        assert result1.uom_distribution == result2.uom_distribution
+        assert result1.uom_percentages == result2.uom_percentages
+
+    def test_empty_input(self):
+        """Empty rows produce empty distribution."""
+        result = analyze_boq([], include_semantic=True)
+        assert result.uom_distribution == {}
+        assert result.uom_percentages == {}
+
+
+class TestSemanticHeaderDistribution:
+    """SEM-PROD-07: Header level count distribution deterministic tests."""
+
+    @pytest.fixture(scope="module")
+    def semantic(self, fixture_path):
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            return analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+    def test_header_distribution_has_keys(self, semantic):
+        """Should have Head1-4 keys."""
+        for key in ("Head1", "Head2", "Head3", "Head4"):
+            assert key in semantic.header_distribution
+
+    def test_header_distribution_values_int(self, semantic):
+        """All values should be int."""
+        for key, count in semantic.header_distribution.items():
+            assert isinstance(count, int), f"Key {key!r} has non-int count: {count}"
+
+    def test_header_distribution_populated(self, semantic):
+        """Full BOQ should have headers at all levels."""
+        for key in ("Head1", "Head2", "Head3", "Head4"):
+            assert semantic.header_distribution[key] > 0
+
+    def test_head4_most_common(self, semantic):
+        """Head4 should have highest count (636 observed)."""
+        assert semantic.header_distribution["Head4"] > semantic.header_distribution["Head1"]
+
+    def test_header_distribution_determinism(self, fixture_path):
+        """Same input produces identical distribution."""
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            result1 = analyze_boq(rows, include_semantic=True)
+            result2 = analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+        assert result1.header_distribution == result2.header_distribution
+
+    def test_empty_input(self):
+        """Empty rows produce zero distribution."""
+        result = analyze_boq([], include_semantic=True)
+        for key in ("Head1", "Head2", "Head3", "Head4"):
+            assert result.header_distribution[key] == 0
+
+
+class TestSemanticHeaderQuantityInvariant:
+    """SEM-PROD-09: 'Items Always Quantify' enforcement tests."""
+
+    @pytest.fixture(scope="module")
+    def semantic(self, fixture_path):
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            return analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+    def test_no_violations_in_valid_data(self, semantic):
+        """In full_boq, no header should have non-NULL quantities."""
+        assert isinstance(semantic.header_quantity_violations, tuple)
+        assert len(semantic.header_quantity_violations) == 0
+
+    def test_violation_detected_with_quantity(self):
+        """A header row with quantity should be detected."""
+        rows = [
+            BOQRow(1, "A", "GENERALLY", None, "Head1", "Head", "A"),
+            BOQRow(2, None, "Some item", 10.0, "m2", "Item", "A"),
+            BOQRow(3, "B", "REFERENCES", 5.0, "Head1", "Head", "B"),  # Violation!
+        ]
+        result = analyze_boq(rows, include_semantic=True)
+        assert len(result.header_quantity_violations) == 1
+        violation = result.header_quantity_violations[0]
+        assert violation["row_number"] == 3
+        assert violation["uom"] == "Head1"
+        assert violation["quantity"] == 5.0
+
+    def test_no_violations_with_no_headers(self):
+        """Empty or Item-only rows produce empty violations."""
+        rows = [BOQRow(1, "A", "desc", 10.0, "m", "Item", None)]
+        result = analyze_boq(rows, include_semantic=True)
+        assert result.header_quantity_violations == ()
+
+    def test_invariant_determinism(self, fixture_path):
+        """Same input produces identical violations."""
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            result1 = analyze_boq(rows, include_semantic=True)
+            result2 = analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+        assert result1.header_quantity_violations == result2.header_quantity_violations
+
+
+class TestSemanticAdminPatterns:
+    """SEM-PROD-04: Administrative pattern detection tests."""
+
+    @pytest.fixture(scope="module")
+    def semantic_with_hierarchy(self, fixture_path):
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            return analyze_boq(rows, include_hierarchy=True, include_semantic=True)
+        finally:
+            parser.close()
+
+    def test_requires_hierarchy(self, fixture_path):
+        """Without hierarchy, patterns should be None."""
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            result = analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+        assert result.administrative_patterns is None
+
+    def test_patterns_populated(self, semantic_with_hierarchy):
+        """With hierarchy, patterns should be populated."""
+        assert isinstance(semantic_with_hierarchy.administrative_patterns, dict)
+        assert len(semantic_with_hierarchy.administrative_patterns) > 0
+
+    def test_pattern_determinism(self, fixture_path):
+        """Same input produces identical patterns."""
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            result1 = analyze_boq(rows, include_hierarchy=True, include_semantic=True)
+            result2 = analyze_boq(rows, include_hierarchy=True, include_semantic=True)
+        finally:
+            parser.close()
+
+        assert result1.administrative_patterns == result2.administrative_patterns
+
+
+class TestSemanticAdminTemplate:
+    """SEM-PROD-12: Administrative sub-template recognition tests."""
+
+    @pytest.fixture(scope="module")
+    def semantic(self, fixture_path):
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            return analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+    def test_template_matches_populated(self, semantic):
+        """Template matches should be a non-empty dict."""
+        assert isinstance(semantic.admin_template_matches, dict)
+        assert len(semantic.admin_template_matches) > 0
+
+    def test_template_matches_have_expected_keys(self, semantic):
+        """Each match entry should have required keys."""
+        for section, matches in semantic.admin_template_matches.items():
+            for match in matches:
+                assert "pattern_name" in match
+                assert "matched_text" in match
+                assert "row_number" in match
+
+    def test_template_determinism(self, fixture_path):
+        """Same input produces identical template matches."""
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            result1 = analyze_boq(rows, include_semantic=True)
+            result2 = analyze_boq(rows, include_semantic=True)
+        finally:
+            parser.close()
+
+        assert result1.admin_template_matches == result2.admin_template_matches
+
+    def test_empty_input(self):
+        """Empty rows produce empty template matches."""
+        result = analyze_boq([], include_semantic=True)
+        assert result.admin_template_matches == {}
+
+
+class TestIncrement4FullPipeline:
+    """Integration test: Increment 4 with full production fixture."""
+
+    @pytest.fixture(scope="module")
+    def full_semantic(self, fixture_path):
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            return analyze_boq(rows, include_hierarchy=True, include_detection=True, include_semantic=True)
+        finally:
+            parser.close()
+
+    def test_all_fields_populated(self, full_semantic):
+        """All Increment 4 fields should be populated with real data."""
+        assert len(full_semantic.vocabulary) > 0
+        assert len(full_semantic.head1_categorization["Administrative"]) > 0
+        assert len(full_semantic.head1_categorization["Trade-Specific"]) > 0
+        assert len(full_semantic.section_enumeration) > 0
+        assert len(full_semantic.uom_distribution) > 0
+        assert len(full_semantic.uom_percentages) > 0
+        assert sum(full_semantic.header_distribution.values()) > 0
+        assert isinstance(full_semantic.header_quantity_violations, tuple)
+        assert len(full_semantic.admin_template_matches) > 0
+
+    def test_all_increments_together_determinism(self, fixture_path):
+        """All increments together produce deterministic results."""
+        parser = WorkbookParser()
+        try:
+            parser.load(fixture_path)
+            parser.validate()
+            rows = extract_boq(parser.workbook)
+            result1 = analyze_boq(rows, include_hierarchy=True, include_detection=True, include_semantic=True)
+            result2 = analyze_boq(rows, include_hierarchy=True, include_detection=True, include_semantic=True)
+        finally:
+            parser.close()
+
+        # Check all fields match across runs
+        assert result1 == result2
+
+    def test_increment_fields_remain_present(self, full_semantic):
+        """Verifies Increment 1-3 fields still present alongside Increment 4."""
+        # Increment 1
+        assert full_semantic.row_classification is not None
+        assert full_semantic.section_statistics is not None
+        assert full_semantic.boq_statistics is not None
+        assert full_semantic.known_anomalies is not None
+
+        # Increment 2
+        assert full_semantic.hierarchy is not None
+        assert full_semantic.hierarchy_statistics is not None
+
+        # Increment 3
+        assert full_semantic.detected_level_skips is not None
+        assert full_semantic.zero_quantity_items is not None
+        assert full_semantic.structural_containment_findings is not None
+        assert full_semantic.completeness_findings is not None
+
+        # Increment 4
+        assert full_semantic.vocabulary is not None
+        assert full_semantic.head1_categorization is not None
+        assert full_semantic.section_enumeration is not None
+        assert full_semantic.uom_distribution is not None
+        assert full_semantic.uom_percentages is not None
+        assert full_semantic.header_distribution is not None
+        assert full_semantic.header_quantity_violations is not None
+        assert full_semantic.admin_template_matches is not None

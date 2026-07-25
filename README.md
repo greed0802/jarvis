@@ -2,110 +2,103 @@
 
 Jarvis is a modular AI platform designed to provide deterministic, explainable, and extensible intelligent workflows.
 
-## Project Status
+## Current Status
 
-🚧 Architecture Phase 1 Foundation
-
-Completed:
-
-- Vision
-- Principles
-- System Blueprint
-- Core Ontology
-- Platform Kernel
-- Data Flow
-- ADR_0001–ADR_0021
-
-Next Phase:
-
-- Context Engine
-- Planner Engine
-- Workflow Engine
-
-# Current Status
-
-Version
-
-0.0.1-alpha
-
-Current Architecture
-
-v0.1.0
-
-Repository Status
-
-Production Alpha
+| Property | Value |
+|----------|-------|
+| Architecture Version | v0.1.0 |
+| Software Version | 0.0.1-alpha.13 |
+| Repository Status | Production Alpha |
+| Architecture | Frozen (26 ADRs) |
+| Tests | 372 passing |
+| Governance | Engineering Governance v1.0 + Implementation Governance v1.0 |
 
 ---
 
-## Completed
+## Completed Engineering Questions
 
-### Platform
+| EQ | Title | Status |
+|----|-------|--------|
+| EQ-0010 | Deterministic BOQ Structural Intelligence | Completed |
+| EQ-0011 | BOQ Semantic Intelligence Boundary | Completed |
+| EQ-0012 | BOQ Intelligence Public Evidence Contract | Completed — Frozen v1.0 |
+| EQ-0013 | Validation Engine | Completed — Frozen |
+| EQ-0014 | Parser Regression Investigation | Completed |
+| EQ-0015 | Structural Containment Investigation | Completed |
+| EQ-0016 | Trade Classification Authority | Completed |
+| EQ-0017 | Repository Governance Migration | Completed — Frozen v1.0 |
+| EQ-0018 | BOQ Semantic Intelligence | Completed |
+| EQ-0019 | BOQ Semantic Intelligence Increment 1 | COMPLETE — PERMANENTLY FROZEN |
 
-- M0 Architecture Freeze
-- M1 Platform Bootstrap
-- M2 Runtime
-- M3 Configuration
-- M4 Runtime Assembly
-- M5 CostX Research
-- M6 Parser Foundation
-- M7 BOQ Intelligence
+---
 
-### Engineering
+## Completed Implementation Packages
 
-- Engineering Governance
-- EQ-0010 Complete
-- EQ-0011 Complete
+| IP | Title | Status |
+|----|-------|--------|
+| IP-0001 | BOQ Intelligence Increment 4 — Semantic Intelligence | PERMANENTLY FROZEN |
 
-### BOQ Intelligence
+---
 
-✅ Increment 1 — Observe
+## BOQ Intelligence
 
-✅ Increment 2 — Reconstruct
+| Increment | Capabilities | Status |
+|-----------|-------------|--------|
+| Increment 1 | Observe — Classification, Statistics, Anomalies | Complete |
+| Increment 2 | Reconstruct — Hierarchy | Complete |
+| Increment 3 | Detect — Structural Evidence | Complete |
+| Increment 4 | Semantic — 8 Semantic Capabilities | **PERMANENTLY FROZEN** |
 
-✅ Increment 3 — Detect
+### Semantic Capabilities (Increment 4 — IP-0001)
 
-### Tests
+| ID | Capability | Status |
+|----|-----------|--------|
+| SEM-PROD-01 | Vocabulary Extraction | Implemented — Frozen |
+| SEM-PROD-02 | Head1 Text Categorization | Implemented — Frozen |
+| SEM-PROD-04 | Administrative Pattern Detection | Implemented — Frozen |
+| SEM-PROD-05 | Section Code Enumeration | Implemented — Frozen |
+| SEM-PROD-06 | UOM Distribution Reporting | Implemented — Frozen |
+| SEM-PROD-07 | Header Level Count Distribution | Implemented — Frozen |
+| SEM-PROD-09 | "Items Always Quantify" Enforcement | Implemented — Frozen |
+| SEM-PROD-12 | Administrative Sub-Template Recognition | Implemented — Frozen |
 
-66 / 66 Passing
+**Deferred:** SEM-PROD-03, SEM-PROD-08, SEM-PROD-10, SEM-PROD-11
 
-### Architecture
+---
 
-Stable
+## Governance
 
-Evidence First
+| Document | Version | Status |
+|----------|---------|--------|
+| Engineering Governance | v1.0 | Active |
+| Implementation Governance | v1.0 | Active |
+| Quality Assurance Constitution | 1.0 | Active |
+| Engineering Question Freeze Checklist | 1.0 | Active |
+| Repository Governance Automation | v1.0 | Active |
 
-Deterministic
+---
 
-Immutable
+## Repository
 
-Pure Functional
+```
+docs/     — Architecture, ADRs, Engineering, Contracts, Implementation
+src/      — Platform source code (BOQ Intelligence, Validation Engine, Kernel)
+tests/    — 372 tests, 0 failures
+tools/    — Quality verification suite, governance tooling
+```
 
-## Repository Structure
+---
 
-- docs/ — Architecture and ADRs
-- src/ — Platform source code
-- tools/ — Documentation tooling
+## Latest Release
+
+[v0.0.1-alpha.13](docs/releases/v0.0.1-alpha.13.md) — BOQ Intelligence Increment 4
+
+## Roadmap
+
+Phase 2 — Capability Era (current) — Building capabilities under ADR governance
+
+---
 
 ## License
 
 Private repository.
-
-# Documentation Automation
-
-Run:
-
-```bash
-cd tools
-python build_docs.py
-```
-
-This will regenerate:
-
-- docs/decisions/README.md
-
-Future generators can be added here:
-- ontology index
-- skills index
-- API index
-- documentation statistics

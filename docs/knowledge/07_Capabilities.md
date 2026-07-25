@@ -21,7 +21,7 @@ For detailed capability matrices, see `05_Engineering_Questions.md`. For the liv
 
 | Capability | Status | Contract | EQ | Implemented |
 |------------|--------|----------|-----|-------------|
-| **BOQ Intelligence** | **Implemented** | BOQ Intelligence Evidence v1.0 | EQ-0010, EQ-0011, EQ-0012 | 2026-07-14 |
+| **BOQ Intelligence** | **Implemented** | BOQ Intelligence Evidence v1.1.0 | EQ-0010, EQ-0011, EQ-0012, EQ-0019 | 2026-07-25 |
 | **Validation Engine** | **Implemented** | Validation Findings v1.0 | EQ-0013 | 2026-07-15 |
 | BOQ Summaries | Deferred | — | — | — |
 | BOQ Export | Deferred | — | — | — |
@@ -90,12 +90,13 @@ BOQ Intelligence scored: High Value / High Complexity / Low Risk / Low Domain De
 ### BOQ Intelligence
 - **Owner**: Platform
 - **Input**: `list[BOQRow]` (production data)
-- **Output**: `list[EvidenceRow]` (per BOQ Intelligence Contract v1.0)
-- **Public Contract**: 10 evidence fields (4 required, 6 optional), 19 invariants
+- **Output**: `BOQIntelligenceResult` (per BOQ Intelligence Contract v1.1.0)
+- **Public Contract**: 19 evidence fields (4 required, 15 optional), 118 invariants
 - **Consumers**: CheckMate (planned), future plugins
-- **Engineering Questions**: EQ-0010 (structural), EQ-0011 (semantic), EQ-0012 (contract)
+- **Engineering Questions**: EQ-0010 (structural), EQ-0011 (semantic), EQ-0012 (contract), EQ-0019 (semantic increment)
 - **Capability Matrices**: 18 structural + 17 semantic capabilities classified
-- **Status**: Implemented, Contract Frozen
+- **Status**: Implemented, Contract Frozen v1.1.0, IP-0001 Permanently Frozen
+- **Increments**: 1 (Observation), 2 (Hierarchy), 3 (Detection), 4 (Semantic — 8 capabilities, IP-0001 Permanently Frozen)
 
 ### Validation Engine
 - **Owner**: Platform (reusable infrastructure)

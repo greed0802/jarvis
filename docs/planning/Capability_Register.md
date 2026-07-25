@@ -41,15 +41,16 @@ Historical artifacts preserve what was known or decided at a point in time. Oper
 
 ## Capability States
 
-| Capability | Lifecycle State | Evidence Ready | Implementation Ready | Dependency | Notes |
-|------------|:---------------:|:--------------:|:--------------------:|------------|-------|
-| **BOQ Intelligence** | Implemented | Yes | Yes | None | Increment 1 complete — 2026-07-14 |
-| **Validation Engine** | Implemented | Yes | Yes (Consumer Ready) | BOQ Intelligence (evidence dependency) | EQ-0013 Frozen — Gate 3 Approved — 2026-07-15 |
-| **Formatter** | Deferred | Partial | No | BOQ Intelligence (prerequisite) | Distinct product capability |
-| **CheckMate** | Deferred | Partial | No | BOQ Intelligence (baseline) | Distinct product capability |
-| **Cubit Parser** | Deferred | No | No | Fixtures + Engineering Question | Awaiting fixtures |
-| **PDF Parser** | Deferred | No | No | None | Insufficient evidence |
-| **AI-Assisted Estimation** | Deferred | No | No | BOQ Intelligence + Context Engine + training data | Long-term strategic |
+| Capability | Lifecycle State | Classification | Evidence Ready | Implementation Ready | Dependency | Notes |
+|------------|:---------------:|:-------------:|:--------------:|:-------------------:|------------|-------|
+| **BOQ Intelligence** | Active | Strategic | ✅ Yes | ✅ Yes (further increments pending) | None | Increments 1–3 complete. Evidence Contract v1.0 Frozen. Active strategic capability. |
+| **Validation Engine** | Frozen Sub-capability | Supporting | ✅ Yes | ✅ Yes (Consumer Ready) | BOQ Intelligence (evidence dependency) | EQ-0013 Frozen — Gate 3 Approved — 2026-07-15. Consumption-ready. |
+| **Formatter** | Deferred | Deferred | Partial | No | BOQ Intelligence (prerequisite) | Distinct product capability — export formatting |
+| **CheckMate** | Deferred | Deferred | Partial | No | BOQ Intelligence (baseline), domain rule catalog | Distinct product capability — QA validation |
+| **Cubit Parser** | Deferred | Deferred | No | No | Fixtures + Engineering Question | Awaiting Cubit export fixtures |
+| **PDF Parser** | Deferred | Deferred | No | No | None | Insufficient evidence; fundamentally different extraction problem |
+| **AI-Assisted Estimation** | Deferred | Deferred | No | No | BOQ Intelligence + Context Engine + training data | Long-term strategic |
+| **Observation Runtime (M6)** | Historical | Historical | N/A | N/A | None | Architectural evaluation by ADR-0025; production rejected; artifacts preserved as Historical Engineering |
 
 ---
 
@@ -75,15 +76,50 @@ BOQ Intelligence (Implemented)
 
 | Property | Value |
 |----------|-------|
-| **Lifecycle State** | Implemented |
+| **Lifecycle State** | Active |
+| **Classification** | Active |
 | **Evidence Ready** | Yes |
-| **Implementation Ready** | Yes |
+| **Implementation Ready** | Yes (Next increments pending) |
 | **Approved** | 2026-07-13 |
-| **Implemented** | 2026-07-14 |
+| **Increments Delivered** | Increments 1–4 (2026-07-25) |
+| **Evidence Contract** | v1.1.0 Frozen (2026-07-25) |
+| **Implementation Package** | IP-0001 — Permanently Frozen |
+| **IP Freeze Date** | 2026-07-25 |
 | **Approval Reference** | `docs/planning/Capability_Evaluation_001.md` |
 | **Discovery Reference** | `docs/planning/Capability_Discovery_001.md` |
 | **Scope** | Validation, analysis, summaries, exports, and anomaly detection over `list[BOQRow]` |
 | **Constraint** | No architectural expansion. Pure functions over existing production types. |
+
+### Validation Engine
+
+| Property | Value |
+|----------|-------|
+| **Lifecycle State** | Frozen Sub-capability |
+| **Classification** | Frozen Sub-capability |
+| **Evidence Ready** | Yes |
+| **Implementation Ready** | Yes (Consumer Ready) |
+| **Approved** | 2026-07-15 |
+| **Engineering Question** | EQ-0013 |
+| **Contract** | `docs/contracts/Validation_Findings_Contract_v1.0.md` |
+| **Scope** | Deterministic validation engine consuming BOQ Intelligence evidence; produces immutable `ValidationFindings` |
+| **Constraint** | Observes and Detects only. Does NOT Assess, Judge, or Recommend (EQ-0011 boundary). |
+
+### BOQ Intelligence — Semantic Capabilities (Increment 4 — IP-0001)
+
+The following 8 semantic sub-capabilities were implemented under IP-0001 (PERMANENTLY FROZEN) and are governed by EQ-0019:
+
+| ID | Capability | Status | Evidence Source |
+|----|-----------|--------|-----------------|
+| SEM-PROD-01 | Vocabulary Extraction | Implemented — Frozen | EQ-0019 Spike 3 |
+| SEM-PROD-02 | Head1 Text Categorization | Implemented — Frozen | EQ-0019 Spike 3 |
+| SEM-PROD-04 | Administrative Pattern Detection | Implemented — Frozen | EQ-0019 Spike 3 |
+| SEM-PROD-05 | Section Code Enumeration | Implemented — Frozen | EQ-0019 Spike 3 |
+| SEM-PROD-06 | UOM Distribution Reporting | Implemented — Frozen | EQ-0019 Spike 3 |
+| SEM-PROD-07 | Header Level Count Distribution | Implemented — Frozen | EQ-0019 Spike 3 |
+| SEM-PROD-09 | "Items Always Quantify" Enforcement | Implemented — Frozen | EQ-0019 Spike 3 |
+| SEM-PROD-12 | Administrative Sub-Template Recognition | Implemented — Frozen | EQ-0019 Spike 3 |
+
+**Deferred (not implemented):** SEM-PROD-03, SEM-PROD-08, SEM-PROD-10, SEM-PROD-11
 
 ---
 
@@ -97,8 +133,11 @@ BOQ Intelligence (Implemented)
 | 2026-07-13 | Cubit Parser | Proposed | Deferred | Capability Evaluation 001 — awaiting fixtures |
 | 2026-07-13 | PDF Parser | Proposed | Deferred | Capability Evaluation 001 — insufficient evidence |
 | 2026-07-13 | AI-Assisted Estimation | Proposed | Deferred | Capability Evaluation 001 — long-term strategic |
-| 2026-07-14 | BOQ Intelligence | Approved | Implemented | Increment 1 complete — 73 tests passed, 0 failures |
-| 2026-07-15 | Validation Engine | Proposed | Implemented | EQ-0013 Frozen — 4 spikes complete, Gate 3 Approved |
+| 2026-07-14 | BOQ Intelligence | Approved | Active | Increments 1–3 complete — 73 tests passed, 0 failures |
+| 2026-07-15 | Validation Engine | Proposed | Frozen Sub-capability | EQ-0013 Frozen — 4 spikes complete — Gate 3 Approved |
+| 2026-07-22 | BOQ Intelligence | Implemented → Active | Refined classification. Increments frozen, capability still evolving. CB-0001. |
+| 2026-07-22 | Validation Engine | Implemented → Frozen Sub-capability | Refined classification. Contract-frozen consumer. CB-0001. |
+| 2026-07-22 | Observation Runtime (M6) | Unlisted → Historical | Added as Historical artifact. ADR-0025 rejected. CB-0001. |
 
 ---
 
@@ -107,4 +146,5 @@ BOQ Intelligence (Implemented)
 | Version | Date | Change |
 |---------|------|--------|
 | 1.0 | 2026-07-13 | Initial creation. Records first Project Owner decisions from Capability Evaluation 001. |
-| 1.1 | 2026-07-14 | BOQ Intelligence moves from Approved to Implemented. Increment 1 delivered. |
+| 1.1 | 2026-07-14 | BOQ Intelligence moves from Approved to Active. Increment 1 delivered. |
+| 1.2 | 2026-07-22 | CB-0001 baseline alignment. Introduced Classification column, Frozen Sub-capability state, Historical entries. BOQ Intelligence reclassified as Active. Validation Engine reclassified as Frozen Sub-capability. Observation Runtime (M6) added as Historical. |

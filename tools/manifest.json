@@ -34,5 +34,35 @@
     "inputs": ["README.md", "docs/knowledge/00_Knowledge_Index.md", "docs/26_Implementation_Status.md", "AGENTS.md"],
     "outputs": ["report.json", "report.md"],
     "description": "Documentation synchronization audit for key engineering documents"
+  },
+  "verify_governance": {
+    "authority": "Quality Gate 2",
+    "inputs": ["docs/engineering/Engineering_Register.md", "docs/engineering/questions/", "docs/engineering/evidence/", "tools/"],
+    "outputs": ["report.json", "report.md"],
+    "description": "Comprehensive repository governance validation including Engineering Register, EQ packages, authority documents, evidence structure, and tool placement"
+  },
+  "verify_links": {
+    "authority": "Quality Gate 1",
+    "inputs": ["docs/engineering/Engineering_Register.md", "docs/engineering/evidence/", "README.md"],
+    "outputs": ["report.json", "report.md"],
+    "description": "Automated verification of all markdown links including internal references, relative paths, Engineering Register references, and cross-document links"
+  },
+  "verify_evidence": {
+    "authority": "Quality Gate 2",
+    "inputs": ["docs/engineering/Engineering_Register.md", "docs/engineering/questions/", "docs/engineering/evidence/"],
+    "outputs": ["report.json", "report.md"],
+    "description": "Engineering Question evidence validation including authority documents, evidence packages, completeness, orphaned/duplicate detection, and structure validation"
+  },
+  "verify_tools": {
+    "authority": "Quality Gate 3",
+    "inputs": ["tools/quality/", "tools/manifest.json", "tools/quality/Tool_Registry.md"],
+    "outputs": ["report.json", "report.md"],
+    "description": "Tool classification and placement validation ensuring proper categorization as reusable or historical evidence with architectural justification"
+  },
+  "verify_register": {
+    "authority": "Quality Gate 3",
+    "inputs": ["docs/engineering/Engineering_Register.md", "docs/engineering/questions/", "docs/engineering/evidence/"],
+    "outputs": ["report.json", "report.md"],
+    "description": "Specialized Engineering Register validation for unique EQ numbers, authority document existence, evidence package existence, valid paths, and status values"
   }
 }

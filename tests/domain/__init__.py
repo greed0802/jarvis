@@ -1,0 +1,1 @@
+"""Domain Rule Foundation tests."""
