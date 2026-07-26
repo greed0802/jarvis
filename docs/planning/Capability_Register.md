@@ -46,7 +46,7 @@ Historical artifacts preserve what was known or decided at a point in time. Oper
 | **BOQ Intelligence** | Active | Strategic | ✅ Yes | ✅ Yes (further increments pending) | None | Increments 1–3 complete. Evidence Contract v1.0 Frozen. Active strategic capability. |
 | **Validation Engine** | Frozen Sub-capability | Supporting | ✅ Yes | ✅ Yes (Consumer Ready) | BOQ Intelligence (evidence dependency) | EQ-0013 Frozen — Gate 3 Approved — 2026-07-15. Consumption-ready. |
 | **Formatter** | Deferred | Deferred | Partial | No | BOQ Intelligence (prerequisite) | Distinct product capability — export formatting |
-| **CheckMate** | Deferred | Deferred | Partial | No | BOQ Intelligence (baseline), domain rule catalog | Distinct product capability — QA validation |
+| **CheckMate** | Active | Strategic Consumer Application | ✅ Yes | ✅ Yes (IP-0002 Implementation Complete) | BOQ Intelligence (Evidence Contract v1.0) | Distinct product capability — QA validation |
 | **Cubit Parser** | Deferred | Deferred | No | No | Fixtures + Engineering Question | Awaiting Cubit export fixtures |
 | **PDF Parser** | Deferred | Deferred | No | No | None | Insufficient evidence; fundamentally different extraction problem |
 | **AI-Assisted Estimation** | Deferred | Deferred | No | No | BOQ Intelligence + Context Engine + training data | Long-term strategic |
@@ -63,14 +63,14 @@ BOQ Intelligence (Implemented)
         │
         ├── prerequisite for ──▶ Formatter (Deferred)
         │
-        ├── baseline for ──▶ CheckMate (Deferred)
+        ├── consumed by ──▶ CheckMate (Implemented)
         │
         └── foundation for ──▶ AI-Assisted Estimation (Deferred)
 ```
 
 ---
 
-## Active Capability
+## Active Capabilities
 
 ### BOQ Intelligence
 
@@ -91,6 +91,21 @@ BOQ Intelligence (Implemented)
 | **Constraint** | No architectural expansion. Pure functions over existing production types. |
 
 ### Validation Engine
+### CheckMate
+
+| Property | Value |
+|----------|-------|
+| **Lifecycle State** | Active |
+| **Classification** | Strategic Consumer Application |
+| **Evidence Ready** | Yes |
+| **Implementation Ready** | Yes (IP-0002 Complete) |
+| **Approved** | 2026-07-26 |
+| **Implementation Package** | IP-0002 — CheckMate Application — Consumer Architecture |
+| **Engineering Questions** | EQ-0020 (Consumer Arch), EQ-0021 (App Arch) |
+| **Scope** | First BOQ Intelligence consumer. Star-topology architecture. Standalone Application consuming `BOQIntelligenceResult` via Evidence Contract. |
+| **Constraint** | No Kernel registration. No lifecycle management. Pure consumer. |
+
+
 
 | Property | Value |
 |----------|-------|
@@ -138,6 +153,7 @@ The following 8 semantic sub-capabilities were implemented under IP-0001 (PERMAN
 | 2026-07-22 | BOQ Intelligence | Implemented → Active | Refined classification. Increments frozen, capability still evolving. CB-0001. |
 | 2026-07-22 | Validation Engine | Implemented → Frozen Sub-capability | Refined classification. Contract-frozen consumer. CB-0001. |
 | 2026-07-22 | Observation Runtime (M6) | Unlisted → Historical | Added as Historical artifact. ADR-0025 rejected. CB-0001. |
+| 2026-07-26 | CheckMate | Deferred → Active | CP-0001 Sprint Complete. CheckMate approved as BOQ Consumer Application. IP-0002 Frozen. |
 
 ---
 

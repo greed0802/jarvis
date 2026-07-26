@@ -312,7 +312,7 @@ The Capability Register is the single source of truth for lifecycle states. This
 | **BOQ Intelligence** | Active | Strategic | Yes | Yes (next increments pending) | None |
 | **Validation Engine** | Frozen Sub-capability | Supporting | Yes | Yes (Consumer Ready) | BOQ Intelligence (evidence) |
 | **Formatter** | Deferred | Deferred | Partial | No | BOQ Intelligence (prerequisite) |
-| **CheckMate** | Deferred | Deferred | Partial | No | BOQ Intelligence (baseline), domain rule catalog |
+| **CheckMate** | Active | Strategic Consumer Application | ✅ Yes | ✅ Yes (IP-0002 Complete) | BOQ Intelligence (Evidence Contract) |
 | **Cubit Parser** | Deferred | Deferred | No | No | Fixtures + Engineering Question |
 | **PDF Parser** | Deferred | Deferred | No | No | None |
 | **AI-Assisted Estimation** | Deferred | Deferred | No | No | BOQ Intelligence + Context Engine + training data |
@@ -322,7 +322,7 @@ The Capability Register is the single source of truth for lifecycle states. This
 
 The current prioritization, approved by Project Owner in Capability Evaluation 001:
 
-1. **BOQ Intelligence** — continue active development. Evidence Contract v1.0 is frozen. Next increments pending scoping.
+1. **CheckMate (CP-0001)** — first consumer of BOQ Intelligence. IP-0002 complete. CP-0002 (Configuration) next. Next increments pending scoping.
 2. **CheckMate** — activate once BOQ Intelligence has matured sufficiently and a domain rule catalog exists.
 3. **Formatter** — activate once BOQ Intelligence validation baseline is trusted.
 
@@ -349,10 +349,11 @@ Deferred:
 
 | Criterion | Status |
 |-----------|:------:|
-| BOQ Intelligence sufficiently mature | In progress |
-| Domain rule catalog formally documented | Not started |
-| Capability Evaluation (Eval 002) | Not started |
-| Project Owner approval to activate | Pending |
+| CP-0001 Sprint complete (IP-0002) | ✅ Complete |
+| Star-topology consumer architecture (EQ-0020) | ✅ Complete |
+| CheckMate Application Architecture (EQ-0021) | ✅ PERMANENTLY FROZEN |
+| First consumer of BOQ Intelligence Evidence Contract | ✅ Complete |
+| CP-0002 (CheckMate Configuration) | Authorized - Next Sprint |
 
 #### Formatter
 
@@ -370,7 +371,7 @@ The following progression reflects the current understanding of capability order
 
 ### Illustration 1 — BOQ Intelligence
 
-**Classification:** Production work (leading candidate, not yet selected)
+**Classification:** Production work — Development continuing
 
 **Goal:** Transform raw BOQ extraction into validated, analyzed, summarized, and exportable BOQ intelligence.
 

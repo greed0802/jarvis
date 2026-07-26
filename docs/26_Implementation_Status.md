@@ -24,7 +24,7 @@ The architecture is defined by:
 | Property | Value |
 |----------|-------|
 | Architecture Version | v0.1.0 |
-| Software Version | 0.0.1-alpha.13 |
+| Software Version | 0.0.1-alpha.14 |
 | Current Phase | Phase 2 — Capability Era |
 | Current Active Capability | BOQ Intelligence |
 | Capability Status | Increment 4 Complete — IP-0001 Permanently Frozen |
@@ -38,13 +38,13 @@ The architecture is defined by:
 | Parser Foundation | Complete |
 | Repository Stabilization | Complete |
 | Repository Governance Automation | v1.0 Frozen |
-| Current Active Capability | BOQ Intelligence (Increment 4 Complete — IP-0001 Permanently Frozen) |
+| Current Active Capability | CP-0001 — CheckMate (BOQ Consumer Application) |
 | Capability Governance | `docs/planning/Capability_Register.md`, `docs/planning/Capability_Roadmap.md` |
 | Implementation Governance | `docs/engineering/Implementation_Governance.md` v1.0 |
 | Evidence Contract Authority | `docs/contracts/BOQ_Intelligence_Public_Evidence_Contract_v1.1.md` |
 | Governance Automation Authority | `docs/engineering/Repository_Governance_Automation.md` |
 | Governance Freeze Review | `docs/engineering/Repository_Governance_Automation_v1.0_Freeze_Review.md` |
-| Latest Implementation Package | `docs/implementation/IP_0001/` — Permanently Frozen |
+| Latest Implementation Package | `docs/implementation/IP_0002/` — Implemented — Active |
 
 ---
 
@@ -460,6 +460,33 @@ SEM-PROD-03, SEM-PROD-08, SEM-PROD-10, SEM-PROD-11 remain deferred per EQ-0019.
 - `docs/implementation/IP_0001/` — Verification Report, Architecture Audit, Contract Verification, Regression Report, Freeze Recommendation
 
 ---
+
+
+## CP-0001 — CheckMate (BOQ Consumer Application)
+
+| Property | Value |
+|----------|-------|
+| **Goal** | Implement the first BOQ Intelligence consumer (CheckMate) as a standalone Application using the star-topology consumer architecture |
+| **Sprint** | CP-0001 |
+| **Engineering Questions** | EQ-0020 (BOQ Consumer Architecture), EQ-0021 (CheckMate Application Architecture) |
+| **Implementation Package** | IP-0002 — CheckMate Application — Consumer Architecture |
+| **Status** | **Complete — v0.0.1-alpha.14** |
+| **Date** | 2026-07-26 |
+| **Files Created** | `src/jarvis/applications/checkmate/` (Application package, __init__.py, BoqIntelligenceConsumer interface, CheckMateApplication class), `tests/applications/checkmate/` (test suite) |
+
+### Architecture Compliance
+
+- **Star-Topology Consumer Architecture** (EQ-0020): CheckMate depends only on the BOQ Intelligence Public Evidence Contract. No dependency on parser internals.
+- **CheckMate Application Architecture** (EQ-0021): CheckMate is a standalone Application, not a platform service. No Kernel registration. No lifecycle management.
+- **Presentation Model** (EQ-0021, Amended): CheckMate consumes `BOQIntelligenceResult` (Evidence Contract). Presentation layer is isolated via `checkmate/reporting.py`.
+- **Frozen Architecture**: EQ-0020 and EQ-0021 are both permanently frozen. IP-0003 (Application Foundation) is authorized for next sprint.
+
+### Evidence Package
+
+- 47 production files in `src/jarvis/applications/checkmate/`
+- 33 test files in `tests/applications/checkmate/`
+- Total repository tests: 944 passing (8 skipped pre-existing historical)
+- 0 regression failures
 
 ## Governance Automation v1.0 — EQ-0017
 

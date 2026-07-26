@@ -1,0 +1,1 @@
+"""Tests for CheckMate CLI Application (CP-0001)."""

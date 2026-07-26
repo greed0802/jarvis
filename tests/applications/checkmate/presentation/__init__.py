@@ -1,0 +1,1 @@
+"""Tests for the CheckMate Presentation Model Assembly (IP-0005)."""

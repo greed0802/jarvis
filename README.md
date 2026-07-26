@@ -6,11 +6,11 @@ Jarvis is a modular AI platform designed to provide deterministic, explainable, 
 
 | Property | Value |
 |----------|-------|
-| Architecture Version | v0.1.0 |
-| Software Version | 0.0.1-alpha.13 |
+| Architecture Version | v1.0 (Permanently Frozen) |
+| Software Version | 0.0.1-alpha.14 |
 | Repository Status | Production Alpha |
-| Architecture | Frozen (26 ADRs) |
-| Tests | 372 passing |
+| Architecture | Frozen (26 ADRs + Architecture v1.0) |
+| Tests | 944 passing (8 skipped) |
 | Governance | Engineering Governance v1.0 + Implementation Governance v1.0 |
 
 ---
@@ -29,6 +29,8 @@ Jarvis is a modular AI platform designed to provide deterministic, explainable, 
 | EQ-0017 | Repository Governance Migration | Completed — Frozen v1.0 |
 | EQ-0018 | BOQ Semantic Intelligence | Completed |
 | EQ-0019 | BOQ Semantic Intelligence Increment 1 | COMPLETE — PERMANENTLY FROZEN |
+| EQ-0020 | BOQ Intelligence Consumer Architecture | Complete — Frozen |
+| EQ-0021 | CheckMate Application Architecture | Complete — PERMANENTLY FROZEN |
 
 ---
 
@@ -37,6 +39,7 @@ Jarvis is a modular AI platform designed to provide deterministic, explainable, 
 | IP | Title | Status |
 |----|-------|--------|
 | IP-0001 | BOQ Intelligence Increment 4 — Semantic Intelligence | PERMANENTLY FROZEN |
+| IP-0002 | CheckMate Application — Consumer Architecture | Implemented — Active |
 
 ---
 
@@ -83,7 +86,7 @@ Jarvis is a modular AI platform designed to provide deterministic, explainable, 
 ```
 docs/     — Architecture, ADRs, Engineering, Contracts, Implementation
 src/      — Platform source code (BOQ Intelligence, Validation Engine, Kernel)
-tests/    — 372 tests, 0 failures
+tests/    — 944 tests, 0 failures (8 skipped)
 tools/    — Quality verification suite, governance tooling
 ```
 
@@ -91,7 +94,7 @@ tools/    — Quality verification suite, governance tooling
 
 ## Latest Release
 
-[v0.0.1-alpha.13](docs/releases/v0.0.1-alpha.13.md) — BOQ Intelligence Increment 4
+[v0.0.1-alpha.14](docs/releases/v0.0.1-alpha.14.md) — Capability Engineering: CP-0001 CheckMate CLI Application
 
 ## Roadmap
 

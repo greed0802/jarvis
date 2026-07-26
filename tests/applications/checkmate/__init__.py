@@ -1,0 +1,1 @@
+"""Tests for IP-0003 — CheckMate Application Foundation."""
