@@ -45,6 +45,7 @@ The architecture is defined by:
 | Governance Automation Authority | `docs/engineering/Repository_Governance_Automation.md` |
 | Governance Freeze Review | `docs/engineering/Repository_Governance_Automation_v1.0_Freeze_Review.md` |
 | Latest Implementation Package | `docs/implementation/IP_0002/` — Implemented — Active |
+| Knowledge Engineering Foundation | `docs/knowledge/Knowledge_Storage_Policy.md` — Complete |
 
 ---
 
@@ -58,7 +59,7 @@ The architecture is defined by:
 | Engineering Question | Can the platform architecture be fully specified before any implementation begins? |
 | Status | **Complete** |
 | Commit | `b8a195f` |
-| Tag | `v0.1.0` |
+| Tag | `v0.0.1.0` |
 
 ---
 
@@ -461,7 +462,6 @@ SEM-PROD-03, SEM-PROD-08, SEM-PROD-10, SEM-PROD-11 remain deferred per EQ-0019.
 
 ---
 
-
 ## CP-0001 — CheckMate (BOQ Consumer Application)
 
 | Property | Value |
@@ -544,9 +544,71 @@ The `shared_governance.py` library provides:
 
 ---
 
+## Knowledge Engineering Foundation — KE-0001
+
+| Property | Value |
+|----------|-------|
+| Goal | Establish the Knowledge Engineering foundation for Jarvis, including knowledge corpus structure, storage governance, and documentation boundaries. |
+| Status | **Complete** |
+| Date | 2026-07-27 |
+| Components | Knowledge Registry, Storage Policy, Governance Framework, Documentation Boundaries |
+| Files Created | `knowledge/registry/knowledge_inventory.csv`, `docs/knowledge/Knowledge_Storage_Policy.md`, `docs/execution/KE-0001-R/knowledge_migration_plan.md`, `docs/execution/KE-0001-R/GitIgnore_Recommendations.md`, `docs/execution/KE-0001-R/Migration_Readiness_Assessment.md`, `tools/knowledge/create_knowledge_inventory.py` |
+| Architecture Impact | Added `knowledge/` and `knowledge_inbox/` as first-class repository components |
+
+### Knowledge Engineering Components
+
+**Knowledge Registry**: Comprehensive inventory of 1,856 knowledge assets (24.16 GB) with metadata tracking in `knowledge/registry/knowledge_inventory.csv`.
+
+**Storage Governance**: Hybrid storage model with Git-controlled metadata and external storage for raw knowledge sources (PDF, XLSX, DWG, etc.).
+
+**Documentation Boundaries**: Clear separation between permanent knowledge governance (`docs/knowledge/`) and task execution records (`docs/execution/KE-0001-R/`).
+
+**Governance Framework**: Complete policy documents defining asset classification, versioning, backup, access control, and migration procedures.
+
+### Architecture Compliance
+
+- **Repository Structure**: Added `knowledge/` and `knowledge_inbox/` directories as documented in updated README.md
+- **Storage Policy**: External storage for binary assets, Git for metadata and governance
+- **Documentation Standards**: All documentation follows existing repository patterns and style
+- **No Architecture Changes**: Knowledge Engineering operates within frozen architecture boundaries
+
+### Key Decisions
+
+1. **Hybrid Storage Model**: Raw knowledge sources stored externally, metadata and governance in Git
+2. **Documentation Separation**: Permanent governance vs. execution records
+3. **Inventory-Driven**: Comprehensive asset tracking before any migration
+4. **Safety-First**: Non-destructive operations, extensive verification, rollback procedures
+
+### Current State
+
+- **Knowledge Registry**: 1,856 files documented, 24.16 GB inventoried
+- **Storage Policy**: Approved and documented (KE-STORAGE-001)
+- **Migration Plan**: Ready for execution (awaiting approval)
+- **Documentation**: All governance documents created and organized
+
+### Next Steps
+
+- KE-0002: Knowledge Source Management
+- KE-0003: Knowledge Discovery
+- KE-0004: Knowledge Extraction
+- KE-0005: Knowledge Evidence
+- KE-0006: Knowledge Consumption
+
+---
+
 # Current Capability State
 
 The Capability Era replaced milestone-driven planning with capability-driven governance.
+
+### Current Engineering Streams
+
+**Capability Engineering**
+Status: Active
+Next: CP-0002 CheckMate Configuration System
+
+**Knowledge Engineering**
+Status: Foundation Complete
+Next: KE-0002 Knowledge Source Management
 
 Planning authority is maintained in:
 - `docs/planning/Capability_Register.md` — current state of all capabilities
@@ -559,7 +621,6 @@ Planning authority is maintained in:
 This workflow begins after a capability has been approved through the Capability Era governance process described in `docs/planning/Capability_Roadmap.md`.
 
 Every capability implementation follows this standard development cycle:
-
 
 ```
 Engineering Question

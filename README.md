@@ -84,10 +84,12 @@ Jarvis is a modular AI platform designed to provide deterministic, explainable, 
 ## Repository
 
 ```
-docs/     — Architecture, ADRs, Engineering, Contracts, Implementation
-src/      — Platform source code (BOQ Intelligence, Validation Engine, Kernel)
-tests/    — 944 tests, 0 failures (8 skipped)
-tools/    — Quality verification suite, governance tooling
+docs/          — Architecture, ADRs, Engineering, Contracts, Implementation, Knowledge Governance
+knowledge/     — Knowledge Engineering workspace (registry, evidence, ontology, governance)
+knowledge_inbox/ — Temporary staging area used during Knowledge Engineering ingestion
+src/           — Platform source code (BOQ Intelligence, Validation Engine, Kernel)
+tests/         — 944 tests, 0 failures (8 skipped)
+tools/         — Quality verification suite, governance tooling, knowledge utilities
 ```
 
 ---
