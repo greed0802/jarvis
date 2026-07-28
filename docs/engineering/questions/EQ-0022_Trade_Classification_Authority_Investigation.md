@@ -1,4 +1,4 @@
-# EQ-0017 — Trade Classification Authority Investigation
+# EQ-0022 — Trade Classification Authority Investigation
 
 ## Status
 OPEN
@@ -156,8 +156,12 @@ CB-0005 implemented trade classification using Item Code prefixes from CostX fix
 
 ## Conclusion
 
-EQ-0017 will provide the evidence-based foundation for universal trade classification. The investigation follows Jarvis principles of deterministic, evidence-first engineering while acknowledging the architectural limitations of the current Item-Code-based implementation.
+EQ-0022 will provide the evidence-based foundation for universal trade classification. The investigation follows Jarvis principles of deterministic, evidence-first engineering while acknowledging the architectural limitations of the current Item-Code-based implementation.
 
 **Status**: Ready for engineering investigation
 **Priority**: High (blocks universal trade classification)
 **Impact**: Architectural (defines future classification authority)
+
+## Governance Note
+
+This investigation was originally filed as EQ-0017 (Trade Classification Authority Investigation) during the early governance era when identifier allocation was manual. During the Repository Governance Harmonization Sprint (2026-07-28), it was renumbered to EQ-0022 to resolve a collision with the permanently frozen EQ-0017 (Repository Governance Migration). The investigation content remains unchanged. The original allocation date is preserved for traceability.

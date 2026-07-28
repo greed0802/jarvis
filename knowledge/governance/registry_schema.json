@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Knowledge Registry Manifest Schema",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Manifest schema version"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC timestamp of the last manifest update"
+    },
+    "total_assets": {
+      "type": "integer",
+      "description": "Total number of resources registered"
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^KN-\\d{6}$",
+            "description": "Deterministic Key Sequence"
+          },
+          "title": {
+            "type": "string",
+            "description": "Human-readable semantic title (Canonical)"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "ANZSMM",
+              "Australian Standards",
+              "NCC",
+              "Council Specifications",
+              "Engineering Specifications",
+              "Engineering Reports",
+              "Historical Projects",
+              "Glossary",
+              "Future Knowledge",
+              "Unknown"
+            ],
+            "description": "Top-level categorization matching KNOWLEDGE_REGISTER.md"
+          },
+          "source_path": {
+            "type": "string",
+            "description": "Relative path to the physical asset (e.g. knowledge_inbox/projects/...)"
+          },
+          "filename": {
+            "type": "string",
+            "description": "Original unmodified filename"
+          },
+          "extension": {
+            "type": "string",
+            "description": "File extension extracted during registration"
+          },
+          "hash_sha256": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{64}$",
+            "description": "Cryptographic hash of the source file ensuring immutability"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "description": "Byte length of the file"
+          },
+          "state": {
+            "type": "string",
+            "enum": ["Draft", "Under Review", "Approved", "Archived", "Corrupted"],
+            "description": "Governance Promotion State"
+          },
+          "ocr_required": {
+            "type": "boolean",
+            "description": "Indicates if visual text extraction is necessary"
+          },
+          "authority": {
+            "type": ["string", "null"],
+            "description": "Issuing body (e.g. Master Builders Association)"
+          },
+          "document_version": {
+            "type": ["string", "null"],
+            "description": "Semantic version extracted from document content"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Administrative notes"
+          },
+          "acquired_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "UTC timestamp of entry creation"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "category",
+          "source_path",
+          "filename",
+          "extension",
+          "hash_sha256",
+          "size_bytes",
+          "state",
+          "ocr_required",
+          "acquired_date"
+        ]
+      }
+    }
+  },
+  "required": [
+    "version",
+    "last_updated",
+    "total_assets",
+    "assets"
+  ]
+}

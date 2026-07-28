@@ -1,45 +1,64 @@
-# Jarvis Architecture
+# Jarvis Architecture Status
 
-**Architecture Version:** v0.1.0
+**Architecture Version:** v1.0 (Permanently Frozen)
 
-**Status:** Frozen
+**Status:** Execution Architecture Phase
 
-**Release Date:** 2026-07-08
+**Release Date:** 2026-07-28
 
-This architecture baseline is governed through Architecture Decision Records (ADRs). Changes to the core runtime architecture require a new ADR.
+This architecture is governed through Architecture Decision Records (ADRs). Changes to the core runtime architecture require a new ADR.
 
-M7 — BOQ Intelligence
+---
 
-Status
+## Repository Governance
 
-COMPLETE
+Status: **COMPLETE**
 
-Production Components
+- Repository Governance Harmonization completed
+- Repository Governance Finalization completed
+- Register-driven workstream model established
+- Workstream Governance Charter active
+- Knowledge Engineering separated into independent workstream
+- Engineering Register synchronized
+- Zero identifier collisions
+- Repository prepared for Execution Architecture
 
+---
+
+## Execution Architecture
+
+Status: **CURRENT**
+
+- EQ-0023 — Execution Runtime Architecture (investigation complete, ADRs pending)
+- ADR-0027 — Capability Planning (draft pending)
+- ADR-0028 — Execution Runtime Lifecycle (draft pending)
+- ADR-0029 — Durable Execution Journal (draft pending)
+
+---
+
+## BOQ Intelligence
+
+Status: **PERMANENTLY FROZEN**
+
+Production Components:
 ✓ Observation Layer
-
 ✓ Hierarchy Reconstruction
-
 ✓ Structural Detection
-
 ✓ Semantic Intelligence (Increment 4 — IP-0001 Permanently Frozen)
 
-Engineering Questions
-
+Engineering Questions:
 ✓ EQ-0010
-
 ✓ EQ-0011
-
 ✓ EQ-0019 (PERMANENTLY FROZEN)
 
-Production Tests
+---
 
-372 Passing
+## Production Tests
 
-Frozen
+944 passing (8 skipped)
 
-YES
+---
 
-Next Milestone
+## Next Milestone
 
-M8 — Consumer Layer (CheckMate Integration)
+Execution Runtime Foundation (ADR-0027, ADR-0028, ADR-0029)

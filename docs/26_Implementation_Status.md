@@ -24,9 +24,10 @@ The architecture is defined by:
 | Property | Value |
 |----------|-------|
 | Architecture Version | v0.1.0 |
-| Software Version | 0.0.1-alpha.14 |
+| Software Version | 0.0.1-alpha.16 |
 | Current Phase | Phase 2 — Capability Era |
-| Current Active Capability | BOQ Intelligence |
+| Governance Phase | Repository Governance — COMPLETE |
+| Architecture Phase | Execution Architecture — CURRENT |
 | Capability Status | Increment 4 Complete — IP-0001 Permanently Frozen |
 
 ---
@@ -610,6 +611,9 @@ Next: CP-0002 CheckMate Configuration System
 Status: Foundation Complete
 Next: KE-0002 Knowledge Source Management
 
+**Repository Governance**
+Status: COMPLETE
+Next: Execution Architecture (EQ-0023 → ADR-0027/28/29)
 Planning authority is maintained in:
 - `docs/planning/Capability_Register.md` — current state of all capabilities
 - `docs/planning/Capability_Roadmap.md` — capability relationships and sequencing

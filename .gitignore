@@ -36,3 +36,7 @@ htmlcov/
 
 # Local cache
 .cache/
+
+#Temporary files
+
+knowledge_inbox/

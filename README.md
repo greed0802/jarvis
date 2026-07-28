@@ -7,11 +7,11 @@ Jarvis is a modular AI platform designed to provide deterministic, explainable, 
 | Property | Value |
 |----------|-------|
 | Architecture Version | v1.0 (Permanently Frozen) |
-| Software Version | 0.0.1-alpha.14 |
+| Software Version | 0.0.1-alpha.16 |
 | Repository Status | Production Alpha |
 | Architecture | Frozen (26 ADRs + Architecture v1.0) |
 | Tests | 944 passing (8 skipped) |
-| Governance | Engineering Governance v1.0 + Implementation Governance v1.0 |
+| Governance | Workstream Governance v1.0 (Register-Driven) |
 
 ---
 
@@ -96,11 +96,34 @@ tools/         — Quality verification suite, governance tooling, knowledge uti
 
 ## Latest Release
 
-[v0.0.1-alpha.14](docs/releases/v0.0.1-alpha.14.md) — Capability Engineering: CP-0001 CheckMate CLI Application
+[v0.0.1-alpha.16](docs/releases/v0.0.1-alpha.16.md) — Repository Governance Complete
+
+## Repository Status
+
+Repository governance is complete.
+
+The repository now operates using a register-driven workstream model with
+Engineering Questions, Architecture Decisions, Knowledge Engineering,
+Capability Projects, and Releases governed independently through the
+[Workstream Governance Charter](docs/governance/WORKSTREAM_GOVERNANCE.md).
+
+The next milestone is Execution Architecture.
 
 ## Roadmap
 
 Phase 2 — Capability Era (current) — Building capabilities under ADR governance
+
+### Current Phase: Execution Architecture
+
+```
+Execution Architecture (EQ-0023)
+        ↓
+ADR-0027 — Capability Planning
+ADR-0028 — Execution Runtime Lifecycle
+ADR-0029 — Durable Execution Journal
+        ↓
+Execution Runtime Foundation
+```
 
 ---
 

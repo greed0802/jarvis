@@ -37,6 +37,341 @@ Jarvis is a long-term engineering platform whose architecture is:
 
 ---
 
+# Repository Constitution
+
+The repository architecture is considered a frozen engineering asset.
+
+AI agents SHALL preserve repository structure exactly as defined by the architecture.
+
+Repository organization is NOT an implementation detail.
+
+Repository organization IS architecture.
+
+If an AI agent believes files belong somewhere else, the agent SHALL NOT move them automatically.
+
+Instead the agent shall:
+
+1. identify the conflict
+2. explain why the conflict exists
+3. reference the architecture
+4. propose an Engineering Question or ADR if necessary
+5. wait for Project Owner approval
+
+Repository boundaries shall never evolve implicitly.
+
+---
+
+# Repository Boundary Rules
+
+Every file created by an AI agent SHALL belong to exactly one architectural category.
+
+## Production
+
+Production implementation only.
+
+Examples:
+
+src/
+tests/
+
+Production code SHALL NEVER be written elsewhere.
+
+---
+
+## Documentation
+
+Repository documentation only.
+
+Location:
+
+docs/
+
+Documentation SHALL follow the approved documentation hierarchy.
+
+### Architecture
+
+docs/
+
+Architecture documents.
+
+Examples:
+
+Vision
+
+Principles
+
+Blueprint
+
+Kernel
+
+ADRs
+
+---
+
+### Engineering
+
+docs/engineering/
+
+Engineering Questions
+
+Spike Reports
+
+Capability Discovery
+
+Capability Evaluation
+
+Implementation Reviews
+
+Engineering Evidence
+
+Execution Reports
+
+Temporary engineering documentation
+
+---
+
+### Knowledge Documentation
+
+docs/knowledge/
+
+Knowledge governance only.
+
+Examples:
+
+Knowledge Architecture
+
+Knowledge Governance
+
+Knowledge Lifecycle
+
+Knowledge Storage Policy
+
+Knowledge Consumption
+
+Knowledge Engineering Principles
+
+These documents describe HOW knowledge is managed.
+
+They do NOT describe execution of a milestone.
+
+---
+
+### Execution Documentation
+
+docs/execution/
+
+Execution history only.
+
+Examples:
+
+Migration Reports
+
+Recovery Reports
+
+Temporary execution plans
+
+Validation summaries
+
+Implementation logs
+
+One-off engineering activities
+
+Execution documentation shall never become permanent governance.
+
+---
+
+# Knowledge Boundary
+
+knowledge/
+
+is NOT documentation.
+
+knowledge/
+
+is runtime repository data.
+
+It contains repository knowledge assets.
+
+Only the following belong here:
+
+knowledge/
+
+    registry/
+
+    governance/
+
+    ontology/
+
+    glossary/
+
+    evidence/
+
+Source documents remain immutable.
+
+---
+
+# Tool Boundary
+
+tools/
+
+contains executable tooling only.
+
+Never place:
+
+documentation
+
+reports
+
+architecture
+
+governance
+
+inside tools/.
+
+---
+
+# File Placement Rule
+
+Before creating ANY new file the AI agent SHALL perform this reasoning:
+
+1.
+
+What category is this file?
+
+2.
+
+What architectural boundary owns this category?
+
+3.
+
+Does an approved location already exist?
+
+If yes:
+
+Use the existing location.
+
+Do NOT invent another folder.
+
+---
+
+# Folder Creation Rule
+
+AI agents SHALL NOT create new top-level folders.
+
+AI agents SHALL NOT create new documentation hierarchies.
+
+AI agents SHALL reuse the approved repository structure.
+
+If a new hierarchy appears necessary:
+
+STOP.
+
+Raise an Engineering Question.
+
+---
+
+# Repository Preservation Rule
+
+Every planned operation must be classified before execution.
+
+One of:
+
+Read-Only
+
+Additive
+
+Transformative
+
+Destructive
+
+Definitions
+
+Read-Only
+
+Reads repository assets only.
+
+No modifications.
+
+Additive
+
+Creates new files only.
+
+Never changes existing assets.
+
+Transformative
+
+Modifies repository-managed artefacts only.
+
+Examples:
+
+documentation
+
+registry
+
+metadata
+
+tests
+
+configuration
+
+Destructive
+
+Deletes
+
+Moves
+
+Renames
+
+Overwrites
+
+Restructures
+
+existing assets.
+
+Destructive operations are PROHIBITED unless explicitly approved by the Project Owner in the current conversation.
+
+---
+
+# Architecture Conflict Rule
+
+If implementation conflicts with repository architecture:
+
+STOP.
+
+Do not improvise.
+
+Do not relocate files.
+
+Do not create alternative structures.
+
+Produce an Architecture Conflict Report.
+
+Wait for approval.
+
+---
+
+# Continuous Consistency Rule
+
+Before declaring any milestone complete, verify:
+
+No duplicate documentation exists.
+
+No competing folder structures exist.
+
+No duplicate governance exists.
+
+No architectural drift has occurred.
+
+If drift is detected:
+
+STOP.
+
+Produce a Repository Drift Report.
+
+Do not request milestone freeze until drift is resolved.
+
+---
+
 # Project Authority
 
 The Project Owner is the final engineering authority.
@@ -604,3 +939,450 @@ require executable verification or committed automated tests.
 Repository summaries are not evidence.
 
 Execution is evidence.
+
+---
+
+# Repository Boundary Constitution
+
+Repository organization is part of the Jarvis Architecture.
+
+Folder structure is considered a frozen engineering asset.
+
+AI agents SHALL preserve repository organization exactly as defined by the architecture.
+
+Repository layout SHALL NOT evolve through implementation.
+
+Only the Project Owner may approve repository structural changes.
+
+---
+
+# Repository Boundary Verification
+
+Before creating ANY file, every AI agent SHALL perform the following verification.
+
+## Step 1 — Classify the Artifact
+
+Every artifact belongs to exactly one architectural category.
+
+Choose one:
+
+- Production Code
+- Test
+- Architecture Documentation
+- Engineering Documentation
+- Knowledge Documentation
+- Execution Documentation
+- Knowledge Repository Data
+- Tooling
+- Configuration
+- Automation
+- Temporary Investigation
+
+If classification is ambiguous:
+
+STOP.
+
+Request clarification.
+
+---
+
+## Step 2 — Determine Repository Owner
+
+Every category has exactly one repository owner.
+
+| Category | Location |
+|----------|----------|
+| Production Code | src/ |
+| Tests | tests/ |
+| Architecture Documentation | docs/ |
+| Engineering Documentation | docs/engineering/ |
+| Knowledge Documentation | docs/knowledge/ |
+| Execution Documentation | docs/execution/ |
+| Knowledge Repository Data | knowledge/ |
+| Tooling | tools/ |
+| Configuration | repository root |
+
+Never create a second owner.
+
+---
+
+## Step 3 — Check Existing Structure
+
+Before creating a new directory:
+
+Search for an existing location.
+
+If an equivalent location already exists:
+
+Reuse it.
+
+Do not create another folder.
+
+---
+
+# Documentation Placement Rules
+
+Permanent documents belong only in permanent locations.
+
+## Architecture
+
+Contains:
+
+Vision
+
+Principles
+
+Blueprint
+
+Kernel
+
+ADR
+
+Ontology
+
+Architecture Status
+
+Repository Architecture
+
+Never place temporary engineering work here.
+
+---
+
+## Engineering
+
+Contains:
+
+Engineering Questions
+
+Spike Reports
+
+Capability Discovery
+
+Capability Evaluation
+
+Capability Register
+
+Implementation Reviews
+
+Engineering Evidence
+
+Engineering Debt
+
+Only engineering activities belong here.
+
+---
+
+## Knowledge Documentation
+
+Contains permanent governance.
+
+Examples:
+
+Knowledge Architecture
+
+Knowledge Governance
+
+Knowledge Lifecycle
+
+Knowledge Storage Policy
+
+Knowledge Engineering Principles
+
+Knowledge Source Management
+
+Knowledge Consumption
+
+Knowledge Ontology
+
+These documents describe the knowledge system itself.
+
+Never place temporary execution history here.
+
+---
+
+## Execution Documentation
+
+Contains temporary activities.
+
+Examples:
+
+Migration reports
+
+Recovery reports
+
+Execution logs
+
+Validation summaries
+
+One-time implementation reports
+
+Temporary rollout documentation
+
+Execution documents SHALL NOT become permanent governance.
+
+---
+
+# Knowledge Repository Rules
+
+knowledge/
+
+contains repository knowledge.
+
+NOT documentation.
+
+Allowed:
+
+knowledge/
+
+    registry/
+
+    governance/
+
+    ontology/
+
+    glossary/
+
+    evidence/
+
+Never place Markdown documentation here unless it is repository-managed knowledge content.
+
+Never duplicate documentation already living under docs/.
+
+---
+
+# Tooling Rules
+
+tools/
+
+contains executable utilities only.
+
+Never place:
+
+reports
+
+documentation
+
+governance
+
+architecture
+
+inside tools/.
+
+---
+
+# Folder Creation Policy
+
+AI agents SHALL NOT create new top-level folders.
+
+AI agents SHALL NOT introduce alternative documentation hierarchies.
+
+AI agents SHALL reuse approved repository structure.
+
+If a new hierarchy appears necessary:
+
+STOP.
+
+Raise an Engineering Question.
+
+Wait for Project Owner approval.
+
+---
+
+# Repository Preservation Rule
+
+Every repository operation SHALL be classified.
+
+Exactly one classification must be assigned.
+
+## Read-Only
+
+Reads only.
+
+Creates nothing.
+
+Changes nothing.
+
+---
+
+## Additive
+
+Creates new files only.
+
+Never modifies existing assets.
+
+---
+
+## Transformative
+
+Updates approved repository-managed artefacts only.
+
+Examples:
+
+documentation
+
+registry
+
+metadata
+
+configuration
+
+tests
+
+---
+
+## Destructive
+
+Deletes
+
+Moves
+
+Renames
+
+Overwrites
+
+Restructures
+
+existing assets.
+
+Destructive operations are prohibited unless explicitly approved by the Project Owner in the current conversation.
+
+---
+
+# Repository Drift Detection
+
+Before milestone completion the AI agent SHALL verify:
+
+□ No duplicate documentation.
+
+□ No duplicated governance.
+
+□ No duplicated execution reports.
+
+□ No competing folder structures.
+
+□ No conflicting repository hierarchy.
+
+□ No undocumented folder creation.
+
+□ No architecture drift.
+
+If any answer is YES:
+
+STOP.
+
+Produce a Repository Drift Report.
+
+Do not request milestone freeze.
+
+---
+
+# Repository Boundary Checklist
+
+Every completion report SHALL include:
+
+Repository Boundary Verification
+
+Repository Drift Check
+
+Documentation Placement Verification
+
+Knowledge Boundary Verification
+
+Tool Boundary Verification
+
+Architecture Compliance
+
+The checklist SHALL explicitly report:
+
+PASS
+
+or
+
+FAIL
+
+for every category.
+
+---
+
+# Constitutional Stop Conditions
+
+The AI agent SHALL immediately stop if:
+
+- repository architecture becomes ambiguous
+
+- two valid locations appear to exist
+
+- documentation placement cannot be justified
+
+- folder ownership becomes unclear
+
+- architecture conflicts with implementation
+
+- repository organization must change
+
+When stopped:
+
+Produce an Architecture Conflict Report.
+
+Do not continue implementation.
+
+---
+
+# Continuous Engineering Rule
+
+Every completed milestone shall leave the repository:
+
+more deterministic
+
+more consistent
+
+more traceable
+
+more reproducible
+
+more maintainable
+
+than it was before implementation.
+
+No milestone shall increase architectural ambiguity.
+
+====================================================
+REPOSITORY QUALITY GATE
+====================================================
+
+Architecture Compliance
+PASS / FAIL
+
+Repository Boundary Verification
+PASS / FAIL
+
+Documentation Placement Verification
+PASS / FAIL
+
+Knowledge Boundary Verification
+PASS / FAIL
+
+Repository Drift Detection
+PASS / FAIL
+
+Destructive Operations
+NONE / LIST
+
+Files Created
+...
+
+Files Modified
+...
+
+Engineering Debt
+...
+
+Risks Remaining
+...
+
+Recommendation
+
+□ Freeze
+□ Continue
+□ Engineering Question Required
+□ ADR Required
