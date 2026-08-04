@@ -1,0 +1,1 @@
+"""CLI Application Services facade for platform operation encapsulation."""

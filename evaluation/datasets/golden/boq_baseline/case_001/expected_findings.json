@@ -1,0 +1,11 @@
+{
+  "findings": [
+    {
+      "rule_id": "RULE-001",
+      "severity": "CRITICAL",
+      "risk_statement": "Missing unit rate in BOQ item.",
+      "remediation": "Insert the correct unit rate per trade schedule.",
+      "evidence_ids": ["ev-001"]
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+"""Thin command handlers for the jarvis CLI. Zero business logic — delegate only to services."""

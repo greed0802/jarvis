@@ -1,1 +1,1 @@
-"""Jarvis Platform Tests."""
+# Test package

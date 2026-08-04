@@ -1,0 +1,1 @@
+"""Vector index adapters (in-memory mock for EP-B101)."""

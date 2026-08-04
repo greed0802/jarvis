@@ -1,0 +1,32 @@
+version: "1.0.0"
+queries:
+  - query_id: "q1"
+    query_text: "What is the concrete strength for the foundation?"
+    relevant_evidence: ["ev_101"]
+    query_type: "factoid"
+    difficulty: "low"
+    reasoning_depth: 1
+  - query_id: "q2"
+    query_text: "Does the painting spec require two coats of primer on interior doors?"
+    relevant_evidence: ["ev_102", "ev_103"]
+    query_type: "reasoning"
+    difficulty: "medium"
+    reasoning_depth: 2
+  - query_id: "q3"
+    query_text: "List all lighting fixture types required in the basement."
+    relevant_evidence: ["ev_104", "ev_105", "ev_106"]
+    query_type: "aggregation"
+    difficulty: "medium"
+    reasoning_depth: 1
+  - query_id: "q4"
+    query_text: "What is the warranty period for roof tiles?"
+    relevant_evidence: ["ev_107"]
+    query_type: "factoid"
+    difficulty: "low"
+    reasoning_depth: 1
+  - query_id: "q5"
+    query_text: "Are we using copper or PEX for hot water lines?"
+    relevant_evidence: ["ev_108", "ev_109"]
+    query_type: "factoid"
+    difficulty: "low"
+    reasoning_depth: 1

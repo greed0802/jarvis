@@ -15,9 +15,9 @@ This register contains the canonical navigation point for all Engineering Questi
 | EQ-0016 | Trade Classification Authority | Completed | [EQ_0016_Trade_Classification_Authority.md](questions/EQ_0016_Trade_Classification_Authority.md) | [evidence/EQ_0016/](evidence/EQ_0016/) | Approved | docs/engineering/ |
 | EQ-0017 | Repository Governance Migration | Completed | [EQ_0017_Repository_Governance_Migration.md](questions/EQ_0017_Repository_Governance_Migration.md) | [evidence/EQ_0017/](evidence/EQ_0017/) | Approved | docs/engineering/ |
 | EQ-0018 | BOQ Semantic Intelligence | Completed | [EQ_0018_BOQ_Semantic_Intelligence.md](questions/EQ_0018_BOQ_Semantic_Intelligence.md) | [evidence/EQ_0018/](evidence/EQ_0018/) | Approved | docs/engineering/ |
-| EQ-0019 | BOQ Semantic Intelligence Increment 1 | COMPLETE | [EQ_0019_BOQ_Semantic_Intelligence_Increment_1.md](questions/EQ_0019_BOQ_Semantic_Intelligence_Increment_1.md) | [evidence/EQ_0019/](evidence/EQ_0019/) | PERMANENTLY FROZEN — Increment 4 AUTHORIZED | docs/engineering/ |
-| EQ-0020 | BOQ Consumer Architecture | COMPLETE | Referenced in `docs/design/EQ_0020_Architecture_Recommendation.md` | (see EQ-0019 evidence) | PERMANENTLY FROZEN | docs/engineering/ |
-| EQ-0021 | CheckMate Application Architecture | COMPLETE | Referenced in `docs/design/EQ_0021_Architecture_Recommendation.md` | (see design directory) | PERMANENTLY FROZEN | docs/engineering/ |
+| EQ-0019 | BOQ Semantic Intelligence Increment 1 | Completed | [EQ_0019_BOQ_Semantic_Intelligence_Increment_1.md](questions/EQ_0019_BOQ_Semantic_Intelligence_Increment_1.md) | [evidence/EQ_0019/](evidence/EQ_0019/) | PERMANENTLY FROZEN — Increment 4 AUTHORIZED | docs/engineering/ |
+| EQ-0020 | BOQ Consumer Architecture | Completed | Referenced in `docs/design/EQ_0020_Architecture_Recommendation.md` | (see EQ-0019 evidence) | PERMANENTLY FROZEN | docs/engineering/ |
+| EQ-0021 | CheckMate Application Architecture | Completed | Referenced in `docs/design/EQ_0021_Architecture_Recommendation.md` | (see design directory) | PERMANENTLY FROZEN | docs/engineering/ |
 | EQ-0022 | Trade Classification Authority Investigation | OPEN | [EQ_0022_Trade_Classification_Authority_Investigation.md](questions/EQ_0022_Trade_Classification_Authority_Investigation.md) | Pending | Investigation not yet started | docs/engineering/questions/ |
 | EQ-0023 | Execution Runtime Architecture | OPEN | [EQ_0023_Execution_Runtime_Architecture.md](questions/EQ_0023_Execution_Runtime_Architecture.md) | Pending | Investigation complete; ADRs required | docs/engineering/questions/ |
 
@@ -31,7 +31,7 @@ This register contains the canonical navigation point for all Engineering Questi
 
 | KE Number | Title | Status | Location |
 |-----------|-------|--------|-----------|
-| KE-0001 | Knowledge Engineering Foundation | COMPLETE | `docs/execution/KE-0001-R/` |
+| KE-0001 | Knowledge Engineering Foundation | Completed | `docs/execution/KE-0001-R/` |
 | KE-0002 | Knowledge Source Management | ACTIVE | `docs/knowledge/questions/KE_0002_Knowledge_Source_Management.md` |
 
 ## Governance Model Compliance

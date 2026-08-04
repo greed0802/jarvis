@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0.0",
+  "run_name": "run_001_bm25_baseline",
+  "architecture_version": "Track A1",
+  "software_version": "v0.0.1-alpha.9",
+  "evaluation_framework_version": "RB-0001",
+  "retriever_version": "BM25LexicalRetriever_v1",
+  "git_commit": "HEAD",
+  "dataset": {
+    "path": "docs/evaluation/datasets/GD-0001-v1.0.0.yaml",
+    "checksum": "sha256-placeholder"
+  },
+  "metrics": {
+    "Recall@E_5": {
+      "median": 1.0,
+      "min": 1.0,
+      "max": 1.0,
+      "stddev": 0.0
+    },
+    "Recall@E_10": {
+      "median": 1.0,
+      "min": 1.0,
+      "max": 1.0,
+      "stddev": 0.0
+    },
+    "Precision@E_5": {
+      "median": 0.36000000000000004,
+      "min": 0.36000000000000004,
+      "max": 0.36000000000000004,
+      "stddev": 0.0
+    },
+    "NDCG@E_10": {
+      "median": 0.9465657240955583,
+      "min": 0.9465657240955583,
+      "max": 0.9465657240955583,
+      "stddev": 0.0
+    },
+    "MRR@E": {
+      "median": 0.9,
+      "min": 0.9,
+      "max": 0.9,
+      "stddev": 0.0
+    },
+    "P50_MS": 0.36454200744628906,
+    "P95_MS": 0.4673004150390625
+  }
+}

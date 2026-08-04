@@ -134,6 +134,23 @@ Validation → Release
 
 ---
 
+## Identifier Continuity Policy
+
+Engineering identifiers are permanent repository identifiers.
+
+Once allocated:
+
+1. Identifiers SHALL NOT be renumbered.
+2. Identifier gaps are permitted.
+3. Identifiers SHALL NEVER be reused.
+4. Cancelled, abandoned, superseded, or deprecated work SHALL retain its allocated identifier.
+5. Repository history takes precedence over sequential numbering.
+6. AI agents SHALL NOT create historical artifacts solely to fill numbering gaps.
+
+**Rationale:** Repository identifiers are stable architectural references rather than contiguous sequence numbers. Historical numbering establishes an immutable audit trail that must not be rewritten for cosmetic purposes. Gaps in numbering are a natural artifact of the development process and shall remain as part of the permanent historical record.
+
+---
+
 **Version:** 1.0
 **Date:** 2026-07-28
 **Authority:** Repository Governance Harmonization Sprint

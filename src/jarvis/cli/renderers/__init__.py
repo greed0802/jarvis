@@ -1,0 +1,1 @@
+"""Pluggable output renderers for headless CLI (text, json, markdown)."""

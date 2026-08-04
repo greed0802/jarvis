@@ -1,0 +1,10 @@
+schema_version: "1.0.0"
+run_name: "run_001_bm25_baseline"
+architecture_version: "Track A1"
+software_version: "v0.0.1-alpha.9"
+evaluation_framework_version: "RB-0001"
+retriever_version: "BM25LexicalRetriever_v1"
+git_commit: "HEAD"
+dataset:
+  path: "docs/evaluation/datasets/GD-0001-v1.0.0.yaml"
+  checksum: "sha256-placeholder"
