@@ -81,10 +81,25 @@ class Application:
 
         self._intent_planner = IntentPlanner(self._capability_runtime)
         self._kernel.register_component(self._intent_planner)
-        
+
+        # Memory, Artifact, Pipeline services
+        self._memory_service = WorkspaceMemoryService()
+        self._kernel.register_component(self._memory_service)
+
+        self._artifact_repository = ArtifactRepository()
+        self._kernel.register_component(self._artifact_repository)
+
+        self._execution_pipeline = ExecutionPipeline(
+            self._capability_runtime, self._memory_service, self._artifact_repository
+        )
+        self._kernel.register_component(self._execution_pipeline)
+
         # Bind back-references safely
         self._workspace_assistant.intent_planner = self._intent_planner
         self._workspace_assistant.capability_runtime = self._capability_runtime
+        self._workspace_assistant.execution_pipeline = self._execution_pipeline
+        self._workspace_assistant.memory_service = self._memory_service
+        self._workspace_assistant.artifact_repository = self._artifact_repository
         self._shutdown_event = asyncio.Event()
 
     @property
@@ -132,6 +147,10 @@ class Application:
     @property
     def intent_planner(self) -> IntentPlanner:
         return self._intent_planner
+
+    @property
+    def execution_pipeline(self) -> ExecutionPipeline:
+        return self._execution_pipeline
         
     @property
     def state(self) -> LifecycleState:

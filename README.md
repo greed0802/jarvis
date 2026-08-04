@@ -7,10 +7,10 @@ Jarvis is a modular AI platform designed to provide deterministic, explainable, 
 | Property | Value |
 |----------|-------|
 | Architecture Version | v1.0 (Permanently Frozen) |
-| Software Version | 0.0.1-alpha.17 |
-| Repository Status | Production Alpha |
+| Software Version | 0.1.0-beta.1 |
+| Repository Status | Product Baseline Beta |
 | Architecture | Frozen (26 ADRs + Architecture v1.0) |
-| Tests | 944 passing (8 skipped) |
+| Tests | 59 passing |
 | Governance | Workstream Governance v1.0 (Register-Driven) |
 
 ---

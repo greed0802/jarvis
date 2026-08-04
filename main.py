@@ -8,34 +8,23 @@ support for existing CLI execution patterns via `jarvis.cli` if arguments are pr
 
 import sys
 import os
-import asyncio
 
 # Ensure src namespace resolves correctly
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
-from jarvis import __version__
-from jarvis.application import Application
-from jarvis.configuration import Configuration
-from jarvis.cli.main import main as cli_main
-
-async def run_server() -> None:
-    """Orchestrate the platform core application lifecycle."""
-    print(f"Jarvis Platform v{__version__}")
-    print("Application Runtime v0.1")
-
-    config = Configuration()
-    app = Application(config)
-
-    await app.run()
 
 def main() -> None:
     """Bootstrap root-level execution via single composition root."""
-    if len(sys.argv) > 1:
+    if len(sys.argv) > 1 and sys.argv[1] not in ("--developer",):
         # Delegate to the established headless CLI router
+        from jarvis.cli.main import main as cli_main
         sys.exit(cli_main())
     else:
-        # Delegate to the orchestration Application layer
-        asyncio.run(run_server())
+        # Delegate to the interactive shell host
+        developer_mode = "--developer" in sys.argv
+        from jarvis.application.bootstrap import bootstrap
+        bootstrap(developer_mode=developer_mode)
+
 
 if __name__ == "__main__":
     main()
