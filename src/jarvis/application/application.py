@@ -17,6 +17,16 @@ import signal
 from jarvis.configuration import Configuration
 from jarvis.contracts.lifecycle import LifecycleState
 from jarvis.core.jarvis.kernel import Kernel
+from jarvis.core.workspace.runtime import WorkspaceRuntime
+from jarvis.engines.knowledge.engine import KnowledgeAcquisitionEngine
+from jarvis.engines.airuntime.engine import AIRuntime
+from jarvis.engines.assistant.orchestrator import WorkspaceAssistant
+from jarvis.core.capability.runtime import CapabilityRuntime
+from jarvis.core.capability.reference import BOQIntelligenceCapability
+from jarvis.engines.planner.engine import IntentPlanner
+from jarvis.core.pipeline.engine import ExecutionPipeline
+from jarvis.core.memory.engine import WorkspaceMemoryService
+from jarvis.core.artifact.repository import ArtifactRepository
 from jarvis.services import LoggingService
 
 logger = logging.getLogger(__name__)
@@ -50,7 +60,31 @@ class Application:
         self._config = config or Configuration()
         self._kernel = Kernel(config=self._config)
         self._logging_service = LoggingService(config=self._config)
+        self._workspace_runtime = WorkspaceRuntime()
+        self._knowledge_engine = KnowledgeAcquisitionEngine(self._workspace_runtime)
+        self._ai_runtime = AIRuntime()
+        self._workspace_assistant = WorkspaceAssistant(
+            workspace_runtime=self._workspace_runtime,
+            knowledge_engine=self._knowledge_engine,
+            ai_runtime=self._ai_runtime
+        )
         self._kernel.register_component(self._logging_service)
+        self._kernel.register_component(self._workspace_runtime)
+        self._kernel.register_component(self._knowledge_engine)
+        self._kernel.register_component(self._ai_runtime)
+        self._kernel.register_component(self._workspace_assistant)
+        
+        # CAP-0007 Capability Hookup
+        self._capability_runtime = CapabilityRuntime(self._workspace_runtime)
+        self._capability_runtime.registry.register(BOQIntelligenceCapability())
+        self._kernel.register_component(self._capability_runtime)
+
+        self._intent_planner = IntentPlanner(self._capability_runtime)
+        self._kernel.register_component(self._intent_planner)
+        
+        # Bind back-references safely
+        self._workspace_assistant.intent_planner = self._intent_planner
+        self._workspace_assistant.capability_runtime = self._capability_runtime
         self._shutdown_event = asyncio.Event()
 
     @property
@@ -63,6 +97,42 @@ class Application:
         """Get the platform logging service (read-only)."""
         return self._logging_service
 
+    @property
+    def workspace_runtime(self) -> WorkspaceRuntime:
+        """Get the platform workspace runtime (read-only)."""
+        return self._workspace_runtime
+
+    @property
+    def knowledge_engine(self) -> KnowledgeAcquisitionEngine:
+        """Get the platform knowledge runtime (read-only)."""
+        return self._knowledge_engine
+
+
+    @property
+    def ai_runtime(self) -> AIRuntime:
+        """Get the platform AI runtime (read-only)."""
+        return self._ai_runtime
+
+    @property
+    def workspace_assistant(self) -> WorkspaceAssistant:
+        return self._workspace_assistant
+
+    @property
+    def capability_runtime(self) -> CapabilityRuntime:
+        return self._capability_runtime
+
+    @property
+    def artifact_repository(self) -> ArtifactRepository:
+        return self._artifact_repository
+
+    @property
+    def memory_service(self) -> WorkspaceMemoryService:
+        return self._memory_service
+
+    @property
+    def intent_planner(self) -> IntentPlanner:
+        return self._intent_planner
+        
     @property
     def state(self) -> LifecycleState:
         """Get the current kernel lifecycle state (read-only)."""

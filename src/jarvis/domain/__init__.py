@@ -39,3 +39,30 @@ __all__ = [
     "load_registry",
     "get_registry",
 ]
+
+# Jarvis Domain Models
+from .workspace import Workspace
+from .project import Project
+from .knowledge import KnowledgeItem
+from .context import Context
+from .memory import Memory
+from .intent import Intent
+from .workflow import Workflow
+from .task import Task
+from .capability import CapabilityDefinition
+from .planner import Plan
+from .session import Session
+
+__all__.extend([
+    "Workspace",
+    "Project",
+    "KnowledgeItem",
+    "Context",
+    "Memory",
+    "Intent",
+    "Workflow",
+    "Task",
+    "CapabilityDefinition",
+    "Plan",
+    "Session"
+])

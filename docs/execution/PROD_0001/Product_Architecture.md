@@ -1,0 +1,1 @@
+# Product Architecture\n\nDescribes the orchestration layer exposing user US-001 story interfaces.\n

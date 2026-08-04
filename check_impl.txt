@@ -1,0 +1,1411 @@
+--- src/jarvis/engines/generation/contracts.py ---
+"""Immutable generation contracts, capabilities, and trace artifacts."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Any
+
+from jarvis.engines.retrieval.contracts import RetrievalTrace
+from jarvis.engines.reasoning.contracts import ReasoningTrace
+
+@dataclass(frozen=True)
+class ProviderCapabilities:
+    """Explicit capability semantics per ES-C101."""
+    supports_streaming: bool
+    supports_tools: bool
+    supports_images: bool
+    supports_json: bool
+    supports_system_prompt: bool
+
+@dataclass(frozen=True)
+class ProviderMetadata:
+    """Metadata describing the provider and execution parameters."""
+    provider_name: str
+    model_name: str
+    capabilities: ProviderCapabilities
+    temperature: float
+    max_tokens: int
+
+@dataclass(frozen=True)
+class TokenUsage:
+    """Standardized token cost reporting."""
+    prompt_tokens: int
+    completion_tokens: int
+    total_tokens: int
+
+@dataclass(frozen=True)
+class GenerationTrace:
+    """Immutable per-query generation execution record."""
+    trace_id: str
+    provider_metadata: ProviderMetadata
+    token_usage: TokenUsage
+    finish_reason: str
+    latency_ms: float
+    timestamp: str
+
+@dataclass(frozen=True)
+class ExecutionTrace:
+    """Application-level observer aggregating all linear trace artifacts.
+    Note: Promoted from the presentation mapping -> canonical lifecycle container.
+    """
+    session_id: str
+    retrieval_trace: RetrievalTrace
+    reasoning_trace: ReasoningTrace
+    generation_trace: GenerationTrace
+    total_latency_ms: float
+    timestamp: str
+--- src/jarvis/engines/generation/protocols.py ---
+"""Protocol interfaces decoupling generation pipeline components."""
+
+from __future__ import annotations
+
+from typing import Protocol, runtime_checkable, Any
+
+from jarvis.contracts.assistant import AssistantResponse, GroundingContext
+from jarvis.engines.generation.contracts import ProviderCapabilities, GenerationTrace
+
+@runtime_checkable
+class BaseProviderClient(Protocol):
+    """Low-level SDK/network wrapper. Defines the generic execution boundary."""
+
+    def send_request(
+        self, prompt: str, system_prompt: str | None, config: dict[str, Any]
+    ) -> dict[str, Any]:
+        """Execute text generation synchronously against an external endpoint."""
+        ...
+
+@runtime_checkable
+class BaseGenerationProvider(Protocol):
+    """High-level provider adapter enforcing platform constraints."""
+
+    @property
+    def provider_id(self) -> str:
+        """Vendor-specific identifier for the adapter."""
+        ...
+
+    @property
+    def capabilities(self) -> ProviderCapabilities:
+        """Statically declared implementation capabilities."""
+        ...
+
+    def generate(self, context: GroundingContext) -> tuple[AssistantResponse, GenerationTrace]:
+        """Produce highly constrained AssistantResponse wrapping low-level client."""
+        ...
+--- src/jarvis/engines/generation/pipeline.py ---
+"""Composition root for Generation Architecture."""
+
+from __future__ import annotations
+
+import time
+from uuid import uuid4
+
+from jarvis.engines.retrieval.contracts import RetrievalTrace
+from jarvis.engines.reasoning.contracts import ReasoningTrace
+from jarvis.contracts.assistant import GroundingContext
+from jarvis.engines.generation.protocols import BaseGenerationProvider
+from jarvis.contracts.assistant import AssistantResponse
+from jarvis.engines.generation.contracts import ExecutionTrace, GenerationTrace
+
+class GenerationPipeline:
+    """Canonical Generation Pipeline orchestrating providers and execution trace."""
+
+    def __init__(self, provider: BaseGenerationProvider):
+        """Inject any BaseGenerationProvider."""
+        self._provider = provider
+
+    def process(
+        self,
+        context: GroundingContext,
+        retrieval_trace: RetrievalTrace,
+        reasoning_trace: ReasoningTrace,
+    ) -> tuple[AssistantResponse, ExecutionTrace]:
+        """Executes generation and wraps the response inside an ExecutionTrace observer."""
+        start = time.time()
+        session_id = f"exec_{uuid4().hex[:12]}"
+
+        # BaseGenerationProvider implements generate() according to protocols
+        # It handles normalizing raw outputs -> AssistantResponse & GenerationTrace
+        resp, gen_trace = self._provider.generate(context)
+
+        end = time.time()
+        # Create observer aggregating these traces strictly, no mutation occurs
+        exec_trace = ExecutionTrace(
+            session_id=session_id,
+            retrieval_trace=retrieval_trace,
+            reasoning_trace=reasoning_trace,
+            generation_trace=gen_trace,
+            total_latency_ms=round((end - start) * 1000, 1),
+            timestamp=str(int(start)),
+        )
+
+        return resp, exec_trace
+
+--- src/jarvis/engines/generation/clients/base.py ---
+"""Base network interface definition (mirrors protocol, used internally)."""
+
+from typing import Any
+from jarvis.engines.generation.protocols import BaseProviderClient
+
+# Can serve as ABC or just explicit import pathing
+--- src/jarvis/engines/generation/clients/openai_client.py ---
+"""OpenAI explicit SDK network client wrapper."""
+from typing import Any
+
+class OpenAIClient:
+    """Mock structure demonstrating external API boundaries isolation."""
+    def send_request(self, prompt: str, system_prompt: str | None, config: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "text": "OpenAI simulated",
+            "finish_reason": "stop",
+            "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        }
+--- src/jarvis/engines/generation/clients/anthropic_client.py ---
+"""Anthropic explicit SDK network client wrapper."""
+from typing import Any
+
+class AnthropicClient:
+    """Mock structure demonstrating external API boundaries isolation."""
+    def send_request(self, prompt: str, system_prompt: str | None, config: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "text": "Anthropic simulated",
+            "finish_reason": "stop_sequence",
+            "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        }
+--- src/jarvis/engines/generation/clients/ollama_client.py ---
+"""Ollama explicit network client wrapper."""
+from typing import Any
+
+class OllamaClient:
+    """Mock structure demonstrating local network API boundaries isolation."""
+    def send_request(self, prompt: str, system_prompt: str | None, config: dict[str, Any]) -> dict[str, Any]:
+        return {
+            "text": "Ollama simulated",
+            "finish_reason": "stop",
+            "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+        }
+--- src/jarvis/engines/generation/providers/openai.py ---
+"""OpenAI high-level provider adapter enforcing platform constraints."""
+
+import time
+from uuid import uuid4
+
+from jarvis.contracts.assistant import AssistantResponse, GroundingContext, GroundingStatus
+from jarvis.engines.generation.contracts import (
+    ProviderCapabilities,
+    ProviderMetadata,
+    TokenUsage,
+    GenerationTrace,
+)
+from jarvis.engines.generation.clients.base import BaseProviderClient
+
+class OpenAIProvider:
+    """Enforces OpenAI message schemas and output isolation."""
+
+    def __init__(self, client: BaseProviderClient):
+        self._client = client
+        self.config = {"temperature": 0.0, "max_tokens": 1500}
+
+    @property
+    def provider_id(self) -> str:
+        return "openai"
+
+    @property
+    def capabilities(self) -> ProviderCapabilities:
+        return ProviderCapabilities(
+            supports_streaming=True,
+            supports_tools=True,
+            supports_images=True,
+            supports_json=True,
+            supports_system_prompt=True,
+        )
+
+    def generate(self, context: GroundingContext) -> tuple[AssistantResponse, GenerationTrace]:
+        start = time.time()
+        trace_id = f"gen_{uuid4().hex[:8]}"
+
+        raw = self._client.send_request(
+            prompt=context.formatted_prompt_payload,
+            system_prompt="OpenAI instructions",
+            config=self.config
+        )
+
+        resp = AssistantResponse(
+            response_id=f"resp_{trace_id}",
+            query_text="", 
+            response_text=raw["text"],
+            grounding_status=GroundingStatus.FULLY_GROUNDED,
+            cited_evidence=context.retrieved_evidence,
+            confidence_score=0.90,
+        )
+
+        usage = TokenUsage(
+            prompt_tokens=raw["usage"]["prompt_tokens"],
+            completion_tokens=raw["usage"]["completion_tokens"],
+            total_tokens=raw["usage"]["total_tokens"],
+        )
+
+        end = time.time()
+        trace = GenerationTrace(
+            trace_id=trace_id,
+            provider_metadata=ProviderMetadata(
+                provider_name="openai",
+                model_name="gpt-4",
+                capabilities=self.capabilities,
+                temperature=self.config["temperature"],
+                max_tokens=self.config["max_tokens"],
+            ),
+            token_usage=usage,
+            finish_reason=raw["finish_reason"],
+            latency_ms=round((end - start)*1000, 1),
+            timestamp=str(int(start))
+        )
+        return resp, trace
+--- src/jarvis/engines/generation/providers/anthropic.py ---
+"""Anthropic high-level provider adapter enforcing platform constraints."""
+
+import time
+from uuid import uuid4
+
+from jarvis.contracts.assistant import AssistantResponse, GroundingContext, GroundingStatus
+from jarvis.engines.generation.contracts import (
+    ProviderCapabilities,
+    ProviderMetadata,
+    TokenUsage,
+    GenerationTrace,
+)
+from jarvis.engines.generation.clients.base import BaseProviderClient
+
+class AnthropicProvider:
+    """Enforces Anthropic payload behaviors isolating standard."""
+
+    def __init__(self, client: BaseProviderClient):
+        self._client = client
+        self.config = {"temperature": 0.5, "max_tokens": 1500}
+
+    @property
+    def provider_id(self) -> str:
+        return "anthropic"
+
+    @property
+    def capabilities(self) -> ProviderCapabilities:
+        return ProviderCapabilities(
+            supports_streaming=True,
+            supports_tools=True,
+            supports_images=True,
+            supports_json=False,  # Claude parses XML typically not implicit JSON modes natively (in ES definitions)
+            supports_system_prompt=True,
+        )
+
+    def generate(self, context: GroundingContext) -> tuple[AssistantResponse, GenerationTrace]:
+        start = time.time()
+        trace_id = f"gen_{uuid4().hex[:8]}"
+
+        raw = self._client.send_request(
+            prompt=context.formatted_prompt_payload,
+            system_prompt="Anthropic instructions",
+            config=self.config
+        )
+
+        resp = AssistantResponse(
+            response_id=f"resp_{trace_id}",
+            query_text="", 
+            response_text=raw["text"],
+            grounding_status=GroundingStatus.PARTIALLY_GROUNDED,
+            cited_evidence=context.retrieved_evidence,
+            confidence_score=0.8,
+        )
+
+        usage = TokenUsage(
+            prompt_tokens=raw["usage"]["prompt_tokens"],
+            completion_tokens=raw["usage"]["completion_tokens"],
+            total_tokens=raw["usage"]["total_tokens"],
+        )
+
+        end = time.time()
+        trace = GenerationTrace(
+            trace_id=trace_id,
+            provider_metadata=ProviderMetadata(
+                provider_name="anthropic",
+                model_name="claude-3-opus",
+                capabilities=self.capabilities,
+                temperature=self.config["temperature"],
+                max_tokens=self.config["max_tokens"],
+            ),
+            token_usage=usage,
+            finish_reason=raw["finish_reason"],
+            latency_ms=round((end - start)*1000, 1),
+            timestamp=str(int(start))
+        )
+        return resp, trace
+--- src/jarvis/engines/generation/providers/ollama.py ---
+"""Ollama high-level provider adapter enforcing platform constraints."""
+
+import time
+from uuid import uuid4
+
+from jarvis.contracts.assistant import AssistantResponse, GroundingContext, GroundingStatus
+from jarvis.engines.generation.contracts import (
+    ProviderCapabilities,
+    ProviderMetadata,
+    TokenUsage,
+    GenerationTrace,
+)
+from jarvis.engines.generation.clients.base import BaseProviderClient
+
+class OllamaProvider:
+    """Enforces Ollama message schemas and output isolation."""
+
+    def __init__(self, client: BaseProviderClient):
+        self._client = client
+        self.config = {"temperature": 0.0, "max_tokens": 1500}
+
+    @property
+    def provider_id(self) -> str:
+        return "ollama"
+
+    @property
+    def capabilities(self) -> ProviderCapabilities:
+        return ProviderCapabilities(
+            supports_streaming=True,
+            supports_tools=False,
+            supports_images=False,
+            supports_json=True,
+            supports_system_prompt=True,
+        )
+
+    def generate(self, context: GroundingContext) -> tuple[AssistantResponse, GenerationTrace]:
+        start = time.time()
+        trace_id = f"gen_{uuid4().hex[:8]}"
+
+        raw = self._client.send_request(
+            prompt=context.formatted_prompt_payload,
+            system_prompt="Ollama instructions",
+            config=self.config
+        )
+
+        resp = AssistantResponse(
+            response_id=f"resp_{trace_id}",
+            query_text="", 
+            response_text=raw["text"],
+            grounding_status=GroundingStatus.PARTIALLY_GROUNDED,
+            cited_evidence=context.retrieved_evidence,
+            confidence_score=0.70,
+        )
+
+        usage = TokenUsage(
+            prompt_tokens=raw["usage"]["prompt_tokens"],
+            completion_tokens=raw["usage"]["completion_tokens"],
+            total_tokens=raw["usage"]["total_tokens"],
+        )
+
+        end = time.time()
+        trace = GenerationTrace(
+            trace_id=trace_id,
+            provider_metadata=ProviderMetadata(
+                provider_name="ollama",
+                model_name="llama3",
+                capabilities=self.capabilities,
+                temperature=self.config["temperature"],
+                max_tokens=self.config["max_tokens"],
+            ),
+            token_usage=usage,
+            finish_reason=raw["finish_reason"],
+            latency_ms=round((end - start)*1000, 1),
+            timestamp=str(int(start))
+        )
+        return resp, trace
+--- src/jarvis/engines/assistant/providers.py ---
+"""Generation providers for the Grounded AI Assistant.
+
+Implements GenerationProvider protocol implementations.
+
+Per C1.13: This module SHALL NOT import CheckMateEngine, ExecutionOutcome,
+RuleSnapshot, RuleRegistry, or CheckMateRule.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+from jarvis.contracts.assistant import DraftResponse, GenerationProvider, GroundingContext
+
+# =============================================================================
+# MockGenerationProvider — Deterministic reference implementation (AC-6)
+# =============================================================================
+
+@dataclass
+class MockGenerationProvider:
+    """Deterministic reference GenerationProvider for testing and offline use.
+
+    Per AC-6: This provider generates identical output given identical
+    GroundingContext, making it predictable and testable.
+
+    Per AC-1: Receives only GroundingContext — never raw ProjectUnderstanding
+    or engine models.
+    """
+
+    _provider_name: str = "mock-provider"
+    _provider_version: str = "1.0.0"
+    seed_text: str = "Based on the provided context, "
+
+    @property
+    def provider_name(self) -> str:
+        return self._provider_name
+
+    @property
+    def provider_version(self) -> str:
+        return self._provider_version
+
+    def generate_draft(self, context: GroundingContext) -> DraftResponse:
+        count = len(context.retrieved_context.relevant_findings)
+        evidence_count = len(context.retrieved_evidence)
+
+        if count == 0:
+            response = (
+                "I could not find any relevant findings in the project "
+                "understanding database for this query. Please check if "
+                "the project has been analyzed or rephrase your query."
+            )
+        else:
+            parts = [f"{self.seed_text}I found {count} relevant finding(s)"]
+            if evidence_count > 0:
+                parts.append(f" supported by {evidence_count} evidence reference(s).")
+            else:
+                parts.append(". No direct evidence was located for these findings.")
+
+            parts.append("\n\nSummary of findings:")
+            for f in context.retrieved_context.relevant_findings[:3]:
+                parts.append(
+                    f"\n  - [{f.category.value}] {f.severity}: {f.risk_statement}"
+                    f" — {f.remediation}"
+                )
+            response = "".join(parts)
+
+        return DraftResponse(
+            provider_name=self._provider_name,
+            provider_version=self._provider_version,
+            response_text=response,
+            generation_metadata={
+                "findings_matched": str(count),
+                "evidence_available": str(evidence_count),
+                "generator": "mock",
+            },
+        )
+--- src/jarvis/engines/assistant/service.py ---
+"""GroundedAssistantService — main orchestrator for M10.5.
+
+Coordinates the full pipeline:
+  1. Question interpretation → intent + search terms
+  2. Understanding retrieval → matched findings
+  3. Evidence resolution → grounding context
+  4. Provider draft generation → raw response
+  5. Validation → public AssistantResponse
+
+Per C1.13: This module SHALL NOT import CheckMateEngine, ExecutionOutcome,
+RuleSnapshot, RuleRegistry, or CheckMateRule.
+
+Per AC-6: Service operates identically regardless of backing GenerationProvider.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+
+from jarvis.contracts.assistant import (
+    AssistantResponse,
+    DraftResponse,
+    GenerationProvider,
+    GroundingContext,
+    GroundingStatus,
+)
+from jarvis.contracts.capabilities import EvidenceReference, EvidenceSourceType
+from jarvis.engines.assistant.providers import MockGenerationProvider
+from jarvis.engines.assistant.retrieval import (
+    EvidenceRetriever,
+    QuestionInterpreter,
+    UnderstandingRetriever,
+)
+from jarvis.engines.assistant.validator import GroundingValidator
+from jarvis.engines.understanding.service import ProjectUnderstandingService
+
+# =============================================================================
+# GroundedAssistantService — AC-6: Provider Interchangeability
+# =============================================================================
+
+@dataclass
+class GroundedAssistantService:
+    """Main orchestrator for the Grounded AI Assistant pipeline.
+
+    Coordinates retrieval, generation, and validation to produce
+    grounded, evidence-backed AssistantResponse objects.
+
+    Per AC-6: The service operates identically regardless of the backing
+    GenerationProvider implementation — just swap the provider parameter.
+    """
+
+    understanding_service: ProjectUnderstandingService = field(
+        default_factory=ProjectUnderstandingService
+    )
+    provider: GenerationProvider = field(
+        default_factory=MockGenerationProvider
+    )
+    interpreter: QuestionInterpreter = field(
+        default_factory=QuestionInterpreter
+    )
+    understanding_retriever: UnderstandingRetriever = field(
+        default_factory=UnderstandingRetriever
+    )
+    evidence_retriever: EvidenceRetriever = field(
+        default_factory=EvidenceRetriever
+    )
+    validator: GroundingValidator = field(
+        default_factory=GroundingValidator
+    )
+
+    def respond(
+        self,
+        query: str,
+        evidence_repository=None,
+    ) -> AssistantResponse:
+        """Execute the full grounded assistant pipeline for a user query.
+
+        Args:
+            query: Raw user query text.
+            evidence_repository: Optional EvidenceRepository for evidence lookup.
+
+        Returns:
+            Immutable AssistantResponse public contract.
+        """
+        # Step 1: Interpret the query
+        intent, terms = self.interpreter.interpret(query)
+
+        # Step 2: Retrieve understanding findings
+        retrieved = self.understanding_retriever.retrieve(
+            query=query,
+            intent_category=intent,
+            query_terms=terms,
+        )
+
+        # Step 3: Resolve evidence references
+        evidence_refs: list[EvidenceReference] = []
+        if evidence_repository is not None and retrieved.relevant_findings:
+            evidence_refs = evidence_repository.list()
+        else:
+            # Use evidence details from findings
+            for f in retrieved.relevant_findings[:3]:
+                if "doc-" in f.risk_statement:
+                    evidence_refs.append(
+                        EvidenceReference(
+                            document_id=f"doc-{f.finding_id}",
+                            sheet="unknown",
+                            evidence_id=f.finding_id,
+                            source_type=EvidenceSourceType.COMPUTED,
+                        )
+                    )
+
+        # Set up UnderstandingRetriever's service for lookups
+        self.understanding_retriever.understanding_service = self.understanding_service
+
+        ground_context = self.evidence_retriever.build_grounding(
+            retrieved=retrieved, evidence_refs=evidence_refs
+        )
+
+        # Step 4: Generate draft via provider (AC-1, AC-6)
+        draft = self.provider.generate_draft(ground_context)
+
+        # Step 5: Validate and produce public response (AC-7)
+        provenance_id = (
+            retrieved.query_id
+            if not retrieved.relevant_findings
+            else retrieved.relevant_findings[0].finding_id
+        )
+
+        response = self.validator.validate(
+            draft=draft,
+            ground_context=ground_context,
+            understanding_provenance_id=provenance_id,
+        )
+
+        return response
+
+    def respond_unsupported(self, query: str) -> AssistantResponse:
+        """Produce an explicit UNSUPPORTED response for out-of-scope queries.
+
+        Args:
+            query: Query text that could not be matched.
+
+        Returns:
+            AssistantResponse with UNSUPPORTED status.
+        """
+        return AssistantResponse(
+            response_id=f"resp-no-match-{abs(hash(query)) & 0xFFFFFFFF:08x}",
+            query_text=query,
+            response_text=(
+                "I could not find relevant project understanding data for"
+                " your query. The query may be outside the scope of the"
+                " current project analysis. Please try rephrasing or"
+                " ensure project data has been imported."
+            ),
+            grounding_status=GroundingStatus.UNSUPPORTED,
+            cited_evidence=[],
+            understanding_provenance_id="",
+            confidence_score=0.0,
+            suggested_followups=[
+                "Could you rephrase your query with more specific details?",
+                "What document or project are you referencing?",
+            ],
+        )
+--- src/jarvis/engines/assistant/retrieval.py ---
+"""Retrieval pipeline components for M10.5 Grounded Assistant.
+
+Contains:
+- QuestionInterpreter: parses raw queries into search terms + intent.
+- UnderstandingRetriever: queries ProjectUnderstandingService, produces RetrievedContext.
+- EvidenceRetriever: resolves EvidenceReference from EvidenceRepository, produces GroundingContext.
+
+Per C1.13: This module SHALL NOT import CheckMateEngine, ExecutionOutcome,
+RuleSnapshot, RuleRegistry, or CheckMateRule.
+"""
+
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass, field
+from uuid import uuid4
+
+from jarvis.contracts.assistant import GroundingContext, RetrievedContext
+from jarvis.contracts.capabilities import EvidenceReference
+from jarvis.contracts.understanding import UnderstandingFinding
+from jarvis.engines.understanding.service import ProjectUnderstandingService
+
+# =============================================================================
+# QuestionInterpreter
+# =============================================================================
+
+@dataclass
+class QuestionInterpreter:
+    """Analyzes raw user query text and extracts search terms and intent."""
+
+    def interpret(self, query: str) -> tuple[str, list[str]]:
+        """Parse query text into intent category and search terms."""
+        intent = self._classify_intent(query.lower())
+        terms = self._extract_terms(query.lower())
+        return intent, terms
+
+    def _classify_intent(self, normalized: str) -> str:
+        if any(w in normalized for w in ("measure", "estimate", "quantity", "takeoff")):
+            return "measurement_query"
+        if any(w in normalized for w in ("spec", "specification", "requirement")):
+            return "specification_query"
+        if any(w in normalized for w in ("coordinate", "alignment", "grid", "location")):
+            return "coordination_query"
+        if any(w in normalized for w in ("compliance", "violation", "verify", "validate")):
+            return "compliance_query"
+        if any(w in normalized for w in ("document", "reference", "version", "trace")):
+            return "documentation_query"
+        if any(w in normalized for w in ("policy", "rule", "guideline", "procedure")):
+            return "policy_query"
+        return "general_query"
+
+    def _extract_terms(self, normalized: str) -> list[str]:
+        words = re.findall(r"[a-z_]+", normalized)
+        stopwords = {
+            "the", "a", "an", "is", "are", "was", "were", "of", "in", "to",
+            "for", "on", "and", "or", "not", "it", "its", "be", "has", "have",
+            "what", "how", "why", "when", "where", "which", "who", "can", "does",
+            "about", "this", "that", "from", "with", "by", "at", "as", "into",
+        }
+        return [w for w in words if w not in stopwords]
+
+
+# =============================================================================
+# UnderstandingRetriever
+# =============================================================================
+
+@dataclass
+class UnderstandingRetriever:
+    """Queries ProjectUnderstandingService for relevant findings.
+
+    Produces RetrievedContext containing matched UnderstandingFinding records
+    for the given query terms and intent.
+    """
+
+    understanding_service: ProjectUnderstandingService = field(
+        default_factory=ProjectUnderstandingService
+    )
+
+    def retrieve(
+        self, query: str, intent_category: str, query_terms: list[str]
+    ) -> RetrievedContext:
+        query_id = f"q-{uuid4().hex[:8]}"
+        matched: list[UnderstandingFinding] = []
+
+        all_records = self.understanding_service.list_all()
+        for record in all_records:
+            for finding in record.findings:
+                for term in query_terms:
+                    if term in finding.risk_statement.lower() or term in finding.remediation.lower():
+                        matched.append(finding)
+                        break
+
+        return RetrievedContext(
+            query_id=query_id,
+            intent_category=intent_category,
+            relevant_findings=matched,
+            query_terms=query_terms,
+        )
+
+
+# =============================================================================
+# EvidenceRetriever
+# =============================================================================
+
+@dataclass
+class EvidenceRetriever:
+    """Resolves EvidenceReference objects and builds GroundingContext.
+
+    Consumes RetrievedContext and an evidence lookup function to resolve
+    specific evidence references for the matched findings.
+    """
+
+    def build_grounding(
+        self,
+        retrieved: RetrievedContext,
+        evidence_refs: list[EvidenceReference],
+    ) -> GroundingContext:
+        context_id = f"ctx-{uuid4().hex[:8]}"
+        payload_lines = [f"Query Intent: {retrieved.intent_category}", ""]
+
+        if retrieved.relevant_findings:
+            payload_lines.append("Relevant Findings:")
+            for f in retrieved.relevant_findings:
+                payload_lines.append(
+                    f"  - [{f.category}] {f.severity}: {f.risk_statement}"
+                )
+        else:
+            payload_lines.append("No relevant findings matched.")
+
+        payload_lines.append("")
+        payload_lines.append(f"Evidence References: {len(evidence_refs)}")
+        for ref in evidence_refs[:5]:
+            payload_lines.append(
+                f"  - {ref.document_id}/{ref.sheet}/{ref.evidence_id}"
+            )
+
+        formatted = "\n".join(payload_lines)
+
+        return GroundingContext(
+            context_id=context_id,
+            retrieved_context=retrieved,
+            retrieved_evidence=evidence_refs,
+            formatted_prompt_payload=formatted,
+        )
+--- src/jarvis/engines/assistant/validator.py ---
+"""GroundingValidator for the M10.5 Grounded AI Assistant.
+
+Consumes DraftResponse + GroundingContext; independently computes
+confidence_score and grounding_status. Transforms into AssistantResponse.
+
+Per C1.13: This module SHALL NOT import CheckMateEngine, ExecutionOutcome,
+RuleSnapshot, RuleRegistry, or CheckMateRule.
+
+Per AC-7: GroundingValidator computes confidence_score INDEPENDENTLY of the
+provider. Providers SHALL NOT self-report confidence or grounding status.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from uuid import uuid4
+
+from jarvis.contracts.assistant import (
+    AssistantResponse,
+    DraftResponse,
+    GroundingContext,
+    GroundingStatus,
+)
+
+# =============================================================================
+# GroundingValidator — AC-7: Independent validation
+# =============================================================================
+
+@dataclass
+class GroundingValidator:
+    """Validates DraftResponse claims against GroundingContext evidence.
+
+    Independently computes confidence_score and grounding_status from
+    evidence coverage and retrieval match ratios. Does NOT delegate
+    scoring to the generation provider.
+
+    Per AC-7: confidence_score = evidence-backed-claims / total-claims
+    (simplified heuristic for M10.5; uses term-grep as proxy).
+    """
+
+    high_confidence_threshold: float = 0.8
+    partial_confidence_threshold: float = 0.3
+    min_evidence_for_grounded: int = 1
+
+    def validate(
+        self,
+        draft: DraftResponse,
+        ground_context: GroundingContext,
+        understanding_provenance_id: str = "",
+    ) -> AssistantResponse:
+        """Validate provider output and produce public AssistantResponse.
+
+        Args:
+            draft: Raw response from GenerationProvider.
+            ground_context: The GroundingContext used to generate the draft.
+            understanding_provenance_id: From ProjectUnderstanding provenance.
+
+        Returns:
+            Fully validated AssistantResponse public contract.
+        """
+        evidence_count = len(ground_context.retrieved_evidence)
+        finding_count = len(ground_context.retrieved_context.relevant_findings)
+
+        # Compute confidence independently of provider metadata (AC-7)
+        confidence = self._compute_confidence(
+            finding_count=finding_count,
+            evidence_count=evidence_count,
+            response_text=draft.response_text,
+        )
+        grounding_status = self._classify_grounding(
+            finding_count=finding_count,
+            evidence_count=evidence_count,
+            confidence=confidence,
+        )
+
+        # Follow-ups based on uncovered categories
+        suggested = self._suggest_followups(ground_context, finding_count)
+
+        return AssistantResponse(
+            response_id=f"resp-{uuid4().hex[:8]}",
+            query_text=ground_context.retrieved_context.query_id,
+            response_text=draft.response_text,
+            grounding_status=grounding_status,
+            cited_evidence=ground_context.retrieved_evidence,
+            understanding_provenance_id=understanding_provenance_id,
+            confidence_score=confidence,
+            suggested_followups=suggested,
+        )
+
+    def _compute_confidence(
+        self,
+        finding_count: int,
+        evidence_count: int,
+        response_text: str,
+    ) -> float:
+        """Compute confidence score independently of the provider (AC-7).
+
+        Uses heuristic based on evidence and finding coverage:
+        - Evidence presence boosts confidence
+        - Finding count provides base confidence
+        - Draft text length/coherence adds slight boost
+        """
+        if finding_count == 0:
+            return 0.0
+
+        base = 0.3
+        finding_bonus = min(finding_count * 0.1, 0.3)
+        evidence_bonus = min(evidence_count * 0.15, 0.3)
+        text_bonus = 0.1 if len(response_text) > 100 else 0.05
+
+        score = base + finding_bonus + evidence_bonus + text_bonus
+        return min(score, 1.0)
+
+    def _classify_grounding(
+        self,
+        finding_count: int,
+        evidence_count: int,
+        confidence: float,
+    ) -> GroundingStatus:
+        """Classify grounding status based on evidence and confidence."""
+        if finding_count == 0 or evidence_count < self.min_evidence_for_grounded:
+            return GroundingStatus.UNSUPPORTED
+        if confidence < self.partial_confidence_threshold:
+            return GroundingStatus.UNSUPPORTED
+        if confidence >= self.high_confidence_threshold:
+            return GroundingStatus.FULLY_GROUNDED
+        return GroundingStatus.PARTIALLY_GROUNDED
+
+    def _suggest_followups(
+        self,
+        ground_context: GroundingContext,
+        finding_count: int,
+    ) -> list[str]:
+        """Generate suggested follow-up queries based on uncovered ground."""
+        if finding_count == 0:
+            return [
+                "Could you provide more details about the document or project?",
+                "What specific aspect of the project are you interested in?",
+            ]
+        if finding_count < 3:
+            return [
+                "Would you like me to examine additional areas for similar findings?",
+            ]
+        return []
+--- src/jarvis/contracts/assistant.py ---
+"""Grounded AI Assistant public and internal contracts for M10.5.
+
+Defines the public AssistantResponse contract alongside internal contracts
+(RetrievedContext, GroundingContext, DraftResponse) and the GenerationProvider
+protocol.
+
+Architecture conformance: ADR-0030 (C1.1, C1.3), ADR-0031 (C1.13, C1.14, C1.15),
+ADR-0032 (C1.4, C1.9, C1.11).
+
+Strict boundary: This module SHALL NOT import ExecutionOutcome, CheckMateEngine,
+RuleSnapshot, RuleRegistry, or CheckMateRule.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from enum import StrEnum
+from typing import Protocol, runtime_checkable
+from uuid import uuid4
+
+from jarvis.contracts.capabilities import EvidenceReference
+from jarvis.contracts.understanding import UnderstandingFinding
+
+
+# =============================================================================
+# GroundingStatus — Outcome classification for assistant responses
+# =============================================================================
+
+
+class GroundingStatus(StrEnum):
+    """Status indicating how well a response is supported by evidence.
+
+    FULLY_GROUNDED: All factual assertions trace to cited evidence.
+    PARTIALLY_GROUNDED: Some assertions verified, some unsourced.
+    UNSUPPORTED: No evidence or understanding available for the query.
+    """
+
+    FULLY_GROUNDED = "FULLY_GROUNDED"
+    PARTIALLY_GROUNDED = "PARTIALLY_GROUNDED"
+    UNSUPPORTED = "UNSUPPORTED"
+
+
+# =============================================================================
+# AssistantResponse — Public Contract (C1.15)
+# =============================================================================
+
+
+@dataclass(frozen=True)
+class AssistantResponse:
+    """Immutable public contract returned by the Grounded Assistant pipeline.
+
+    This is the ONLY public output consumed by M10.6 (Workbench UI) and
+    external integrations. All internal pipeline models are hidden behind
+    this contract.
+
+    Per C1.15: Frozen and immutable. No partial composition.
+    """
+
+    response_id: str
+    query_text: str
+    response_text: str
+    grounding_status: GroundingStatus
+    cited_evidence: list[EvidenceReference] = field(default_factory=list)
+    understanding_provenance_id: str = ""
+    confidence_score: float = 0.0
+    suggested_followups: list[str] = field(default_factory=list)
+
+    def __post_init__(self):
+        if self.confidence_score < 0.0 or self.confidence_score > 1.0:
+            raise ValueError(
+                f"confidence_score must be in [0.0, 1.0], got {self.confidence_score}"
+            )
+
+
+# =============================================================================
+# RetrievedContext — Internal Contract
+# =============================================================================
+
+
+@dataclass(frozen=True)
+class RetrievedContext:
+    """Internal contract: query interpretation + matched understanding findings.
+
+    Produced by UnderstandingRetriever after querying ProjectUnderstandingService.
+    Used by EvidenceRetriever to resolve specific evidence references.
+    """
+
+    query_id: str
+    intent_category: str
+    relevant_findings: list[UnderstandingFinding] = field(default_factory=list)
+    query_terms: list[str] = field(default_factory=list)
+
+
+# =============================================================================
+# GroundingContext — Internal Contract (Grounding Firewall)
+# =============================================================================
+
+
+@dataclass(frozen=True)
+class GroundingContext:
+    """Fully resolved context passed to GenerationProvider.
+
+    This is the grounding firewall — GenerationProvider receives ONLY this
+    data structure, not raw ProjectUnderstanding or engine models.
+
+    Contains resolved understanding findings, resolved evidence references,
+    and a pre-formatted prompt payload for the provider.
+    """
+
+    context_id: str
+    retrieved_context: RetrievedContext
+    retrieved_evidence: list[EvidenceReference] = field(default_factory=list)
+    formatted_prompt_payload: str = ""
+
+
+# =============================================================================
+# DraftResponse — Internal Contract
+# =============================================================================
+
+
+@dataclass(frozen=True)
+class DraftResponse:
+    """Raw output from a GenerationProvider before grounding validation.
+
+    Contains the provider's draft text and generation metadata. This is NOT
+    a public contract — GroundingValidator transforms it into AssistantResponse.
+    """
+
+    provider_name: str
+    provider_version: str
+    response_text: str
+    generation_metadata: dict[str, str] = field(default_factory=dict)
+
+
+# =============================================================================
+# GenerationProvider Protocol (AC-1 — Understanding Isolation)
+# =============================================================================
+
+
+@runtime_checkable
+class GenerationProvider(Protocol):
+    """Protocol for pluggable generation providers.
+
+    Per AC-1: Providers receive strictly GroundingContext — never raw
+    ProjectUnderstanding or engine models. The grounding firewall ensures
+    providers operate on verified, evidence-backed data.
+    """
+
+    @property
+    def provider_name(self) -> str: ...
+    @property
+    def provider_version(self) -> str: ...
+
+    def generate_draft(self, context: GroundingContext) -> DraftResponse:
+        """Generate a draft response from grounded context.
+
+        Args:
+            context: Fully resolved, evidence-backed GroundingContext.
+                     SHALL NOT contain raw Engine or Understanding internals.
+
+        Returns:
+            A DraftResponse containing the provider response and metadata.
+        """
+        ...
+--- src/jarvis/contracts/capabilities.py ---
+"""Capability hosting contracts for the CheckMate capability layer.
+
+Defines the technology-agnostic interface contracts per frozen ADR-0030 and
+ADR-0031. These contracts govern how capabilities are hosted, how the public
+FindingReport is structured, and how workspace evidence is bound.
+
+No implementation logic lives here — only type definitions and invariants.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from enum import StrEnum
+from typing import Protocol, runtime_checkable
+
+# =============================================================================
+# ADR-0031: FindingReport & Public Contract
+# =============================================================================
+
+
+class Severity(StrEnum):
+    """Finding severity taxonomy per C1.6 invariant.
+
+    Only these four levels are valid.CRITICAL/MAJOR findings indicate
+    violations that require corrective action.
+    """
+
+    CRITICAL = "CRITICAL"
+    MAJOR = "MAJOR"
+    MINOR = "MINOR"
+    INFORMATIONAL = "INFORMATIONAL"
+
+
+class EvidenceSourceType(StrEnum):
+    """Evidence source types per C1.2 Evidence Grounding invariant."""
+
+    CELL = "cell"
+    ROW = "row"
+    SECTION = "section"
+    RANGE = "range"
+    COMPUTED = "computed"
+
+
+@dataclass(frozen=True)
+class EvidenceReference:
+    """Immutable reference to source evidence (C1.2 invariant).
+
+    Every Finding SHALL reference at least one EvidenceReference.
+    """
+
+    document_id: str
+    sheet: str
+    evidence_id: str
+    source_type: EvidenceSourceType
+    page: int | None = None
+    bbox: dict | None = None
+    text_span: dict | None = None
+
+
+@dataclass(frozen=True)
+class Finding:
+    """An actionable QS finding (C1.6 invariant).
+
+    A Finding is NOT the same as a rule execution outcome. Only FAIL
+    outcomes MAY generate Findings per C1.7.
+    """
+
+    rule_id: str
+    severity: Severity
+    evidence: list[EvidenceReference] = field(default_factory=list)
+    risk_statement: str = ""
+    remediation: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.evidence:
+            raise ValueError("A Finding must reference at least one EvidenceReference.")
+        if not self.risk_statement:
+            raise ValueError("A Finding must include a risk statement.")
+        if not self.remediation:
+            raise ValueError("A Finding must include actionable remediation.")
+
+
+# =============================================================================
+# ADR-0031 — FindingReport Public Contract
+# =============================================================================
+
+@dataclass(frozen=True)
+class ReportProvenance:
+    """Provenance block embedded in every FindingReport (C1.14).
+
+    Links the report to its exact execution context for full reproducibility.
+    """
+
+    execution_id: str
+    evidence_fingerprint: str
+    rule_snapshot_hash: str
+    capability_version: str
+
+
+@dataclass(frozen=True)
+class TelemetrySummary:
+    """Operational telemetry (C1.13 — internal, not public)."""
+
+    rule_count_total: int = 0
+    rule_count_executed: int = 0
+    rule_count_unevaluable: int = 0
+    execution_duration_ms: float = 0.0
+    coverage_pct: float = 0.0
+
+
+@dataclass(frozen=True)
+class FindingReport:
+    """Public capability output contract (C1.13, C1.15).
+
+    A FindingReport is the complete, deterministic result of a single
+    execution run. It is technology-agnostic and contains no internal
+    execution telemetry beyond the provenance block.
+
+    Reports SHALL NOT be incrementally composed or retroactively modified.
+    """
+
+    provenance: ReportProvenance
+    telemetry_summary: TelemetrySummary
+    findings: list[Finding] = field(default_factory=list)
+    domain_coverage: dict[str, float] = field(default_factory=dict)
+
+
+# =============================================================================
+# ADR-0030 — Capability Host Interface
+# =============================================================================
+
+@runtime_checkable
+class CapabilityHost(Protocol):
+    """Interface contract for any capability panel hosted in the shell.
+
+    Per ADR-0030, capabilities are mounted through this interface and SHALL
+    NOT directly import or invoke other capabilities. The shell enforces
+    this boundary.
+    """
+
+    @property
+    def capability_id(self) -> str:
+        """Unique identifier for this capability."""
+        ...
+
+    async def initialize(self) -> None:
+        """Initialize the capability within its host context."""
+        ...
+
+    async def dispose(self) -> None:
+        """Dispose of capability resources when unmounted."""
+        ...
+
+
+# =============================================================================
+# ADR-0032 — Workspace Evidence Binding
+# =============================================================================
+
+class EvidenceGranularity(StrEnum):
+    """Evidence granularity levels per ADR-0032 C1.4 hierarchy."""
+
+    ATOMIC = "atomic"
+    STRUCTURAL = "structural"
+    AGGREGATE = "aggregate"
+    DERIVED = "derived"
+
+class EvidenceBindingFrozenError(Exception):
+    """Raised when attempting to modify evidence after binding is frozen."""
+
+
+@runtime_checkable
+class EvidenceContext(Protocol):
+    """Protocol-level evidence context per ADR-0032.
+
+    Per C1.4/C1.12, evidence is frozen at binding and cannot be rewritten.
+    """
+
+    @property
+    def is_bound(self) -> bool:
+        """Whether the evidence context has been sealed (immutable)."""
+        ...
+
+    def bind(self, evidence_path: str) -> list[str]:
+        """Bind evidence and freeze for the life of this context.
+
+        Returns:
+            List of evidence artifacts bound into the context.
+
+        Raises:
+            EvidenceBindingFrozenError: if evidence is already bound.
+        """
+        ...
+
+@runtime_checkable
+class EvidenceRepository(Protocol):
+    """Capability-neutral query interface for evidence retrieval.
+
+    Provides read-only access to persisted evidence records.
+    Used by downstream CheckMate rules to resolve evidence dependencies.
+    """
+
+    def get(self, evidence_id: str) -> EvidenceReference | None:
+        """Retrieve an evidence record by its unique identifier."""
+        ...
+
+    def list(self) -> list[EvidenceReference]:
+        """List all evidence records currently stored."""
+        ...
+
+    def find_by_document(self, document_id: str) -> list[EvidenceReference]:
+        """Find all evidence records belonging to a specific document."""
+        ...
+
+    def find_by_sheet(self, document_id: str, sheet: str) -> list[EvidenceReference]:
+        """Find all evidence records for a specific sheet in a document."""
+        ...
+
+    def find_by_source_type(self, source_type: EvidenceSourceType) -> list[EvidenceReference]:
+        """Find all evidence records of a specific source type."""
+        ...
+
+    def find_by_granularity(self, granularity: EvidenceGranularity) -> list[EvidenceReference]:
+        """Find all evidence records at a specific granularity level."""
+        ...
+
+--- src/jarvis/contracts/understanding.py ---
+"""ProjectUnderstanding public contract for M10.4.
+
+Defines the technology-agnostic immutable contract that downstream consumers
+(M10.5 AI Assistant, M10.6 Workbench UI) integrate against.
+
+Per C1.13: This contract is the ONLY public interface exposed by
+the Project Understanding domain. Internal models (ExecutionOutcome,
+CheckMateEngine, RuleSnapshot) SHALL NOT be imported by this module
+or by any Project Understanding component.
+
+Architecture conformance: ADR-0030 (C1.3), ADR-0031 (C1.13, C1.15).
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from enum import StrEnum
+
+# =============================================================================
+# Domain Classification
+# =============================================================================
+
+class FindingCategory(StrEnum):
+    """Domain-aligned categories for QS findings per ADR-0030 C1.8."""
+
+    MEASUREMENT = "measurement"
+    SPECIFICATION = "specification"
+    COORDINATION = "coordination"
+    COMPLIANCE = "compliance"
+    DOCUMENTATION_INTEGRITY = "documentation_integrity"
+    PROJECT_POLICY = "project_policy"
+
+
+@dataclass(frozen=True)
+class UnderstandingFinding:
+    """A single quality-related finding as understood by the Project Understanding domain.
+
+    This is the public view of a Finding — technology-agnostic, domain-classified,
+    and devoid of engine-specific implementation details.
+    """
+
+    finding_id: str
+    category: FindingCategory
+    severity: str
+    risk_statement: str
+    remediation: str
+    evidence_count: int = 0
+
+
+# =============================================================================
+# ProjectUnderstanding — Public Contract (C1.15)
+# =============================================================================
+
+@dataclass(frozen=True)
+class ProjectUnderstanding:
+    """Immutable public contract for downstream consumers.
+
+    This is the ONLY public output from the Project Understanding domain.
+    It contains a digested view of findings without internal engine provenance
+    or execution telemetry.
+
+    Per C1.15: Frozen and immutable. No partial or incremental composition.
+    """
+
+    report_id: str
+    capability_version: str
+    total_rules_executed: int = 0
+    total_findings: int = 0
+    findings_by_category: dict[str, int] = field(default_factory=dict)
+    findings: list[UnderstandingFinding] = field(default_factory=list)
+    summary: str = ""

@@ -1,0 +1,1 @@
+# Platform_Extensibility_Guide\n\nPart of Platform Freeze v1.0.\n
