@@ -23,6 +23,8 @@ from jarvis.core.pipeline.models import PipelineContext
 from jarvis.core.artifact.models import ArtifactType
 from jarvis.core.artifact.repository import ArtifactRepository
 from jarvis.core.memory.engine import WorkspaceMemoryService
+from jarvis.engines.assistant.resolvers.document import DocumentResolver
+from jarvis.core.document.engine import DocumentIntelligenceEngine
 
 # Import resolver architecture
 from jarvis.engines.assistant.resolvers import (
@@ -89,6 +91,8 @@ class WorkspaceAssistant(LifecycleAware):
         self.memory_service: Optional[Any] = None
         self.artifact_repository: Optional[Any] = None
         self._resolver_chain: Optional[ResolverChain] = None
+        self.knowledge_manifest: Optional[Any] = None
+        self.doc_intel_engine: Optional[DocumentIntelligenceEngine] = None
         
         # Legacy coordinators (for backward compatibility)
         self.context_assembler = ContextAssembler(self.workspace_runtime)
@@ -116,15 +120,24 @@ class WorkspaceAssistant(LifecycleAware):
             memory_service=self.memory_service,
         )
         
+        # Load self-knowledge deterministically (Phase 8 & 3.5 brainstem)
+        from jarvis.engines.assistant.grounding import KnowledgeLoader
+        loader = KnowledgeLoader(self.workspace_runtime)
+        self.knowledge_manifest = loader.discover_and_load()
+        
+        if self.doc_intel_engine is None:
+            self.doc_intel_engine = DocumentIntelligenceEngine(self.artifact_repository)
+        
         self._resolver_chain = ResolverChain([
+            DocumentResolver(self.doc_intel_engine),
             WorkspaceResolver(self.workspace_runtime),
+            KnowledgeResolver(self.workspace_runtime, self.capability_runtime),
             ArtifactResolver(self.artifact_repository),
-            KnowledgeResolver(self.workspace_runtime),
             MemoryResolver(self.memory_service),
             CapabilityResolver(self.capability_runtime),
             AIResolver(self.ai_runtime, grounding_engine),
         ])
-        logger.info("ResolverChain built: 6 resolvers (deterministic first, AI last)")
+        logger.info("ResolverChain built: 7 resolvers (deterministic document & workspace first, AI last)")
 
     def resolve(self, question: str, session_id: str) -> ResolutionResult:
         """Resolve user request through knowledge-driven resolver chain.
@@ -177,6 +190,7 @@ class WorkspaceAssistant(LifecycleAware):
         return str(result.payload)
 
     async def initialize(self) -> None:
+        self.doc_intel_engine = DocumentIntelligenceEngine(self.artifact_repository)
         logger.info("WorkspaceAssistant initialized.")
 
     async def start(self) -> None:
